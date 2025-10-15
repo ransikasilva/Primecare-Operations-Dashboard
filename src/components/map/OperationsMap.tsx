@@ -264,7 +264,7 @@ export default function OperationsMap({
           rider_name: rider.rider_name,
           phone: rider.phone,
           availability_status: rider.availability_status,
-          hospital_name: rider.hospital_name || 'Unknown Hospital',
+          hospital_name: rider.hospital_affiliation?.hospital_name || 'Unknown Hospital',
           vehicle_type: rider.vehicle_type,
           current_location: {
             lat: parseFloat(rider.current_location_lat),
