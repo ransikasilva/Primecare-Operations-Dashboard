@@ -134,7 +134,7 @@ function ProgressRing({ percentage, size = 60, strokeWidth = 6, gradient }: {
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xs font-bold text-gray-600">{percentage}%</span>
+        <span className="text-xs font-bold text-gray-600">{percentage.toFixed(1)}%</span>
       </div>
     </div>
   );
@@ -267,7 +267,8 @@ export function MetricsCards() {
 
   const getChangePercentage = (current: number, previous: number) => {
     if (previous === 0) return 0;
-    return Math.round(((current - previous) / previous) * 100);
+    const percentage = ((current - previous) / previous) * 100;
+    return Number(percentage.toFixed(1));
   };
 
   const getTrendIcon = (status: string) => {
