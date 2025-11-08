@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "TransFleet Operations Dashboard",
   description: "Operations management dashboard for TransFleet healthcare delivery network",
+  verification: {
+    google: "fnfAH0_BJNm-dhMzaYFAT7e7ifoBCPrMij2W-oQnqSM",
+  },
 };
 
 export default function RootLayout({
