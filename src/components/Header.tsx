@@ -197,30 +197,6 @@ export function Header() {
 
         {/* Right Section - Actions & User */}
         <div className="flex items-center space-x-4">
-          {/* Quick Actions */}
-          <div className="flex items-center space-x-2">
-            {quickActions.map((action) => {
-              const Icon = action.icon;
-              return (
-                <button
-                  key={action.label}
-                  className="group p-3 rounded-xl transition-all duration-300 hover:transform hover:scale-105"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.8) 100%)',
-                    border: '1px solid rgba(203, 213, 225, 0.3)',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)'
-                  }}
-                  title={action.label}
-                >
-                  <Icon 
-                    className="w-5 h-5 transition-colors duration-300"
-                    style={{ color: action.color }}
-                  />
-                </button>
-              );
-            })}
-          </div>
-
           {/* Notifications */}
           <div className="relative" ref={notificationRef}>
             <button

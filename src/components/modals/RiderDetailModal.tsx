@@ -1098,33 +1098,6 @@ export function RiderDetailModal({
                 </div>
               </div>
             </div>
-
-            {/* Status Management */}
-            {onStatusChange && (
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Status Management</h3>
-                <div className="flex space-x-4">
-                  {['active', 'suspended', 'blocked'].map((status) => (
-                    <button
-                      key={status}
-                      onClick={() => handleStatusChange(status)}
-                      disabled={isProcessing || rider.status === status}
-                      className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50 ${
-                        rider.status === status 
-                          ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
-                          : status === 'active' 
-                            ? 'bg-green-500 text-white hover:bg-green-600' 
-                            : status === 'suspended'
-                              ? 'bg-yellow-500 text-white hover:bg-yellow-600'
-                              : 'bg-red-500 text-white hover:bg-red-600'
-                      }`}
-                    >
-                      {isProcessing ? 'Processing...' : `Mark as ${status.charAt(0).toUpperCase() + status.slice(1)}`}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

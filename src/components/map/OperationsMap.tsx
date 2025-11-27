@@ -160,11 +160,11 @@ export default function OperationsMap({
       console.log('🧪 CollectionCenters structure:', JSON.stringify(allCollectionCentersData, null, 2));
     }
 
-    const systemData = systemOverviewData?.data || {};
-    
+    const systemData = (systemOverviewData?.data || {}) as any;
+
     // Extract hospitals from system overview or hospital networks data
     let hospitals: Hospital[] = [];
-    
+
     // Try to get hospitals from system overview first
     if (systemData.hospital_networks) {
       hospitals = systemData.hospital_networks.flatMap((network: any) => 
@@ -185,8 +185,8 @@ export default function OperationsMap({
     }
     
     // If no hospitals from system overview, try hospital networks data
-    if (hospitals.length === 0 && hospitalNetworksData?.data?.hospital_networks) {
-      hospitals = hospitalNetworksData.data.hospital_networks.flatMap((network: any) => 
+    if (hospitals.length === 0 && (hospitalNetworksData?.data as any)?.hospital_networks) {
+      hospitals = ((hospitalNetworksData?.data as any)?.hospital_networks || []).flatMap((network: any) =>
         (network.hospitals || []).map((hospital: any) => ({
           id: hospital.id,
           name: hospital.name,
@@ -225,7 +225,7 @@ export default function OperationsMap({
     
     // Try collection centers data if no data from system overview
     if (collectionCenters.length === 0 && allCollectionCentersData?.data) {
-      const centersData = allCollectionCentersData.data;
+      const centersData = allCollectionCentersData.data as any;
       collectionCenters = (Array.isArray(centersData) ? centersData : centersData.collection_centers || []).map((center: any) => ({
         id: center.id,
         center_name: center.center_name,
@@ -485,7 +485,7 @@ export default function OperationsMap({
       const defaultCenter = { lat: 7.8731, lng: 80.7718 };
       
       const mapInstance = new window.google.maps.Map(mapRef.current, {
-        zoom: 8,
+        zoom: 8.5,
         center: defaultCenter,
         mapTypeControl: true,
         streetViewControl: false,
@@ -512,12 +512,19 @@ export default function OperationsMap({
 
       setMap(mapInstance);
       setMapError(null);
-      
-      // Trigger map resize
+
+      // Trigger map resize and ensure center on Sri Lanka
       setTimeout(() => {
         window.google.maps.event.trigger(mapInstance, 'resize');
         mapInstance.setCenter(defaultCenter);
+        mapInstance.setZoom(8.5);
       }, 100);
+
+      // Double-check center after a longer delay to override any auto-centering
+      setTimeout(() => {
+        mapInstance.setCenter(defaultCenter);
+        mapInstance.setZoom(8.5);
+      }, 500);
     } catch (error) {
       console.error('Failed to initialize map:', error);
       setMapError('Failed to initialize map');
@@ -784,28 +791,46 @@ export default function OperationsMap({
 
     markersRef.current = newMarkers;
 
-    // Fit map to show all markers if there are any
+    // Fit map to show all markers if there are any valid markers within Sri Lanka
     if (newMarkers.length > 0) {
-      const bounds = new window.google.maps.LatLngBounds();
-      newMarkers.forEach(marker => bounds.extend(marker.getPosition()));
-      
-      map.fitBounds(bounds, {
-        top: 50,
-        right: 50,
-        bottom: 50,
-        left: 50
+      // Validate markers are within Sri Lanka bounds (roughly 5.9-9.9°N, 79.5-82°E)
+      const validMarkers = newMarkers.filter(marker => {
+        const pos = marker.getPosition();
+        const lat = pos.lat();
+        const lng = pos.lng();
+        return lat >= 5.9 && lat <= 9.9 && lng >= 79.5 && lng <= 82.0;
       });
-      
-      // Set zoom constraints
-      const listener = window.google.maps.event.addListener(map, 'idle', () => {
-        const currentZoom = map.getZoom();
-        if (currentZoom > 16) {
-          map.setZoom(16);
-        } else if (currentZoom < 6) {
-          map.setZoom(6);
-        }
-        window.google.maps.event.removeListener(listener);
-      });
+
+      if (validMarkers.length > 0) {
+        const bounds = new window.google.maps.LatLngBounds();
+        validMarkers.forEach(marker => bounds.extend(marker.getPosition()));
+
+        map.fitBounds(bounds, {
+          top: 50,
+          right: 50,
+          bottom: 50,
+          left: 50
+        });
+
+        // Set zoom constraints
+        const listener = window.google.maps.event.addListener(map, 'idle', () => {
+          const currentZoom = map.getZoom();
+          if (currentZoom > 16) {
+            map.setZoom(16);
+          } else if (currentZoom < 6) {
+            map.setZoom(6);
+          }
+          window.google.maps.event.removeListener(listener);
+        });
+      } else {
+        // No valid markers within Sri Lanka - stay centered on Sri Lanka
+        map.setCenter({ lat: 7.8731, lng: 80.7718 });
+        map.setZoom(8.5);
+      }
+    } else {
+      // No markers - ensure we stay centered on Sri Lanka
+      map.setCenter({ lat: 7.8731, lng: 80.7718 });
+      map.setZoom(8.5);
     }
 
   }, [map, filteredData]);

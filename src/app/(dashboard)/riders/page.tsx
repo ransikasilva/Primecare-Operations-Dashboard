@@ -537,19 +537,12 @@ function RiderCard({
           </div>
 
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={() => onViewDetails(rider)}
               className="p-3 hover:bg-blue-50 rounded-xl transition-colors"
               title="View Rider Details"
             >
               <Eye className="w-4 h-4 text-blue-600" />
-            </button>
-            
-            <button 
-              className="p-3 hover:bg-green-50 rounded-xl transition-colors"
-              title="Manage Rider Settings"
-            >
-              <Settings className="w-4 h-4 text-green-600" />
             </button>
           </div>
         </div>

@@ -43,7 +43,7 @@ export default function HospitalsPage() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'approved' | 'pending_hq_approval' | 'pending_main_hospital_approval' | 'rejected'>('all');
 
   // Extract hospital networks data
-  const allHospitalNetworks = systemData?.data?.hospital_networks || [];
+  const allHospitalNetworks = (systemData as any)?.data?.hospital_networks || [];
 
   // Extract main hospitals from networks with their regional hospitals
   const allMainHospitals = allHospitalNetworks.flatMap((network: any) => {
@@ -508,13 +508,6 @@ function HospitalNetworkCard({
                 {isProcessing ? 'Approving...' : 'Approve'}
               </button>
             )}
-
-            <button
-              className="p-3 hover:bg-gray-50 rounded-xl transition-colors"
-              title="Manage Hospital Settings"
-            >
-              <Settings className="w-4 h-4 text-gray-600" />
-            </button>
           </div>
         </div>
 

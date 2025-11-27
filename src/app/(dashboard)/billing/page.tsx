@@ -201,7 +201,7 @@ export default function BillingManagementPage() {
         billingPeriod: new Date().toISOString().slice(0, 7),
         notes: `Service suspended due to non-payment - ${subscription.networkName}`
       });
-      
+
       if (result.success) {
         alert(`✅ Services suspended for ${subscription.networkName}`);
         // Refetch data instead of reloading the page
@@ -213,6 +213,36 @@ export default function BillingManagementPage() {
     } catch (error: any) {
       console.error('Service suspension failed:', error);
       alert(`❌ Failed to suspend services: ${error.message || 'Please try again.'}`);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleReactivateService = async (subscription: any) => {
+    if (!confirm(`✅ REACTIVATE SERVICES FOR ${subscription.networkName}?\\n\\nThis will restore all TransFleet services for this hospital network.\\n\\nAre you sure?`)) {
+      return;
+    }
+
+    setActionLoading(subscription.id + '_reactivate');
+    try {
+      const result = await updateSubscriptionPayment(subscription.id, {
+        paymentStatus: 'Active',
+        paymentDate: new Date().toISOString().split('T')[0],
+        billingPeriod: new Date().toISOString().slice(0, 7),
+        notes: `Service reactivated - ${subscription.networkName}`
+      });
+
+      if (result.success) {
+        alert(`✅ Services reactivated for ${subscription.networkName}`);
+        // Refetch data instead of reloading the page
+        refetchBillingData();
+        refetchSubscriptions();
+      } else {
+        throw new Error(result.error || 'Service reactivation failed');
+      }
+    } catch (error: any) {
+      console.error('Service reactivation failed:', error);
+      alert(`❌ Failed to reactivate services: ${error.message || 'Please try again.'}`);
     } finally {
       setActionLoading(null);
     }
@@ -774,9 +804,9 @@ export default function BillingManagementPage() {
                           Record Payment
                         </button>
 
-                        {/* Suspend Service Button */}
+                        {/* Suspend Service Button - Only show when Active */}
                         {actualStatus === 'Active' && (
-                          <button 
+                          <button
                             onClick={() => handleSuspendService(subscription)}
                             disabled={actionLoading === subscription.id + '_suspend'}
                             className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 hover:transform hover:scale-105 disabled:opacity-50"
@@ -792,6 +822,27 @@ export default function BillingManagementPage() {
                               <PowerOff className="w-4 h-4" />
                             )}
                             Suspend
+                          </button>
+                        )}
+
+                        {/* Reactivate Service Button - Only show when Suspended */}
+                        {actualStatus === 'Suspended' && (
+                          <button
+                            onClick={() => handleReactivateService(subscription)}
+                            disabled={actionLoading === subscription.id + '_reactivate'}
+                            className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 hover:transform hover:scale-105 disabled:opacity-50"
+                            style={{
+                              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                              color: 'white',
+                              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+                            }}
+                          >
+                            {actionLoading === subscription.id + '_reactivate' ? (
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <CheckCircle2 className="w-4 h-4" />
+                            )}
+                            Reactivate
                           </button>
                         )}
                         

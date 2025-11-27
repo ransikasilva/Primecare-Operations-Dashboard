@@ -120,16 +120,17 @@ export function Sidebar() {
   ];
 
   return (
-    <div 
-      className="w-72 h-screen relative"
+    <div
+      className="w-72 h-screen flex flex-col fixed left-0 top-0"
       style={{
         background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
         borderRight: '1px solid rgba(203, 213, 225, 0.3)',
-        boxShadow: '4px 0 24px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02)'
+        boxShadow: '4px 0 24px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02)',
+        zIndex: 40
       }}
     >
       {/* Header */}
-      <div className="p-4 pb-3 border-b border-gray-100/60">
+      <div className="p-4 pb-3 border-b border-gray-100/60 flex-shrink-0">
         <div className="flex items-center space-x-3">
           <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center relative overflow-hidden bg-white"
@@ -163,7 +164,13 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-3 space-y-2">
+      <nav
+        className="flex-1 overflow-y-auto px-4 py-3 space-y-2"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#5DADE2 transparent'
+        }}
+      >
         {navigation.map((item) => {
           const isActive = pathname === item.href;
           const isHovered = hoveredItem === item.name;
@@ -271,39 +278,8 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Quick Actions */}
-      <div className="p-4 border-t border-gray-100/60">
-        <div className="mb-4">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-            Quick Actions
-          </h3>
-          <div className="flex space-x-2">
-            {quickActions.map((action) => {
-              const Icon = action.icon;
-              return (
-                <button
-                  key={action.label}
-                  className="group flex-1 flex flex-col items-center p-3 rounded-xl transition-all duration-300 hover:transform hover:scale-105"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.8) 100%)',
-                    border: '1px solid rgba(203, 213, 225, 0.3)',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)'
-                  }}
-                >
-                  <Icon 
-                    className="w-5 h-5 mb-1 transition-colors duration-300"
-                    style={{ color: action.color }}
-                  />
-                  <span className="text-xs font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
-                    {action.label.split(' ')[0]}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* System Status */}
+      {/* System Status */}
+      <div className="p-4 border-t border-gray-100/60 flex-shrink-0">
         <div 
           className="p-4 rounded-2xl"
           style={{

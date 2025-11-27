@@ -468,13 +468,6 @@ function CollectionCenterCard({
             >
               <Eye className="w-4 h-4 text-green-600" />
             </button>
-            
-            <button 
-              className="p-3 hover:bg-blue-50 rounded-xl transition-colors"
-              title="Manage Center Settings"
-            >
-              <Settings className="w-4 h-4 text-blue-600" />
-            </button>
           </div>
         </div>
         
