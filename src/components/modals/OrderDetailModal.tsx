@@ -880,7 +880,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                               </div>
                               <div className="space-y-1 text-xs">
                                 <div className="text-gray-600">
-                                  {location.location_lat.toFixed(4)}, {location.location_lng.toFixed(4)}
+                                  {parseFloat(location.location_lat.toString()).toFixed(4)}, {parseFloat(location.location_lng.toString()).toFixed(4)}
                                 </div>
                                 {location.speed_kmh !== undefined && (
                                   <div className="text-gray-600">{location.speed_kmh} km/h</div>
