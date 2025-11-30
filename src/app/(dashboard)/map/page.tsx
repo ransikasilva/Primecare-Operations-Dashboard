@@ -146,8 +146,8 @@ export default function MapPage() {
             onClick={() => setIsFullscreen(!isFullscreen)}
             className="flex items-center gap-2 px-4 py-2 rounded-2xl transition-all duration-300 hover:transform hover:scale-105"
             style={{
-              background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-              boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+              background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+              boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
             }}
           >
             <Maximize2 className="w-4 h-4 text-white" />
@@ -264,7 +264,7 @@ export default function MapPage() {
                 <div 
                   className="w-12 h-12 rounded-2xl flex items-center justify-center"
                   style={{
-                    background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+                    background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
                   }}
                 >
                   <Activity className="w-6 h-6 text-white" />
@@ -286,9 +286,9 @@ export default function MapPage() {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-gray-800">Map Filters</h3>
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 rounded-lg">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span className="text-xs text-blue-700 font-medium">Hospitals</span>
+                  <div className="flex items-center gap-1 px-2 py-1 bg-teal-100 rounded-lg">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-xs text-teal-700 font-medium">Hospitals</span>
                   </div>
                   <div className="flex items-center gap-1 px-2 py-1 bg-orange-100 rounded-lg">
                     <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
@@ -298,9 +298,9 @@ export default function MapPage() {
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span className="text-xs text-green-700 font-medium">Available</span>
                   </div>
-                  <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 rounded-lg">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                    <span className="text-xs text-blue-700 font-medium">Busy</span>
+                  <div className="flex items-center gap-1 px-2 py-1 bg-teal-100 rounded-lg">
+                    <div className="w-2 h-2 bg-teal-600 rounded-full"></div>
+                    <span className="text-xs text-teal-700 font-medium">Busy</span>
                   </div>
                   <div className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-lg">
                     <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
@@ -324,8 +324,8 @@ export default function MapPage() {
                         : 'text-gray-600 hover:bg-gray-100'
                     }`}
                     style={selectedFilter === 'all' ? {
-                      background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                      boxShadow: '0 4px 16px rgba(93, 173, 226, 0.3)'
+                      background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                      boxShadow: '0 4px 16px rgba(78, 205, 196, 0.3)'
                     } : {}}
                   >
                     All
@@ -338,8 +338,8 @@ export default function MapPage() {
                         : 'text-gray-600 hover:bg-gray-100'
                     }`}
                     style={selectedFilter === 'hospitals' ? {
-                      background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                      boxShadow: '0 4px 16px rgba(93, 173, 226, 0.3)'
+                      background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                      boxShadow: '0 4px 16px rgba(78, 205, 196, 0.3)'
                     } : {}}
                   >
                     <Building2 className="w-4 h-4" />
@@ -353,8 +353,8 @@ export default function MapPage() {
                         : 'text-gray-600 hover:bg-gray-100'
                     }`}
                     style={selectedFilter === 'centers' ? {
-                      background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                      boxShadow: '0 4px 16px rgba(93, 173, 226, 0.3)'
+                      background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                      boxShadow: '0 4px 16px rgba(78, 205, 196, 0.3)'
                     } : {}}
                   >
                     <Stethoscope className="w-4 h-4" />
@@ -368,8 +368,8 @@ export default function MapPage() {
                         : 'text-gray-600 hover:bg-gray-100'
                     }`}
                     style={selectedFilter === 'riders' ? {
-                      background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                      boxShadow: '0 4px 16px rgba(93, 173, 226, 0.3)'
+                      background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                      boxShadow: '0 4px 16px rgba(78, 205, 196, 0.3)'
                     } : {}}
                   >
                     <Navigation className="w-4 h-4" />

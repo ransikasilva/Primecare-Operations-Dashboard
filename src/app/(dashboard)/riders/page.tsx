@@ -30,7 +30,7 @@ export default function RidersPage() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'approved' | 'pending' | 'rejected'>('all');
 
   // Extract riders data
-  const allRiders = systemData?.data?.data?.riders || systemData?.data?.riders || [];
+  const allRiders = ((systemData?.data as any)?.data?.riders || (systemData?.data as any)?.riders || []) as any[];
 
   // Filter riders based on search and filters
   const filteredRiders = allRiders.filter((rider: any) => {
@@ -57,7 +57,7 @@ export default function RidersPage() {
     return (
       <div className="space-y-8">
         <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
           <p className="text-gray-500">Loading riders...</p>
         </div>
       </div>
@@ -263,7 +263,7 @@ export default function RidersPage() {
       >
         <div className="p-6 border-b border-gray-100/60">
           <h2 className="text-xl font-bold text-gray-800 mb-1 flex items-center gap-2">
-            <Users className="w-6 h-6 text-blue-600" />
+            <Users className="w-6 h-6 text-teal-600" />
             All Riders ({filteredRiders.length})
           </h2>
           <p className="text-gray-600 text-base">Complete list with hospital affiliations and contact details</p>
@@ -322,11 +322,16 @@ export default function RidersPage() {
                           created_at: rider.created_at,
                           last_active: rider.last_active || new Date().toISOString(),
                           current_location: undefined,
-                          profile_picture: rider.profile_picture,
-                          driver_license_front: rider.driver_license_front,
-                          driver_license_back: rider.driver_license_back,
-                          nic_front: rider.nic_front,
-                          nic_back: rider.nic_back
+                          profile_image_url: rider.profile_image_url,
+                          profile_picture: rider.profile_image_url,
+                          driver_license_front: rider.license_image_url,
+                          driver_license_back: rider.license_image_back_url,
+                          nic_front: rider.nic_image_url,
+                          nic_back: rider.nic_image_back_url,
+                          license_image_url: rider.license_image_url,
+                          license_image_back_url: rider.license_image_back_url,
+                          nic_image_url: rider.nic_image_url,
+                          nic_image_back_url: rider.nic_image_back_url
                         };
                         setSelectedRider(transformedRider);
                       }
@@ -361,7 +366,17 @@ export default function RidersPage() {
                         monthly_km: 0,
                         weekly_km: 0,
                         created_at: rider.created_at,
-                        last_active: rider.last_active || new Date().toISOString()
+                        last_active: rider.last_active || new Date().toISOString(),
+                        profile_image_url: rider.profile_image_url,
+                        profile_picture: rider.profile_image_url,
+                        driver_license_front: rider.license_image_url,
+                        driver_license_back: rider.license_image_back_url,
+                        nic_front: rider.nic_image_url,
+                        nic_back: rider.nic_image_back_url,
+                        license_image_url: rider.license_image_url,
+                        license_image_back_url: rider.license_image_back_url,
+                        nic_image_url: rider.nic_image_url,
+                        nic_image_back_url: rider.nic_image_back_url
                       };
                       setSelectedRider(transformedRider);
                       setShowDetailModal(true);
@@ -413,15 +428,15 @@ export default function RidersPage() {
             const { operationsApi } = await import('@/lib/api');
             const kmResponse = await operationsApi.getRiderKmData(riderId, filter);
             
-            if (kmResponse.success && selectedRider) {
+            if (kmResponse.success && kmResponse.data && selectedRider) {
               // Update the selected rider with new KM data
               setSelectedRider({
                 ...selectedRider,
-                total_km: kmResponse.data.total_km,
-                monthly_km: kmResponse.data.monthly_km,
-                weekly_km: kmResponse.data.weekly_km,
-                total_deliveries: kmResponse.data.total_deliveries,
-                average_delivery_time: kmResponse.data.avg_delivery_time_minutes
+                total_km: kmResponse.data.total_km || selectedRider.total_km,
+                monthly_km: kmResponse.data.monthly_km || selectedRider.monthly_km,
+                weekly_km: kmResponse.data.weekly_km || selectedRider.weekly_km,
+                total_deliveries: selectedRider.total_deliveries,
+                average_delivery_time: selectedRider.average_delivery_time
               });
             }
           } catch (error) {
@@ -454,13 +469,27 @@ function RiderCard({
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-start gap-4">
-            <div 
+            {rider.profile_image_url ? (
+              <img
+                src={rider.profile_image_url}
+                alt={rider.rider_name}
+                className="w-12 h-12 rounded-xl object-cover border-2 border-teal-300"
+                onError={(e) => {
+                  // Fallback to icon if image fails to load
+                  e.currentTarget.style.display = 'none';
+                  const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (fallback) fallback.style.display = 'flex';
+                }}
+              />
+            ) : null}
+            <div
               className="w-12 h-12 rounded-xl flex items-center justify-center"
               style={{
                 background: rider.hospital_affiliation
                   ? 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'
                   : 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                display: rider.profile_image_url ? 'none' : 'flex'
               }}
             >
               <User className="w-6 h-6 text-white" />
@@ -539,10 +568,10 @@ function RiderCard({
           <div className="flex items-center gap-3">
             <button
               onClick={() => onViewDetails(rider)}
-              className="p-3 hover:bg-blue-50 rounded-xl transition-colors"
+              className="p-3 hover:bg-teal-50 rounded-xl transition-colors"
               title="View Rider Details"
             >
-              <Eye className="w-4 h-4 text-blue-600" />
+              <Eye className="w-4 h-4 text-teal-600" />
             </button>
           </div>
         </div>

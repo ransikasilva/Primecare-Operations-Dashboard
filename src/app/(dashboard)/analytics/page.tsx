@@ -348,7 +348,7 @@ export default function AnalyticsPage() {
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-teal-500"
             >
               <option value="current_month">Current Month</option>
               <option value="last_month">Last Month</option>
@@ -360,7 +360,7 @@ export default function AnalyticsPage() {
             <select
               value={chartPeriod}
               onChange={(e) => setChartPeriod(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-teal-500"
             >
               <option value="6_months">Last 6 Months</option>
               <option value="12_months">Last 12 Months</option>
@@ -415,7 +415,7 @@ export default function AnalyticsPage() {
               value: totalNetworks,
               subtitle: `${networksChange > 0 ? '+' : ''}${networksChange}% growth`,
               icon: Building2,
-              color: '#5DADE2'
+              color: '#4ECDC4'
             },
             {
               title: 'Total Riders',
@@ -479,7 +479,7 @@ export default function AnalyticsPage() {
                 <div
                   className="w-12 h-12 rounded-2xl flex items-center justify-center"
                   style={{
-                    background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+                    background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
                   }}
                 >
                   <TrendingUp className="w-6 h-6 text-white" />
@@ -492,8 +492,8 @@ export default function AnalyticsPage() {
               <button
                 className="flex items-center space-x-2 px-6 py-3 rounded-2xl transition-all duration-300 hover:transform hover:scale-105"
                 style={{
-                  background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                  boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+                  background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                  boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
                 }}
               >
                 <Settings className="w-4 h-4 text-white" />
@@ -507,7 +507,7 @@ export default function AnalyticsPage() {
           {slaLoading ? (
             <div className="flex items-center justify-center h-96">
               <div className="flex flex-col items-center space-y-3">
-                <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
+                <RefreshCw className="w-8 h-8 text-teal-500 animate-spin" />
                 <p className="text-gray-600">Loading SLA metrics...</p>
               </div>
             </div>
@@ -549,7 +549,7 @@ export default function AnalyticsPage() {
                   >
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-sm font-semibold text-gray-700">Standard SLA</h3>
-                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                      <div className="w-3 h-3 rounded-full bg-teal-500"></div>
                     </div>
                     <div className="text-3xl font-bold text-gray-900 mb-1">
                       {slaMetrics.overall.standard.percentage.toFixed(1)}%
@@ -632,7 +632,7 @@ export default function AnalyticsPage() {
               {/* Enhanced Bar Chart */}
               <div className="relative">
                 {/* Chart Area */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-teal-100">
                   <div className="h-96 relative">
                     {/* Y-axis Labels */}
                     <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 pr-4">
@@ -752,7 +752,7 @@ export default function AnalyticsPage() {
                       <div className="text-2xl font-bold text-gray-800">{trend.total_orders}</div>
                       <div className={`w-3 h-3 rounded-full ${
                         trend.total_orders > 50 ? 'bg-green-400' :
-                        trend.total_orders > 20 ? 'bg-blue-400' :
+                        trend.total_orders > 20 ? 'bg-teal-400' :
                         trend.total_orders > 0 ? 'bg-purple-400' : 'bg-gray-300'
                       }`}></div>
                     </div>
@@ -850,7 +850,7 @@ export default function AnalyticsPage() {
                         <p className="text-xs text-gray-500">Growth</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-lg font-bold text-blue-600">{network.avg_delivery_time} min</p>
+                        <p className="text-lg font-bold text-teal-600">{network.avg_delivery_time} min</p>
                         <p className="text-xs text-gray-500">Avg Time</p>
                       </div>
                     </div>
@@ -880,7 +880,7 @@ export default function AnalyticsPage() {
                         onClick={() => handlePageChange(page)}
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                           currentPage === page
-                            ? 'bg-blue-500 text-white'
+                            ? 'bg-teal-500 text-white'
                             : 'border border-gray-200 hover:bg-gray-50 text-gray-700'
                         }`}
                       >
@@ -931,7 +931,7 @@ export default function AnalyticsPage() {
               <select
                 value={biPeriod}
                 onChange={(e) => setBiPeriod(e.target.value)}
-                className="text-xs px-3 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                className="text-xs px-3 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-teal-500 bg-white"
               >
                 <option value="current_month">Current Month</option>
                 <option value="last_month">Last Month</option>
@@ -962,15 +962,15 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-teal-100">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="text-blue-600 font-semibold text-sm">Network Growth</div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <div className="text-teal-600 font-semibold text-sm">Network Growth</div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full"></div>
                   </div>
-                  <div className="text-2xl font-bold text-blue-700">
+                  <div className="text-2xl font-bold text-teal-700">
                     +{(biData as any).changes.networks_change}%
                   </div>
-                  <div className="text-xs text-blue-600 mt-1">
+                  <div className="text-xs text-teal-600 mt-1">
                     {totalNetworks} Total Networks
                   </div>
                 </div>
@@ -1034,14 +1034,14 @@ export default function AnalyticsPage() {
                   (biData as any).current_month.sla_percentage >= 95
                     ? 'bg-green-100 text-green-700 border border-green-200'
                     : (biData as any).current_month.sla_percentage >= 90
-                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    ? 'bg-teal-100 text-teal-700 border border-teal-200'
                     : 'bg-yellow-100 text-yellow-700 border border-yellow-200'
                 }`}>
                   <div className={`w-2 h-2 rounded-full mr-2 ${
                     (biData as any).current_month.sla_percentage >= 95
                       ? 'bg-green-400'
                       : (biData as any).current_month.sla_percentage >= 90
-                      ? 'bg-blue-400'
+                      ? 'bg-teal-400'
                       : 'bg-yellow-400'
                   }`}></div>
                   {(biData as any).current_month.sla_percentage >= 95 ? 'Excellent Performance' :

@@ -50,7 +50,7 @@ export default function LoginPage() {
               <div
                 className="w-16 h-16 rounded-3xl flex items-center justify-center relative overflow-hidden bg-white"
                 style={{
-                  boxShadow: '0 12px 40px rgba(93, 173, 226, 0.4)'
+                  boxShadow: '0 12px 40px rgba(78, 205, 196, 0.4)'
                 }}
               >
                 <img
@@ -158,10 +158,10 @@ export default function LoginPage() {
               style={{
                 background: loading 
                   ? 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)'
-                  : 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
+                  : 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
                 boxShadow: loading 
                   ? 'none'
-                  : '0 8px 32px rgba(93, 173, 226, 0.4)',
+                  : '0 8px 32px rgba(78, 205, 196, 0.4)',
                 transform: loading ? 'none' : 'translateY(0)',
               }}
             >
@@ -185,7 +185,7 @@ export default function LoginPage() {
       <div 
         className="hidden lg:flex lg:flex-1 flex-col justify-center items-center px-12"
         style={{
-          background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
+          background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
         }}
       >
         <div className="text-center text-white max-w-lg">

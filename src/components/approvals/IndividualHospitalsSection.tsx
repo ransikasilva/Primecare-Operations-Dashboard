@@ -21,7 +21,7 @@ export function IndividualHospitalsSection({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-800 mb-1 flex items-center gap-2">
-              <Hospital className="w-6 h-6 text-blue-600" />
+              <Hospital className="w-6 h-6 text-teal-600" />
               Individual Hospitals ({hospitals.length})
             </h2>
             <p className="text-gray-600 text-base">Hospitals pending individual or network-level HQ approval</p>
@@ -67,7 +67,7 @@ export function IndividualHospitalsSection({
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="text-lg font-bold text-gray-900">{hospital.name}</h3>
                           {hospital.is_main_hospital && (
-                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-teal-100 text-teal-800 border border-teal-200">
                               Main Hospital
                             </span>
                           )}
@@ -135,10 +135,10 @@ export function IndividualHospitalsSection({
                     <div className="flex items-center gap-3">
                       <button 
                         onClick={() => onViewDetails(hospital)}
-                        className="p-3 hover:bg-blue-50 rounded-xl transition-colors"
+                        className="p-3 hover:bg-teal-50 rounded-xl transition-colors"
                         title="View Hospital Details"
                       >
-                        <Eye className="w-4 h-4 text-blue-600" />
+                        <Eye className="w-4 h-4 text-teal-600" />
                       </button>
                       
                       <button 

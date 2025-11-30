@@ -344,8 +344,8 @@ export default function BillingManagementPage() {
       <div 
         className="relative overflow-hidden rounded-3xl p-8"
         style={{
-          background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-          boxShadow: '0 20px 40px rgba(93, 173, 226, 0.3)'
+          background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+          boxShadow: '0 20px 40px rgba(78, 205, 196, 0.3)'
         }}
       >
         <div className="relative z-10">
@@ -460,7 +460,7 @@ export default function BillingManagementPage() {
             icon: CheckCircle2, 
             gradient: ['#3b82f6', '#1d4ed8'],
             change: `${subscriptions.length} total networks`,
-            changeColor: 'text-blue-600'
+            changeColor: 'text-teal-600'
           },
           { 
             title: 'Need Attention', 
@@ -531,7 +531,7 @@ export default function BillingManagementPage() {
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
                 showFilters 
-                  ? 'bg-blue-100 text-blue-700' 
+                  ? 'bg-teal-100 text-teal-700' 
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
@@ -554,7 +554,7 @@ export default function BillingManagementPage() {
                 placeholder="Search by network name, admin name, or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-teal-500 text-sm"
                 style={{
                   background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.8) 100%)'
                 }}
@@ -574,7 +574,7 @@ export default function BillingManagementPage() {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-teal-500 text-sm"
                     style={{
                       background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.8) 100%)'
                     }}
@@ -595,7 +595,7 @@ export default function BillingManagementPage() {
                   <select
                     value={paymentMethodFilter}
                     onChange={(e) => setPaymentMethodFilter(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-teal-500 text-sm"
                     style={{
                       background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.8) 100%)'
                     }}
@@ -638,7 +638,7 @@ export default function BillingManagementPage() {
               <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-200">
                 <span className="text-xs font-medium text-gray-500">Active Filters:</span>
                 {searchTerm && (
-                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-teal-100 text-teal-700 rounded-full text-xs">
                     Search: "{searchTerm}"
                     <button onClick={() => setSearchTerm('')}>
                       <X className="w-3 h-3" />
@@ -781,9 +781,9 @@ export default function BillingManagementPage() {
                           onClick={() => handleViewPaymentHistory(subscription)}
                           className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 hover:transform hover:scale-105"
                           style={{
-                            background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
+                            background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
                             color: 'white',
-                            boxShadow: '0 4px 12px rgba(93, 173, 226, 0.3)'
+                            boxShadow: '0 4px 12px rgba(78, 205, 196, 0.3)'
                           }}
                         >
                           <Eye className="w-4 h-4" />
@@ -886,8 +886,8 @@ export default function BillingManagementPage() {
                         : 'border hover:bg-gray-50'
                     }`}
                     style={currentPage === page ? {
-                      background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                      boxShadow: '0 2px 8px rgba(93, 173, 226, 0.3)'
+                      background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                      boxShadow: '0 2px 8px rgba(78, 205, 196, 0.3)'
                     } : {}}
                   >
                     {page}
@@ -940,9 +940,9 @@ export default function BillingManagementPage() {
                 )}
 
                 {/* Network Info */}
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="font-bold text-blue-900">{selectedNetwork?.networkName}</p>
-                  <p className="text-blue-700 text-sm">TransFleet Platform Subscription</p>
+                <div className="p-4 bg-teal-50 border border-teal-200 rounded-lg">
+                  <p className="font-bold text-teal-900">{selectedNetwork?.networkName}</p>
+                  <p className="text-teal-700 text-sm">TransFleet Platform Subscription</p>
                 </div>
 
                 {/* Payment Amount */}

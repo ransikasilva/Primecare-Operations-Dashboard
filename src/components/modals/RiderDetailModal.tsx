@@ -60,6 +60,13 @@ interface RiderDetails {
     latitude: number;
     longitude: number;
   };
+  // Backend S3 image URLs
+  profile_image_url?: string;
+  license_image_url?: string;
+  license_image_back_url?: string;
+  nic_image_url?: string;
+  nic_image_back_url?: string;
+  // Legacy field names
   profile_picture?: string;
   driver_license_front?: string;
   driver_license_back?: string;
@@ -287,19 +294,27 @@ export function RiderDetailModal({
             </button>
             
             <div className="flex items-start space-x-6">
-              <div 
+              <div
                 className="w-20 h-20 rounded-2xl flex items-center justify-center"
                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
               >
-                {rider.profile_picture ? (
-                  <img 
-                    src={rider.profile_picture} 
+                {(rider.profile_image_url || rider.profile_picture) ? (
+                  <img
+                    src={rider.profile_image_url || rider.profile_picture}
                     alt={rider.full_name}
                     className="w-full h-full rounded-2xl object-cover"
+                    onError={(e) => {
+                      // Fallback to icon if image fails to load
+                      e.currentTarget.style.display = 'none';
+                      const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                      if (fallback) fallback.style.display = 'flex';
+                    }}
                   />
-                ) : (
-                  <Truck className="w-10 h-10 text-white" />
-                )}
+                ) : null}
+                <Truck
+                  className="w-10 h-10 text-white"
+                  style={{ display: (rider.profile_image_url || rider.profile_picture) ? 'none' : 'block' }}
+                />
               </div>
               
               <div className="flex-1">
@@ -349,14 +364,14 @@ export function RiderDetailModal({
           <div className="p-8">
             {/* Performance Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-teal-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-blue-600 font-medium">Total Deliveries</p>
-                    <p className="text-2xl font-bold text-blue-800">{rider.total_deliveries}</p>
+                    <p className="text-sm text-teal-600 font-medium">Total Deliveries</p>
+                    <p className="text-2xl font-bold text-teal-800">{rider.total_deliveries}</p>
                   </div>
-                  <div className="w-12 h-12 bg-blue-200 rounded-xl flex items-center justify-center">
-                    <Route className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-teal-200 rounded-xl flex items-center justify-center">
+                    <Route className="w-6 h-6 text-teal-600" />
                   </div>
                 </div>
               </div>
@@ -434,13 +449,13 @@ export function RiderDetailModal({
                 
                 {/* KM Metrics Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-2xl border border-blue-200">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-2xl border border-teal-200">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-sm text-blue-600 font-medium">{getKmLabel()}</p>
-                      <Route className="w-5 h-5 text-blue-600" />
+                      <p className="text-sm text-teal-600 font-medium">{getKmLabel()}</p>
+                      <Route className="w-5 h-5 text-teal-600" />
                     </div>
-                    <p className="text-2xl font-bold text-blue-800">{getKmValue().toFixed(1)} KM</p>
-                    <p className="text-xs text-blue-600 mt-1">Primary metric</p>
+                    <p className="text-2xl font-bold text-teal-800">{getKmValue().toFixed(1)} KM</p>
+                    <p className="text-xs text-teal-600 mt-1">Primary metric</p>
                   </div>
                   
                   <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-2xl border border-green-200">
@@ -506,7 +521,7 @@ export function RiderDetailModal({
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Activity Level</span>
-                        <span className="text-sm font-medium text-blue-600">
+                        <span className="text-sm font-medium text-teal-600">
                           {getKmValue() > 100 ? 'High' : getKmValue() > 50 ? 'Medium' : 'Low'}
                         </span>
                       </div>
@@ -530,8 +545,8 @@ export function RiderDetailModal({
 
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                      <User className="w-6 h-6 text-blue-600" />
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                      <User className="w-6 h-6 text-teal-600" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Full Name</p>
@@ -582,8 +597,8 @@ export function RiderDetailModal({
                   </div>
 
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                      <MapPin className="w-6 h-6 text-indigo-600" />
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                      <MapPin className="w-6 h-6 text-teal-600" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Address</p>
@@ -609,8 +624,8 @@ export function RiderDetailModal({
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                      <FileText className="w-6 h-6 text-blue-600" />
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-teal-600" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Vehicle Number</p>
@@ -771,7 +786,7 @@ export function RiderDetailModal({
                         <div className="flex items-center gap-4">
                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                             order.status === 'delivered' ? 'bg-green-100' :
-                            order.status === 'in_transit' ? 'bg-blue-100' :
+                            order.status === 'in_transit' ? 'bg-teal-100' :
                             order.status === 'picked_up' ? 'bg-yellow-100' :
                             order.status === 'assigned' ? 'bg-purple-100' :
                             order.status === 'pending' ? 'bg-gray-100' :
@@ -780,7 +795,7 @@ export function RiderDetailModal({
                             {order.status === 'delivered' ? (
                               <CheckCircle2 className="w-6 h-6 text-green-600" />
                             ) : order.status === 'in_transit' ? (
-                              <Truck className="w-6 h-6 text-blue-600" />
+                              <Truck className="w-6 h-6 text-teal-600" />
                             ) : order.status === 'picked_up' ? (
                               <Timer className="w-6 h-6 text-yellow-600" />
                             ) : order.status === 'assigned' ? (
@@ -804,7 +819,7 @@ export function RiderDetailModal({
                         <div className="text-right">
                           <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                             order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                            order.status === 'in_transit' ? 'bg-blue-100 text-blue-800' :
+                            order.status === 'in_transit' ? 'bg-teal-100 text-teal-800' :
                             order.status === 'picked_up' ? 'bg-yellow-100 text-yellow-800' :
                             order.status === 'assigned' ? 'bg-purple-100 text-purple-800' :
                             order.status === 'pending' ? 'bg-gray-100 text-gray-800' :
@@ -888,7 +903,7 @@ export function RiderDetailModal({
             {/* Document Verification Section */}
             <div className="mt-8 pt-6 border-t border-gray-200">
               <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-indigo-600" />
+                <FileText className="w-6 h-6 text-teal-600" />
                 Document Verification
               </h3>
               
@@ -896,16 +911,30 @@ export function RiderDetailModal({
                 {/* Profile Picture */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-blue-600" />
+                    <User className="w-4 h-4 text-teal-600" />
                     <span className="text-sm font-semibold text-gray-700">Profile Picture</span>
                   </div>
                   <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50">
-                    {rider.profile_picture ? (
+                    {(rider.profile_image_url || rider.profile_picture) ? (
                       <div className="space-y-2">
-                        <img 
-                          src={rider.profile_picture} 
+                        <img
+                          src={rider.profile_image_url || rider.profile_picture}
                           alt="Profile"
                           className="w-full h-32 object-cover rounded-lg"
+                          onError={(e) => {
+                            // Fallback to no image state if loading fails
+                            const container = e.currentTarget.parentElement;
+                            if (container) {
+                              container.innerHTML = `
+                                <div class="text-center py-6">
+                                  <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                  </svg>
+                                  <p class="text-xs text-gray-500">Image failed to load</p>
+                                </div>
+                              `;
+                            }
+                          }}
                         />
                         <div className="flex items-center gap-1 text-green-600 text-xs">
                           <CheckCircle2 className="w-3 h-3" />
@@ -928,12 +957,25 @@ export function RiderDetailModal({
                     <span className="text-sm font-semibold text-gray-700">Driver License (Front)</span>
                   </div>
                   <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50">
-                    {rider.driver_license_front ? (
+                    {(rider.license_image_url || rider.driver_license_front) ? (
                       <div className="space-y-2">
-                        <img 
-                          src={rider.driver_license_front} 
+                        <img
+                          src={rider.license_image_url || rider.driver_license_front}
                           alt="Driver License Front"
                           className="w-full h-32 object-cover rounded-lg"
+                          onError={(e) => {
+                            const container = e.currentTarget.parentElement;
+                            if (container) {
+                              container.innerHTML = `
+                                <div class="text-center py-6">
+                                  <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                  </svg>
+                                  <p class="text-xs text-gray-500">Image failed to load</p>
+                                </div>
+                              `;
+                            }
+                          }}
                         />
                         <div className="flex items-center gap-1 text-green-600 text-xs">
                           <CheckCircle2 className="w-3 h-3" />
@@ -956,12 +998,25 @@ export function RiderDetailModal({
                     <span className="text-sm font-semibold text-gray-700">Driver License (Back)</span>
                   </div>
                   <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50">
-                    {rider.driver_license_back ? (
+                    {(rider.license_image_back_url || rider.driver_license_back) ? (
                       <div className="space-y-2">
-                        <img 
-                          src={rider.driver_license_back} 
+                        <img
+                          src={rider.license_image_back_url || rider.driver_license_back}
                           alt="Driver License Back"
                           className="w-full h-32 object-cover rounded-lg"
+                          onError={(e) => {
+                            const container = e.currentTarget.parentElement;
+                            if (container) {
+                              container.innerHTML = `
+                                <div class="text-center py-6">
+                                  <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                  </svg>
+                                  <p class="text-xs text-gray-500">Image failed to load</p>
+                                </div>
+                              `;
+                            }
+                          }}
                         />
                         <div className="flex items-center gap-1 text-green-600 text-xs">
                           <CheckCircle2 className="w-3 h-3" />
@@ -984,12 +1039,25 @@ export function RiderDetailModal({
                     <span className="text-sm font-semibold text-gray-700">NIC (Front)</span>
                   </div>
                   <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50">
-                    {rider.nic_front ? (
+                    {(rider.nic_image_url || rider.nic_front) ? (
                       <div className="space-y-2">
-                        <img 
-                          src={rider.nic_front} 
+                        <img
+                          src={rider.nic_image_url || rider.nic_front}
                           alt="NIC Front"
                           className="w-full h-32 object-cover rounded-lg"
+                          onError={(e) => {
+                            const container = e.currentTarget.parentElement;
+                            if (container) {
+                              container.innerHTML = `
+                                <div class="text-center py-6">
+                                  <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                  </svg>
+                                  <p class="text-xs text-gray-500">Image failed to load</p>
+                                </div>
+                              `;
+                            }
+                          }}
                         />
                         <div className="flex items-center gap-1 text-green-600 text-xs">
                           <CheckCircle2 className="w-3 h-3" />
@@ -1012,12 +1080,25 @@ export function RiderDetailModal({
                     <span className="text-sm font-semibold text-gray-700">NIC (Back)</span>
                   </div>
                   <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50">
-                    {rider.nic_back ? (
+                    {(rider.nic_image_back_url || rider.nic_back) ? (
                       <div className="space-y-2">
-                        <img 
-                          src={rider.nic_back} 
+                        <img
+                          src={rider.nic_image_back_url || rider.nic_back}
                           alt="NIC Back"
                           className="w-full h-32 object-cover rounded-lg"
+                          onError={(e) => {
+                            const container = e.currentTarget.parentElement;
+                            if (container) {
+                              container.innerHTML = `
+                                <div class="text-center py-6">
+                                  <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                  </svg>
+                                  <p class="text-xs text-gray-500">Image failed to load</p>
+                                </div>
+                              `;
+                            }
+                          }}
                         />
                         <div className="flex items-center gap-1 text-green-600 text-xs">
                           <CheckCircle2 className="w-3 h-3" />
@@ -1044,11 +1125,11 @@ export function RiderDetailModal({
                       {/* Calculate verification completion */}
                       {(() => {
                         const documents = [
-                          rider.profile_picture,
-                          rider.driver_license_front,
-                          rider.driver_license_back,
-                          rider.nic_front,
-                          rider.nic_back
+                          rider.profile_image_url || rider.profile_picture,
+                          rider.license_image_url || rider.driver_license_front,
+                          rider.license_image_back_url || rider.driver_license_back,
+                          rider.nic_image_url || rider.nic_front,
+                          rider.nic_image_back_url || rider.nic_back
                         ];
                         const uploadedCount = documents.filter(doc => doc).length;
                         const totalCount = documents.length;

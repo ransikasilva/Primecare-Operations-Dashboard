@@ -109,7 +109,7 @@ export function PaymentHistoryModal({
         <div
           className="p-6 border-b border-gray-200"
           style={{
-            background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+            background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
           }}
         >
           <div className="flex items-center justify-between">
@@ -141,7 +141,7 @@ export function PaymentHistoryModal({
               <div className="text-sm text-gray-600 font-medium">Total Amount</div>
             </div>
             <div className="text-center p-4 rounded-2xl bg-white border border-gray-200">
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-teal-600">
                 {payments.length > 0 ? formatCurrency(totalPaid / payments.length) : formatCurrency(0)}
               </div>
               <div className="text-sm text-gray-600 font-medium">Average Payment</div>
@@ -213,8 +213,8 @@ export function PaymentHistoryModal({
                           )}
 
                           {payment.notes && (
-                            <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-lg">
-                              <p className="text-sm text-blue-800">{payment.notes}</p>
+                            <div className="mt-2 p-3 bg-teal-50 border border-teal-100 rounded-lg">
+                              <p className="text-sm text-teal-800">{payment.notes}</p>
                             </div>
                           )}
                         </div>
@@ -241,8 +241,8 @@ export function PaymentHistoryModal({
               disabled={payments.length === 0}
               className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
-                background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                boxShadow: '0 4px 12px rgba(93, 173, 226, 0.3)'
+                background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                boxShadow: '0 4px 12px rgba(78, 205, 196, 0.3)'
               }}
             >
               <Download className="w-4 h-4" />

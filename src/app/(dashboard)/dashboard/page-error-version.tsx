@@ -122,7 +122,7 @@ export default function DashboardPage() {
         </div>
         <button
           onClick={handleRefreshAll}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+          className="flex items-center space-x-2 px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition"
         >
           <RefreshCw className="w-4 h-4" />
           <span>Refresh</span>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900">Hospital Networks ({allMainHospitals.length})</h2>
-          <Link href="/hospitals" className="text-blue-500 hover:text-blue-600 text-sm font-medium">
+          <Link href="/hospitals" className="text-teal-500 hover:text-teal-600 text-sm font-medium">
             View All →
           </Link>
         </div>
@@ -155,8 +155,8 @@ export default function DashboardPage() {
                 <div key={hospital.id || index} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 flex-1">
-                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <Building2 className="w-6 h-6 text-blue-600" />
+                      <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
+                        <Building2 className="w-6 h-6 text-teal-600" />
                       </div>
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900">{hospital.name}</h3>

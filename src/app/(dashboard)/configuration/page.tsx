@@ -131,7 +131,7 @@ export default function ConfigurationPage() {
     switch (status) {
       case 'Connected':
       case 'Active': return '#10b981';
-      case 'Configured': return '#5DADE2';
+      case 'Configured': return '#4ECDC4';
       case 'Pending': return '#f59e0b';
       default: return '#6b7280';
     }
@@ -170,11 +170,11 @@ export default function ConfigurationPage() {
                       <div 
                         className="w-12 h-12 rounded-2xl flex items-center justify-center"
                         style={{
-                          backgroundColor: isEnabled ? '#5DADE2' + '20' : '#6b7280' + '20',
-                          border: `2px solid ${isEnabled ? '#5DADE2' : '#6b7280'}30`
+                          backgroundColor: isEnabled ? '#4ECDC4' + '20' : '#6b7280' + '20',
+                          border: `2px solid ${isEnabled ? '#4ECDC4' : '#6b7280'}30`
                         }}
                       >
-                        <Icon className="w-6 h-6" style={{ color: isEnabled ? '#5DADE2' : '#6b7280' }} />
+                        <Icon className="w-6 h-6" style={{ color: isEnabled ? '#4ECDC4' : '#6b7280' }} />
                       </div>
                       <div>
                         <h4 className="font-semibold text-gray-800">{feature.title}</h4>
@@ -253,7 +253,7 @@ export default function ConfigurationPage() {
               </div>
               <button
                 onClick={() => handleSLAUpdate(slaSettings)}
-                className="w-full px-4 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
+                className="w-full px-4 py-3 bg-teal-500 text-white rounded-xl hover:bg-teal-600 transition-colors"
               >
                 Update SLA Settings
               </button>
@@ -276,36 +276,44 @@ export default function ConfigurationPage() {
           </div>
           <div className="p-6">
             <div className="space-y-4">
-              {integrations.map((integration: any, index: number) => {
-                const Icon = integration.icon;
-                return (
-                  <div key={index} className="p-4 rounded-2xl bg-gray-50/50">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div 
-                          className="w-10 h-10 rounded-xl flex items-center justify-center"
-                          style={{
-                            backgroundColor: integration.color + '20',
-                            border: `1px solid ${integration.color}30`
-                          }}
+              {integrations.length === 0 ? (
+                <div className="text-center py-8">
+                  <Globe className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500 font-medium">No integrations configured</p>
+                  <p className="text-sm text-gray-400 mt-1">External service integrations will appear here</p>
+                </div>
+              ) : (
+                integrations.map((integration: any, index: number) => {
+                  const Icon = integration.icon;
+                  return (
+                    <div key={index} className="p-4 rounded-2xl bg-gray-50/50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div
+                            className="w-10 h-10 rounded-xl flex items-center justify-center"
+                            style={{
+                              backgroundColor: integration.color + '20',
+                              border: `1px solid ${integration.color}30`
+                            }}
+                          >
+                            <Icon className="w-5 h-5" style={{ color: integration.color }} />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-800">{integration.name}</h4>
+                            <p className="text-sm text-gray-500">External service integration</p>
+                          </div>
+                        </div>
+                        <div
+                          className="px-3 py-1 rounded-full text-xs font-semibold text-white"
+                          style={{ backgroundColor: getStatusColor(integration.status) }}
                         >
-                          <Icon className="w-5 h-5" style={{ color: integration.color }} />
+                          {integration.status}
                         </div>
-                        <div>
-                          <h4 className="font-semibold text-gray-800">{integration.name}</h4>
-                          <p className="text-sm text-gray-500">External service integration</p>
-                        </div>
-                      </div>
-                      <div 
-                        className="px-3 py-1 rounded-full text-xs font-semibold text-white"
-                        style={{ backgroundColor: getStatusColor(integration.status) }}
-                      >
-                        {integration.status}
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </div>
         </div>

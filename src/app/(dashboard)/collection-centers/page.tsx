@@ -407,7 +407,7 @@ function CollectionCenterCard({
                 <h3 className="text-lg font-bold text-gray-900">{center.center_name}</h3>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
                   center.center_type === 'independent'
-                    ? 'bg-blue-100 text-blue-800 border-blue-200'
+                    ? 'bg-teal-100 text-teal-800 border-teal-200'
                     : 'bg-purple-100 text-purple-800 border-purple-200'
                 }`}>
                   {center.center_type}
@@ -481,17 +481,17 @@ function CollectionCenterCard({
               {center.hospital_relationships.map((relationship: any, index: number) => (
                 <div key={index} className={`p-3 rounded-lg border ${
                   center.center_type === 'independent' 
-                    ? 'bg-blue-50 border-blue-100' 
+                    ? 'bg-teal-50 border-teal-100' 
                     : 'bg-purple-50 border-purple-100'
                 }`}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <Hospital className={`w-4 h-4 ${
-                        center.center_type === 'independent' ? 'text-blue-600' : 'text-purple-600'
+                        center.center_type === 'independent' ? 'text-teal-600' : 'text-purple-600'
                       }`} />
                       <span className="text-sm font-medium text-gray-800">{relationship.hospital_name}</span>
                       {relationship.is_main_hospital && (
-                        <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                        <span className="text-xs px-2 py-1 bg-teal-100 text-teal-700 rounded-full font-medium">
                           Main Hospital
                         </span>
                       )}

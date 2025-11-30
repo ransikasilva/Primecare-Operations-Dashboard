@@ -174,9 +174,9 @@ export default function DashboardPage() {
       case 'in_transit':
         return {
           icon: Truck,
-          color: 'text-blue-600',
-          bg: 'bg-blue-100',
-          text: 'text-blue-800',
+          color: 'text-teal-600',
+          bg: 'bg-teal-100',
+          text: 'text-teal-800',
           label: 'In Transit'
         };
       case 'picked_up':
@@ -190,9 +190,9 @@ export default function DashboardPage() {
       case 'assigned':
         return {
           icon: User,
-          color: 'text-indigo-600',
-          bg: 'bg-indigo-100',
-          text: 'text-indigo-800',
+          color: 'text-teal-600',
+          bg: 'bg-teal-100',
+          text: 'text-teal-800',
           label: 'Assigned'
         };
       case 'pending_rider_assignment':
@@ -251,8 +251,8 @@ export default function DashboardPage() {
       <div
         className="relative overflow-hidden rounded-3xl p-8"
         style={{
-          background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-          boxShadow: '0 20px 40px rgba(93, 173, 226, 0.3)'
+          background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+          boxShadow: '0 20px 40px rgba(78, 205, 196, 0.3)'
         }}
       >
         <div className="relative z-10">
@@ -337,8 +337,8 @@ export default function DashboardPage() {
               <button
                 className="flex items-center space-x-2 px-6 py-3 rounded-2xl transition-all duration-300 hover:transform hover:scale-105"
                 style={{
-                  background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                  boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+                  background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                  boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
                 }}
               >
                 <span className="text-white font-semibold">Manage</span>
@@ -377,7 +377,7 @@ export default function DashboardPage() {
                           <div
                             className="w-12 h-12 rounded-2xl flex items-center justify-center"
                             style={{
-                              background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+                              background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
                             }}
                           >
                             <Building className="w-6 h-6 text-white" />
@@ -390,7 +390,7 @@ export default function DashboardPage() {
                                   e.stopPropagation();
                                   toggleNetworkExpansion(hospitalId);
                                 }}
-                                className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium"
+                                className="flex items-center gap-1 px-3 py-1 bg-teal-100 text-teal-700 rounded-lg hover:bg-teal-200 transition-colors text-sm font-medium"
                               >
                                 {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                                 Details
@@ -446,7 +446,7 @@ export default function DashboardPage() {
                               setSelectedNetworkData(hospital);
                               setShowNetworkModal(true);
                             }}
-                            className="p-2 hover:bg-blue-50 rounded-xl transition-colors"
+                            className="p-2 hover:bg-teal-50 rounded-xl transition-colors"
                             title="View Hospital Details"
                           >
                             <ArrowUpRight className="w-5 h-5 text-gray-500" />
@@ -526,8 +526,8 @@ export default function DashboardPage() {
               <button
                 className="flex items-center space-x-2 px-6 py-3 rounded-2xl transition-all duration-300 hover:transform hover:scale-105"
                 style={{
-                  background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                  boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+                  background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                  boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
                 }}
               >
                 <span className="text-white font-semibold">View All</span>
@@ -565,7 +565,7 @@ export default function DashboardPage() {
                         <div
                           className="w-12 h-12 rounded-2xl flex items-center justify-center"
                           style={{
-                            background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+                            background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
                           }}
                         >
                           <Package className="w-6 h-6 text-white" />
@@ -621,8 +621,8 @@ export default function DashboardPage() {
                           <button
                             className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:transform hover:scale-105"
                             style={{
-                              background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                              boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+                              background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                              boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
                             }}
                           >
                             <Eye className="w-4 h-4 text-white" />

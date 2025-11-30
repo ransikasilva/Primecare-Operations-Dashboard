@@ -35,7 +35,7 @@ const getMetricTemplate = () => [
   {
     title: "Total Active Orders",
     icon: FileText,
-    gradient: ["#5DADE2", "#4A9BC7"],
+    gradient: ["#4ECDC4", "#4A9BC7"],
     type: "number" as const,
     description: "Orders nationwide in progress",
     key: "totalActiveOrders"
@@ -43,7 +43,7 @@ const getMetricTemplate = () => [
   {
     title: "Total Main Hospitals",
     icon: Building2,
-    gradient: ["#5DADE2", "#6BB6E8"],
+    gradient: ["#4ECDC4", "#6BB6E8"],
     type: "number" as const,
     description: "Main hospitals across all networks",
     key: "totalMainHospitals"
@@ -51,7 +51,7 @@ const getMetricTemplate = () => [
   {
     title: "Total Riders",
     icon: Users,
-    gradient: ["#5DADE2", "#4FA5D8"],
+    gradient: ["#4ECDC4", "#4FA5D8"],
     type: "number" as const,
     target: 300,
     description: "All riders in the system",
@@ -60,7 +60,7 @@ const getMetricTemplate = () => [
   {
     title: "Total Regional Hospitals",
     icon: Building2,
-    gradient: ["#5DADE2", "#7BBFEA"],
+    gradient: ["#4ECDC4", "#7BBFEA"],
     type: "number" as const,
     description: "Regional hospitals across networks",
     key: "totalRegionalHospitals"

@@ -176,7 +176,7 @@ export function HospitalNetworkDetailModal({
       case 'active':
         return '#10b981';
       case 'good':
-        return '#5DADE2';
+        return '#4ECDC4';
       case 'warning':
         return '#f59e0b';
       case 'critical':
@@ -208,7 +208,7 @@ export function HospitalNetworkDetailModal({
             <div 
               className="w-16 h-16 rounded-2xl flex items-center justify-center"
               style={{
-                background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+                background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
               }}
             >
               <Building2 className="w-8 h-8 text-white" />
@@ -254,14 +254,14 @@ export function HospitalNetworkDetailModal({
             <div 
               className="p-6 rounded-2xl"
               style={{
-                background: 'linear-gradient(135deg, rgba(93, 173, 226, 0.1) 0%, rgba(74, 155, 199, 0.05) 100%)',
-                border: '1px solid rgba(93, 173, 226, 0.2)'
+                background: 'linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(74, 155, 199, 0.05) 100%)',
+                border: '1px solid rgba(78, 205, 196, 0.2)'
               }}
             >
               <div className="flex items-center justify-between mb-4">
                 <div 
                   className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                  style={{ backgroundColor: '#5DADE2' }}
+                  style={{ backgroundColor: '#4ECDC4' }}
                 >
                   <Package className="w-6 h-6 text-white" />
                 </div>
@@ -339,7 +339,7 @@ export function HospitalNetworkDetailModal({
         <div className="p-8">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : (
             <>
@@ -442,7 +442,7 @@ export function HospitalNetworkDetailModal({
                             <div 
                               className="w-12 h-12 rounded-2xl flex items-center justify-center"
                               style={{
-                                backgroundColor: hospital.type === 'main' ? '#5DADE2' : '#4A9BC7'
+                                backgroundColor: hospital.type === 'main' ? '#4ECDC4' : '#4A9BC7'
                               }}
                             >
                               <Building2 className="w-6 h-6 text-white" />

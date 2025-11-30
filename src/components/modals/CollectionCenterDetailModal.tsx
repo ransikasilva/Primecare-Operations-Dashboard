@@ -186,9 +186,9 @@ export function CollectionCenterDetailModal({
         return {
           icon: Shield,
           color: '#3b82f6',
-          bg: 'bg-blue-100',
+          bg: 'bg-teal-100',
           text: 'Core',
-          className: 'text-blue-800',
+          className: 'text-teal-800',
           description: 'Essential features for basic operation'
         };
       case 'premium':
@@ -358,7 +358,7 @@ export function CollectionCenterDetailModal({
                 <div className="flex items-center space-x-4 mb-4">
                   <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
                     center.center_type === 'independent' 
-                      ? 'bg-blue-100 text-blue-800' 
+                      ? 'bg-teal-100 text-teal-800' 
                       : 'bg-purple-100 text-purple-800'
                   }`}>
                     {center.center_type.toUpperCase()}
@@ -406,14 +406,14 @@ export function CollectionCenterDetailModal({
               <>
                 {/* Feature Statistics */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-teal-200">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-blue-600 font-medium">Total Features</p>
-                        <p className="text-2xl font-bold text-blue-800">{features.length}</p>
+                        <p className="text-sm text-teal-600 font-medium">Total Features</p>
+                        <p className="text-2xl font-bold text-teal-800">{features.length}</p>
                       </div>
-                      <div className="w-12 h-12 bg-blue-200 rounded-xl flex items-center justify-center">
-                        <Settings className="w-6 h-6 text-blue-600" />
+                      <div className="w-12 h-12 bg-teal-200 rounded-xl flex items-center justify-center">
+                        <Settings className="w-6 h-6 text-teal-600" />
                       </div>
                     </div>
                   </div>
@@ -639,7 +639,7 @@ export function CollectionCenterDetailModal({
                               <div className="flex items-center gap-4">
                                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                                   order.status === 'delivered' ? 'bg-green-100' :
-                                  order.status === 'in_transit' ? 'bg-blue-100' :
+                                  order.status === 'in_transit' ? 'bg-teal-100' :
                                   order.status === 'picked_up' ? 'bg-yellow-100' :
                                   order.status === 'assigned' ? 'bg-purple-100' :
                                   order.status === 'pending' ? 'bg-gray-100' :
@@ -648,7 +648,7 @@ export function CollectionCenterDetailModal({
                                   {order.status === 'delivered' ? (
                                     <CheckCircle2 className="w-6 h-6 text-green-600" />
                                   ) : order.status === 'in_transit' ? (
-                                    <Truck className="w-6 h-6 text-blue-600" />
+                                    <Truck className="w-6 h-6 text-teal-600" />
                                   ) : order.status === 'picked_up' ? (
                                     <Timer className="w-6 h-6 text-yellow-600" />
                                   ) : order.status === 'assigned' ? (
@@ -672,7 +672,7 @@ export function CollectionCenterDetailModal({
                               <div className="text-right">
                                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                                   order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                                  order.status === 'in_transit' ? 'bg-blue-100 text-blue-800' :
+                                  order.status === 'in_transit' ? 'bg-teal-100 text-teal-800' :
                                   order.status === 'picked_up' ? 'bg-yellow-100 text-yellow-800' :
                                   order.status === 'assigned' ? 'bg-purple-100 text-purple-800' :
                                   order.status === 'pending' ? 'bg-gray-100 text-gray-800' :
@@ -727,7 +727,7 @@ export function CollectionCenterDetailModal({
                                 onClick={() => handlePageChange(page)}
                                 className={`px-3 py-1 rounded-lg text-sm font-medium ${
                                   currentPage === page
-                                    ? 'bg-blue-500 text-white'
+                                    ? 'bg-teal-500 text-white'
                                     : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
                                 }`}
                               >

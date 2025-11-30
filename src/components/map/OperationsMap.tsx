@@ -584,7 +584,7 @@ export default function OperationsMap({
               </div>
               <div class="flex items-center">
                 <span class="w-20 text-gray-600">Type:</span>
-                <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">${hospital.hospital_type}</span>
+                <span class="inline-block px-2 py-1 bg-teal-100 text-teal-800 rounded text-xs font-medium">${hospital.hospital_type}</span>
               </div>
               <div class="flex items-center">
                 <span class="w-20 text-gray-600">Location:</span>
@@ -683,7 +683,7 @@ export default function OperationsMap({
                   <span class="w-20 text-gray-600">Networks:</span>
                   <div class="flex flex-wrap gap-1">
                     ${center.hospital_affiliations.map(network => `
-                      <span class="inline-block px-1 py-0.5 bg-blue-100 text-blue-800 rounded text-xs">${network}</span>
+                      <span class="inline-block px-1 py-0.5 bg-teal-100 text-teal-800 rounded text-xs">${network}</span>
                     `).join('')}
                   </div>
                 </div>
@@ -750,7 +750,7 @@ export default function OperationsMap({
                 <span class="w-20 text-gray-600">Status:</span>
                 <span class="inline-block px-2 py-1 ${
                   rider.availability_status === 'available' ? 'bg-green-100 text-green-800' :
-                  rider.availability_status === 'busy' ? 'bg-blue-100 text-blue-800' :
+                  rider.availability_status === 'busy' ? 'bg-teal-100 text-teal-800' :
                   'bg-gray-100 text-gray-800'
                 } rounded text-xs font-medium">
                   ${rider.availability_status.charAt(0).toUpperCase() + rider.availability_status.slice(1)}
@@ -891,7 +891,7 @@ export default function OperationsMap({
       {loading && (
         <div className="absolute inset-0 bg-white/90 flex items-center justify-center z-10">
           <div className="text-center">
-            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-8 h-8 border-4 border-teal-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Loading map data...</p>
           </div>
         </div>

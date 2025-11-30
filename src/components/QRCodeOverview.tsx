@@ -94,7 +94,7 @@ export function QRCodeOverview() {
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center"
                 style={{
-                  background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+                  background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
                 }}
               >
                 <QrCode className="w-6 h-6 text-white" />
@@ -135,7 +135,7 @@ export function QRCodeOverview() {
               <div 
                 className="w-12 h-12 rounded-2xl flex items-center justify-center"
                 style={{
-                  background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+                  background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
                 }}
               >
                 <QrCode className="w-6 h-6 text-white" />
@@ -147,7 +147,7 @@ export function QRCodeOverview() {
             </div>
             <button
               onClick={() => setShowTrackingModal(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-teal-500 text-white rounded-xl hover:bg-teal-600 transition-colors"
             >
               <Eye className="w-4 h-4" />
               <span>View Details</span>
@@ -166,12 +166,12 @@ export function QRCodeOverview() {
               <div className="text-xs text-green-700">Compliance Rate</div>
             </div>
 
-            <div className="text-center p-4 rounded-xl bg-blue-50 border border-blue-200">
-              <div className="w-8 h-8 mx-auto mb-2 rounded-xl bg-blue-500 flex items-center justify-center">
+            <div className="text-center p-4 rounded-xl bg-teal-50 border border-teal-200">
+              <div className="w-8 h-8 mx-auto mb-2 rounded-xl bg-teal-500 flex items-center justify-center">
                 <QrCode className="w-5 h-5 text-white" />
               </div>
-              <div className="text-2xl font-bold text-blue-600">{metrics.activeQRCodes}</div>
-              <div className="text-xs text-blue-700">Active QR Codes</div>
+              <div className="text-2xl font-bold text-teal-600">{metrics.activeQRCodes}</div>
+              <div className="text-xs text-teal-700">Active QR Codes</div>
             </div>
 
             <div className="text-center p-4 rounded-xl bg-orange-50 border border-orange-200">
@@ -256,7 +256,7 @@ export function QRCodeOverview() {
             <div className="mt-4 text-center">
               <button
                 onClick={() => setShowTrackingModal(true)}
-                className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+                className="text-sm text-teal-600 hover:text-teal-700 font-semibold"
               >
                 View all QR tracking →
               </button>

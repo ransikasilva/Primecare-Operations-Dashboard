@@ -145,17 +145,17 @@ export default function OrdersPage() {
       case 'in_transit':
         return {
           icon: Truck,
-          color: 'text-blue-600',
-          bg: 'bg-blue-100',
-          text: 'text-blue-800',
+          color: 'text-teal-600',
+          bg: 'bg-teal-100',
+          text: 'text-teal-800',
           label: 'In Transit'
         };
       case 'picked_up':
         return {
           icon: Package,
-          color: 'text-indigo-600',
-          bg: 'bg-indigo-100',
-          text: 'text-indigo-800',
+          color: 'text-teal-600',
+          bg: 'bg-teal-100',
+          text: 'text-teal-800',
           label: 'Picked Up'
         };
       case 'delayed':
@@ -227,8 +227,8 @@ export default function OrdersPage() {
       <div
         className="relative overflow-hidden rounded-3xl p-8"
         style={{
-          background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-          boxShadow: '0 20px 40px rgba(93, 173, 226, 0.3)'
+          background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+          boxShadow: '0 20px 40px rgba(78, 205, 196, 0.3)'
         }}
       >
         <div className="relative z-10">
@@ -293,7 +293,7 @@ export default function OrdersPage() {
       {/* Summary Cards Section */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: 'Total Orders', value: allOrders.length || 0, color: '#5DADE2', icon: Package },
+          { label: 'Total Orders', value: allOrders.length || 0, color: '#4ECDC4', icon: Package },
           { label: 'Active Orders', value: getSummaryValue('active_orders') || getSummaryValue('in_progress_orders'), color: '#10B981', icon: Clock },
           { label: 'Pending Assignment', value: getSummaryValue('pending_rider_assignment') || getSummaryValue('pending_orders'), color: '#F59E0B', icon: Timer },
           { label: 'Delivered Today', value: getSummaryValue('delivered_today') || getSummaryValue('completed_orders'), color: '#059669', icon: CheckCircle2 }
@@ -346,8 +346,8 @@ export default function OrdersPage() {
             <button
               className="flex items-center space-x-2 px-6 py-3 rounded-2xl transition-all duration-300 hover:transform hover:scale-105"
               style={{
-                background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+                background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
               }}
             >
               <span className="text-white font-semibold">Filters</span>
@@ -365,7 +365,7 @@ export default function OrdersPage() {
                 placeholder="Search orders, hospitals, riders..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/60 backdrop-blur-sm"
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500 bg-white/60 backdrop-blur-sm"
                 style={{ fontSize: '14px' }}
               />
             </div>
@@ -375,7 +375,7 @@ export default function OrdersPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white/60 backdrop-blur-sm"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500 appearance-none bg-white/60 backdrop-blur-sm"
                 style={{ fontSize: '14px' }}
               >
                 <option value="all">All Statuses</option>
@@ -395,7 +395,7 @@ export default function OrdersPage() {
               <select
                 value={urgencyFilter}
                 onChange={(e) => setUrgencyFilter(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white/60 backdrop-blur-sm"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500 appearance-none bg-white/60 backdrop-blur-sm"
                 style={{ fontSize: '14px' }}
               >
                 <option value="all">All Urgency</option>
@@ -411,14 +411,14 @@ export default function OrdersPage() {
                 type="date"
                 value={dateRange.from}
                 onChange={(e) => setDateRange(prev => ({ ...prev, from: e.target.value }))}
-                className="flex-1 px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/60 backdrop-blur-sm"
+                className="flex-1 px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500 bg-white/60 backdrop-blur-sm"
                 style={{ fontSize: '14px' }}
               />
               <input
                 type="date"
                 value={dateRange.to}
                 onChange={(e) => setDateRange(prev => ({ ...prev, to: e.target.value }))}
-                className="flex-1 px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/60 backdrop-blur-sm"
+                className="flex-1 px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500 bg-white/60 backdrop-blur-sm"
                 style={{ fontSize: '14px' }}
               />
             </div>
@@ -429,7 +429,7 @@ export default function OrdersPage() {
         <div className="p-8">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
               <span className="ml-3 text-gray-600">Loading orders...</span>
             </div>
           ) : error ? (
@@ -439,7 +439,7 @@ export default function OrdersPage() {
                 <p className="text-red-600 font-medium">{error}</p>
                 <button
                   onClick={() => refetch()}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="mt-4 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
                 >
                   Try Again
                 </button>
@@ -472,7 +472,7 @@ export default function OrdersPage() {
                         <div
                           className="w-12 h-12 rounded-2xl flex items-center justify-center"
                           style={{
-                            background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+                            background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
                           }}
                         >
                           <Package className="w-6 h-6 text-white" />
@@ -524,8 +524,8 @@ export default function OrdersPage() {
                           onClick={() => handleViewOrder(order.id)}
                           className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:transform hover:scale-105"
                           style={{
-                            background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                            boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+                            background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                            boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
                           }}
                         >
                           <Eye className="w-4 h-4 text-white" />
@@ -574,8 +574,8 @@ export default function OrdersPage() {
                             : 'text-gray-600 hover:bg-gray-100 font-medium'
                         }`}
                         style={currentPage === page ? {
-                          background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                          boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+                          background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                          boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
                         } : {}}
                       >
                         {page}

@@ -257,7 +257,7 @@ export default function DashboardPage() {
       title: 'Network Management',
       description: 'Manage hospital networks',
       link: '/configuration',
-      gradient: ['#5DADE2', '#4A9BC7'],
+      gradient: ['#4ECDC4', '#4A9BC7'],
       count: '12 Networks'
     },
     {
@@ -265,7 +265,7 @@ export default function DashboardPage() {
       title: 'Pending Approvals',
       description: 'Review and approve',
       link: '/approvals',
-      gradient: ['#5DADE2', '#6BB6E8'],
+      gradient: ['#4ECDC4', '#6BB6E8'],
       count: '16 Pending'
     },
     {
@@ -273,7 +273,7 @@ export default function DashboardPage() {
       title: 'System Analytics',
       description: 'Performance insights',
       link: '/analytics',
-      gradient: ['#5DADE2', '#4FA5D8'],
+      gradient: ['#4ECDC4', '#4FA5D8'],
       count: '94.8% SLA'
     },
     {
@@ -281,7 +281,7 @@ export default function DashboardPage() {
       title: 'Billing Management',
       description: 'Revenue & subscriptions',
       link: '/billing',
-      gradient: ['#5DADE2', '#7BBFEA'],
+      gradient: ['#4ECDC4', '#7BBFEA'],
       count: 'Rs. 2.4M'
     }
   ];
@@ -312,8 +312,8 @@ export default function DashboardPage() {
       <div 
         className="relative overflow-hidden rounded-3xl p-8"
         style={{
-          background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-          boxShadow: '0 20px 40px rgba(93, 173, 226, 0.3)'
+          background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+          boxShadow: '0 20px 40px rgba(78, 205, 196, 0.3)'
         }}
       >
         <div className="relative z-10">
@@ -401,8 +401,8 @@ export default function DashboardPage() {
                   <button
                     className="flex items-center space-x-2 px-6 py-3 rounded-2xl transition-all duration-300 hover:transform hover:scale-105"
                     style={{
-                      background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                      boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+                      background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                      boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
                     }}
                   >
                     <span className="text-white font-semibold">Manage</span>
@@ -441,7 +441,7 @@ export default function DashboardPage() {
                               <div
                                 className="w-12 h-12 rounded-2xl flex items-center justify-center"
                                 style={{
-                                  background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+                                  background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
                                 }}
                               >
                                 <Building className="w-6 h-6 text-white" />
@@ -454,7 +454,7 @@ export default function DashboardPage() {
                                       e.stopPropagation();
                                       toggleNetworkExpansion(hospitalId);
                                     }}
-                                    className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium"
+                                    className="flex items-center gap-1 px-3 py-1 bg-teal-100 text-teal-700 rounded-lg hover:bg-teal-200 transition-colors text-sm font-medium"
                                   >
                                     {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                                     Details
@@ -510,7 +510,7 @@ export default function DashboardPage() {
                                   setSelectedNetworkData(hospital);
                                   setShowNetworkModal(true);
                                 }}
-                                className="p-2 hover:bg-blue-50 rounded-xl transition-colors"
+                                className="p-2 hover:bg-teal-50 rounded-xl transition-colors"
                                 title="View Hospital Details"
                               >
                                 <ArrowUpRight className="w-5 h-5 text-gray-500" />
@@ -524,10 +524,10 @@ export default function DashboardPage() {
                           <div className="ml-8 space-y-3">
                             {/* Hospital Details */}
                             <div
-                              className="p-4 rounded-xl transition-all duration-200 hover:bg-blue-50"
+                              className="p-4 rounded-xl transition-all duration-200 hover:bg-teal-50"
                               style={{
-                                background: 'linear-gradient(135deg, rgba(93, 173, 226, 0.05) 0%, rgba(74, 155, 199, 0.03) 100%)',
-                                border: '1px solid rgba(93, 173, 226, 0.15)'
+                                background: 'linear-gradient(135deg, rgba(78, 205, 196, 0.05) 0%, rgba(74, 155, 199, 0.03) 100%)',
+                                border: '1px solid rgba(78, 205, 196, 0.15)'
                               }}
                             >
                               <div className="grid grid-cols-3 gap-4 text-sm">
@@ -615,8 +615,8 @@ export default function DashboardPage() {
                                 : 'text-gray-600 hover:bg-gray-100 font-medium'
                             }`}
                             style={currentPage === page ? {
-                              background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                              boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+                              background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                              boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
                             } : {}}
                           >
                             {page}

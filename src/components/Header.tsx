@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOperationsNotifications } from "@/hooks/useRealtime";
-import { 
-  Bell, 
-  ChevronDown, 
-  Search, 
+import apiClient from "@/lib/api";
+import {
+  Bell,
+  ChevronDown,
+  Search,
   Settings,
   LogOut,
   User,
@@ -20,11 +21,15 @@ import {
   Clock,
   AlertTriangle,
   CheckCircle2,
-  Shield
+  Shield,
+  Building2,
+  Users as UsersIcon,
+  Package,
+  Hospital
 } from "lucide-react";
 
 const quickActions = [
-  { icon: Plus, label: "New Network", color: "#5DADE2" },
+  { icon: Plus, label: "New Network", color: "#4ECDC4" },
   { icon: RefreshCw, label: "Refresh", color: "#0ea5e9" }
 ];
 
@@ -41,9 +46,13 @@ export function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const notificationRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   // Get real data from APIs and real-time hooks
   const { user, logout } = useAuth();
@@ -56,6 +65,123 @@ export function Header() {
 
   const currentTitle = pathTitles[pathname] || "TransFleet Operations";
 
+  // Perform search when query changes
+  useEffect(() => {
+    const performSearch = async () => {
+      if (!searchQuery.trim()) {
+        setSearchResults([]);
+        return;
+      }
+
+      setIsSearching(true);
+      try {
+        const query = searchQuery.toLowerCase();
+        const results: any[] = [];
+        const token = apiClient.currentToken;
+        const headers: HeadersInit = {
+          'Content-Type': 'application/json'
+        };
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        // Search hospitals/networks
+        try {
+          const hospitalsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/operations/hospitals`, { headers });
+          if (hospitalsRes.ok) {
+            const hospitalsData = await hospitalsRes.json();
+            if (hospitalsData?.data?.networks) {
+              hospitalsData.data.networks.forEach((network: any) => {
+                if (network.network_name?.toLowerCase().includes(query)) {
+                  results.push({
+                    type: 'hospital',
+                    id: network.id,
+                    title: network.network_name,
+                    subtitle: `${network.total_hospitals || 0} hospitals • ${network.region || 'Unknown Region'}`,
+                    icon: Hospital
+                  });
+                }
+              });
+            }
+          }
+        } catch (e) { console.error('Hospital search error:', e); }
+
+        // Search collection centers
+        try {
+          const centersRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/operations/collection-centers`, { headers });
+          if (centersRes.ok) {
+            const centersData = await centersRes.json();
+            if (centersData?.data?.centers) {
+              centersData.data.centers.forEach((center: any) => {
+                if (center.center_name?.toLowerCase().includes(query)) {
+                  results.push({
+                    type: 'center',
+                    id: center.id,
+                    title: center.center_name,
+                    subtitle: `${center.hospital_name || 'Unknown Hospital'}`,
+                    icon: Building2
+                  });
+                }
+              });
+            }
+          }
+        } catch (e) { console.error('Center search error:', e); }
+
+        // Search riders
+        try {
+          const ridersRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/operations/riders`, { headers });
+          if (ridersRes.ok) {
+            const ridersData = await ridersRes.json();
+            if (ridersData?.data?.riders) {
+              ridersData.data.riders.forEach((rider: any) => {
+                if (rider.rider_name?.toLowerCase().includes(query) || rider.rider_id?.toLowerCase().includes(query)) {
+                  results.push({
+                    type: 'rider',
+                    id: rider.id,
+                    title: rider.rider_name,
+                    subtitle: `${rider.hospital_name || 'Unknown Hospital'} • ${rider.availability_status || 'Unknown'}`,
+                    icon: UsersIcon
+                  });
+                }
+              });
+            }
+          }
+        } catch (e) { console.error('Rider search error:', e); }
+
+        // Search orders
+        try {
+          const ordersRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/operations/orders?limit=50`, { headers });
+          if (ordersRes.ok) {
+            const ordersData = await ordersRes.json();
+            if (ordersData?.data?.orders) {
+              ordersData.data.orders.forEach((order: any) => {
+                if (order.order_number?.toLowerCase().includes(query)) {
+                  results.push({
+                    type: 'order',
+                    id: order.id,
+                    title: order.order_number,
+                    subtitle: `${order.center_name || 'Unknown'} → ${order.hospital_name || 'Unknown'}`,
+                    icon: Package
+                  });
+                }
+              });
+            }
+          }
+        } catch (e) { console.error('Order search error:', e); }
+
+        setSearchResults(results.slice(0, 10)); // Limit to 10 results
+      } catch (error) {
+        console.error('Search error:', error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    const debounceTimer = setTimeout(performSearch, 300);
+    return () => clearTimeout(debounceTimer);
+  }, [searchQuery]);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
@@ -63,6 +189,9 @@ export function Header() {
       }
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setShowUserMenu(false);
+      }
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setSearchQuery('');
       }
     }
 
@@ -85,7 +214,7 @@ export function Header() {
       case 'critical': return '#ef4444';
       case 'success': return '#10b981';
       case 'warning': return '#f59e0b';
-      default: return '#5DADE2';
+      default: return '#4ECDC4';
     }
   };
 
@@ -118,9 +247,9 @@ export function Header() {
               <div 
                 className="flex items-center px-3 py-1 rounded-full text-xs font-semibold"
                 style={{
-                  backgroundColor: '#5DADE2',
+                  backgroundColor: '#4ECDC4',
                   color: 'white',
-                  boxShadow: '0 2px 8px rgba(93, 173, 226, 0.3)'
+                  boxShadow: '0 2px 8px rgba(78, 205, 196, 0.3)'
                 }}
               >
                 <Globe className="w-3 h-3 mr-1" />
@@ -152,11 +281,11 @@ export function Header() {
 
         {/* Center Section - Search */}
         <div className="flex-1 max-w-xl mx-8">
-          <div className="relative">
+          <div className="relative" ref={searchRef}>
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search networks, hospitals, orders..."
+              placeholder="Search hospitals, centers, riders, orders..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-3 rounded-2xl border-0 text-gray-800 placeholder-gray-500 transition-all duration-300 focus:outline-none focus:ring-2"
@@ -167,8 +296,8 @@ export function Header() {
               }}
             />
             {searchQuery && (
-              <div 
-                className="absolute top-full left-0 right-0 mt-2 rounded-2xl border-0 overflow-hidden z-50"
+              <div
+                className="absolute top-full left-0 right-0 mt-2 rounded-2xl border-0 overflow-hidden z-50 max-h-96 overflow-y-auto"
                 style={{
                   background: 'rgba(255, 255, 255, 0.95)',
                   backdropFilter: 'blur(20px)',
@@ -177,17 +306,44 @@ export function Header() {
               >
                 <div className="p-2">
                   <div className="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Search Results
+                    {isSearching ? 'Searching...' : `Search Results (${searchResults.length})`}
                   </div>
                   <div className="space-y-1">
-                    <div className="px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                      <div className="font-medium text-gray-800">Central Hospital Network</div>
-                      <div className="text-sm text-gray-500">12 hospitals • Western Region</div>
-                    </div>
-                    <div className="px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                      <div className="font-medium text-gray-800">Order #OP-2024-001</div>
-                      <div className="text-sm text-gray-500">SLA breach detected</div>
-                    </div>
+                    {isSearching ? (
+                      <div className="px-4 py-8 text-center">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600 mx-auto"></div>
+                      </div>
+                    ) : searchResults.length === 0 ? (
+                      <div className="px-4 py-8 text-center text-gray-500">
+                        No results found
+                      </div>
+                    ) : (
+                      searchResults.map((result, index) => {
+                        const Icon = result.icon;
+                        return (
+                          <div
+                            key={index}
+                            onClick={() => {
+                              // Navigate based on type
+                              if (result.type === 'hospital') router.push(`/hospitals?id=${result.id}`);
+                              else if (result.type === 'center') router.push(`/centers?id=${result.id}`);
+                              else if (result.type === 'rider') router.push(`/riders?id=${result.id}`);
+                              else if (result.type === 'order') router.push(`/orders?id=${result.id}`);
+                              setSearchQuery('');
+                            }}
+                            className="px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors duration-200 flex items-center space-x-3"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center flex-shrink-0">
+                              <Icon className="w-4 h-4 text-teal-600" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-gray-800 truncate">{result.title}</div>
+                              <div className="text-sm text-gray-500 truncate">{result.subtitle}</div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
                   </div>
                 </div>
               </div>
@@ -204,11 +360,11 @@ export function Header() {
               className="group relative p-3 rounded-xl transition-all duration-300 hover:transform hover:scale-105"
               style={{
                 background: showNotifications 
-                  ? '#5DADE2'
+                  ? '#4ECDC4'
                   : 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.8) 100%)',
                 border: '1px solid rgba(203, 213, 225, 0.3)',
                 boxShadow: showNotifications 
-                  ? '0 8px 32px rgba(93, 173, 226, 0.3)'
+                  ? '0 8px 32px rgba(78, 205, 196, 0.3)'
                   : '0 2px 8px rgba(0, 0, 0, 0.02)'
               }}
             >
@@ -284,7 +440,7 @@ export function Header() {
                             <div className="flex items-center space-x-2">
                               <h4 className="font-medium text-gray-800">{alert.title}</h4>
                               {!alert.isRead && (
-                                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                <div className="w-2 h-2 rounded-full bg-teal-500" />
                               )}
                               {alert.severity === 'critical' && (
                                 <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-bold rounded-full">
@@ -307,7 +463,7 @@ export function Header() {
                 <div className="p-4 border-t border-gray-100/60">
                   <button 
                     className="w-full text-center text-sm font-medium transition-colors duration-200"
-                    style={{ color: '#5DADE2' }}
+                    style={{ color: '#4ECDC4' }}
                   >
                     View All System Alerts
                   </button>
@@ -329,8 +485,8 @@ export function Header() {
               <div 
                 className="w-12 h-12 rounded-2xl flex items-center justify-center relative overflow-hidden"
                 style={{
-                  backgroundColor: '#5DADE2',
-                  boxShadow: '0 4px 16px rgba(93, 173, 226, 0.3)'
+                  backgroundColor: '#4ECDC4',
+                  boxShadow: '0 4px 16px rgba(78, 205, 196, 0.3)'
                 }}
               >
                 <span className="text-white font-bold text-lg relative z-10">{userInitials}</span>
@@ -362,7 +518,7 @@ export function Header() {
                     <div 
                       className="w-12 h-12 rounded-2xl flex items-center justify-center"
                       style={{
-                        backgroundColor: '#5DADE2'
+                        backgroundColor: '#4ECDC4'
                       }}
                     >
                       <span className="text-white font-bold">{userInitials}</span>

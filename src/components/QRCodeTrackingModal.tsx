@@ -260,7 +260,7 @@ export function QRCodeTrackingModal({
             <div 
               className="w-16 h-16 rounded-2xl flex items-center justify-center"
               style={{
-                background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+                background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
               }}
             >
               <QrCode className="w-8 h-8 text-white" />
@@ -347,8 +347,8 @@ export function QRCodeTrackingModal({
                       : 'text-gray-600 hover:text-gray-800 bg-gray-100 hover:bg-gray-200'
                   }`}
                   style={activeTab === tab.id ? {
-                    background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-                    boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+                    background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                    boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
                   } : {}}
                 >
                   <Icon className="w-5 h-5" />
@@ -374,14 +374,14 @@ export function QRCodeTrackingModal({
                       placeholder="Search QR codes, samples..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500"
                     />
                   </div>
 
                   <select 
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500"
                   >
                     <option value="all">All Status</option>
                     <option value="pending">Pending</option>
@@ -394,7 +394,7 @@ export function QRCodeTrackingModal({
                   <select 
                     value={priorityFilter}
                     onChange={(e) => setPriorityFilter(e.target.value)}
-                    className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500"
                   >
                     <option value="all">All Priority</option>
                     <option value="urgent">Urgent</option>
@@ -655,8 +655,8 @@ export function QRCodeTrackingModal({
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center">
-                          <Truck className="w-6 h-6 text-blue-600" />
+                        <div className="w-12 h-12 rounded-2xl bg-teal-100 flex items-center justify-center">
+                          <Truck className="w-6 h-6 text-teal-600" />
                         </div>
                         
                         <div>
@@ -701,7 +701,7 @@ export function QRCodeTrackingModal({
               >
                 Close
               </button>
-              <button className="px-8 py-3 bg-blue-500 text-white rounded-xl font-semibold hover:bg-blue-600 transition-colors">
+              <button className="px-8 py-3 bg-teal-500 text-white rounded-xl font-semibold hover:bg-teal-600 transition-colors">
                 Generate Report
               </button>
             </div>

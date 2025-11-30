@@ -90,7 +90,7 @@ export default function HospitalsPage() {
     return (
       <div className="space-y-8">
         <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
           <p className="text-gray-500">Loading hospital networks...</p>
         </div>
       </div>
@@ -297,7 +297,7 @@ export default function HospitalsPage() {
       >
         <div className="p-6 border-b border-gray-100/60">
           <h2 className="text-xl font-bold text-gray-800 mb-1 flex items-center gap-2">
-            <Hospital className="w-6 h-6 text-blue-600" />
+            <Hospital className="w-6 h-6 text-teal-600" />
             Main Hospitals ({filteredMainHospitals.length})
           </h2>
           <p className="text-gray-600 text-base">Main hospitals with their regional hospital networks</p>
@@ -422,7 +422,7 @@ function HospitalNetworkCard({
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h3 className="text-lg font-bold text-gray-900">{network.name}</h3>
-                <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                <span className="text-xs px-2 py-1 bg-teal-100 text-teal-700 rounded-full font-medium">
                   Main Hospital
                 </span>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
@@ -491,10 +491,10 @@ function HospitalNetworkCard({
 
             <button
               onClick={() => onViewMainHospital(network)}
-              className="p-3 hover:bg-blue-50 rounded-xl transition-colors"
+              className="p-3 hover:bg-teal-50 rounded-xl transition-colors"
               title="View Main Hospital Details"
             >
-              <Eye className="w-4 h-4 text-blue-600" />
+              <Eye className="w-4 h-4 text-teal-600" />
             </button>
 
             {network.network_status === 'pending_hq_approval' && (
@@ -519,12 +519,12 @@ function HospitalNetworkCard({
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {network.regionalHospitals.map((hospital: any, index: number) => (
-                <div key={index} className="p-3 rounded-lg border bg-blue-50 border-blue-100">
+                <div key={index} className="p-3 rounded-lg border bg-teal-50 border-teal-100">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <Building className="w-4 h-4 text-blue-600" />
+                      <Building className="w-4 h-4 text-teal-600" />
                       <span className="text-sm font-medium text-gray-800">{hospital.name}</span>
-                      <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                      <span className="text-xs px-2 py-1 bg-teal-100 text-teal-700 rounded-full font-medium">
                         Regional
                       </span>
                     </div>
@@ -543,10 +543,10 @@ function HospitalNetworkCard({
                       </span>
                       <button
                         onClick={() => onViewRegionalHospital({...hospital, network_name: network.network_name, network_id: network.network_id})}
-                        className="p-1 hover:bg-blue-100 rounded-lg transition-colors"
+                        className="p-1 hover:bg-teal-100 rounded-lg transition-colors"
                         title="View Regional Hospital Details"
                       >
-                        <Eye className="w-3 h-3 text-blue-600" />
+                        <Eye className="w-3 h-3 text-teal-600" />
                       </button>
                     </div>
                   </div>
@@ -797,10 +797,10 @@ function HospitalDetailModal({
 
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
                       {isMainHospital ?
-                        <Hospital className="w-6 h-6 text-blue-600" /> :
-                        <Building className="w-6 h-6 text-blue-600" />
+                        <Hospital className="w-6 h-6 text-teal-600" /> :
+                        <Building className="w-6 h-6 text-teal-600" />
                       }
                     </div>
                     <div>
@@ -833,8 +833,8 @@ function HospitalDetailModal({
 
                   {hospital.city && hospital.province && (
                     <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                        <MapPin className="w-6 h-6 text-indigo-600" />
+                      <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                        <MapPin className="w-6 h-6 text-teal-600" />
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Location</p>
@@ -867,8 +867,8 @@ function HospitalDetailModal({
 
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                      <Users className="w-6 h-6 text-blue-600" />
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                      <Users className="w-6 h-6 text-teal-600" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Admin Name</p>
@@ -917,7 +917,7 @@ function HospitalDetailModal({
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                  <Package className="w-6 h-6 text-blue-600" />
+                  <Package className="w-6 h-6 text-teal-600" />
                   Hospital Orders
                 </h3>
                 <div className="flex items-center gap-3">
@@ -960,7 +960,7 @@ function HospitalDetailModal({
 
               {ordersLoading ? (
                 <div className="text-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
                   <p className="text-gray-500">Loading hospital orders...</p>
                 </div>
               ) : ordersError ? (
@@ -983,7 +983,7 @@ function HospitalDetailModal({
                         <div className="flex items-center gap-4">
                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                             order.status === 'delivered' ? 'bg-green-100' :
-                            order.status === 'in_transit' ? 'bg-blue-100' :
+                            order.status === 'in_transit' ? 'bg-teal-100' :
                             order.status === 'picked_up' ? 'bg-yellow-100' :
                             order.status === 'assigned' ? 'bg-purple-100' :
                             order.status === 'pending' ? 'bg-gray-100' :
@@ -992,7 +992,7 @@ function HospitalDetailModal({
                             {order.status === 'delivered' ? (
                               <CheckCircle2 className="w-6 h-6 text-green-600" />
                             ) : order.status === 'in_transit' ? (
-                              <Truck className="w-6 h-6 text-blue-600" />
+                              <Truck className="w-6 h-6 text-teal-600" />
                             ) : order.status === 'picked_up' ? (
                               <Timer className="w-6 h-6 text-yellow-600" />
                             ) : order.status === 'assigned' ? (
@@ -1016,7 +1016,7 @@ function HospitalDetailModal({
                         <div className="text-right">
                           <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                             order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                            order.status === 'in_transit' ? 'bg-blue-100 text-blue-800' :
+                            order.status === 'in_transit' ? 'bg-teal-100 text-teal-800' :
                             order.status === 'picked_up' ? 'bg-yellow-100 text-yellow-800' :
                             order.status === 'assigned' ? 'bg-purple-100 text-purple-800' :
                             order.status === 'pending' ? 'bg-gray-100 text-gray-800' :
@@ -1071,7 +1071,7 @@ function HospitalDetailModal({
                             onClick={() => handlePageChange(page)}
                             className={`px-3 py-1 rounded-lg text-sm font-medium ${
                               currentPage === page
-                                ? 'bg-blue-500 text-white'
+                                ? 'bg-teal-500 text-white'
                                 : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
                             }`}
                           >
@@ -1097,12 +1097,12 @@ function HospitalDetailModal({
           {isMainHospital && hospital.regionalHospitals && hospital.regionalHospitals.length > 0 && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <Building className="w-5 h-5 text-blue-600" />
+                <Building className="w-5 h-5 text-teal-600" />
                 Regional Hospitals ({hospital.regionalHospitals.length})
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {hospital.regionalHospitals.map((regHospital: any, index: number) => (
-                  <div key={index} className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div key={index} className="p-3 bg-teal-50 border border-teal-200 rounded-lg">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-medium text-gray-900">{regHospital.name}</span>
                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${
@@ -1173,12 +1173,12 @@ function HospitalDetailModal({
             {/* Note for Regional Hospitals */}
             {!isMainHospital && (
               <div className="mt-8 pt-6 border-t border-gray-200">
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                <div className="bg-teal-50 border border-teal-200 rounded-xl p-6">
                   <div className="flex items-start space-x-3">
-                    <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-teal-600 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-blue-800 mb-1">Regional Hospital Note</h4>
-                      <p className="text-sm text-blue-700">
+                      <h4 className="font-semibold text-teal-800 mb-1">Regional Hospital Note</h4>
+                      <p className="text-sm text-teal-700">
                         Regional hospitals are approved by their main hospital network administrator.
                         Operations HQ does not directly approve regional hospitals.
                       </p>

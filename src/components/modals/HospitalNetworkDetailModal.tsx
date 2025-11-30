@@ -199,14 +199,14 @@ export function HospitalNetworkDetailModal({
           <div className="p-8">
             {/* Network Statistics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-teal-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-blue-600 font-medium">Total Hospitals</p>
-                    <p className="text-2xl font-bold text-blue-800">{network.hospitals?.length || 0}</p>
+                    <p className="text-sm text-teal-600 font-medium">Total Hospitals</p>
+                    <p className="text-2xl font-bold text-teal-800">{network.hospitals?.length || 0}</p>
                   </div>
-                  <div className="w-12 h-12 bg-blue-200 rounded-xl flex items-center justify-center">
-                    <Hospital className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-teal-200 rounded-xl flex items-center justify-center">
+                    <Hospital className="w-6 h-6 text-teal-600" />
                   </div>
                 </div>
               </div>
@@ -255,8 +255,8 @@ export function HospitalNetworkDetailModal({
                 
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                      <Users className="w-6 h-6 text-blue-600" />
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                      <Users className="w-6 h-6 text-teal-600" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Network Administrator</p>
@@ -285,7 +285,7 @@ export function HospitalNetworkDetailModal({
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
                       <StatusIcon className={`w-6 h-6 ${statusConfig.className}`} />
                     </div>
                     <div>
@@ -361,7 +361,7 @@ export function HospitalNetworkDetailModal({
                               <div className="flex items-center gap-2 mb-1">
                                 <p className="font-semibold text-gray-800">{hospital.name}</p>
                                 {hospital.is_main_hospital && (
-                                  <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 font-medium">
+                                  <span className="text-xs px-2 py-1 rounded-full bg-teal-100 text-teal-800 font-medium">
                                     Main Hospital
                                   </span>
                                 )}

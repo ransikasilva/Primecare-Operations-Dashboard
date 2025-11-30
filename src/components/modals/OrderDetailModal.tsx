@@ -356,8 +356,8 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
       case 'in_transit':
         return {
           icon: Truck,
-          color: 'text-blue-600',
-          bg: 'bg-blue-100',
+          color: 'text-teal-600',
+          bg: 'bg-teal-100',
           text: 'In Transit'
         };
       case 'picked_up':
@@ -432,7 +432,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
         >
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
               <span className="ml-3 text-gray-600">Loading order details...</span>
             </div>
           ) : error ? (
@@ -442,7 +442,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                 <p className="text-red-600 font-medium">{error}</p>
                 <button
                   onClick={fetchOrderDetails}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="mt-4 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
                 >
                   Try Again
                 </button>
@@ -554,7 +554,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                         disabled={tab.disabled}
                         className={`flex items-center space-x-2 py-4 border-b-2 font-medium text-sm transition-colors ${
                           activeTab === tab.key
-                            ? 'border-blue-500 text-blue-600'
+                            ? 'border-teal-500 text-teal-600'
                             : tab.disabled
                               ? 'border-transparent text-gray-400 cursor-not-allowed'
                               : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -578,7 +578,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                       {/* Collection Center Info */}
                       <div className="bg-white p-6 rounded-xl border border-gray-200">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                          <Activity className="w-5 h-5 text-blue-600" />
+                          <Activity className="w-5 h-5 text-teal-600" />
                           Collection Center
                         </h3>
                         <div className="space-y-3">
@@ -595,7 +595,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                               <span className="text-gray-600 w-20">Phone:</span>
                               <a
                                 href={`tel:${orderDetails.order.center_phone}`}
-                                className="font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                                className="font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1"
                               >
                                 <Phone className="w-4 h-4" />
                                 {orderDetails.order.center_phone}
@@ -625,7 +625,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                               <span className="text-gray-600 w-20">Phone:</span>
                               <a
                                 href={`tel:${orderDetails.order.hospital_contact_phone}`}
-                                className="font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                                className="font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1"
                               >
                                 <Phone className="w-4 h-4" />
                                 {orderDetails.order.hospital_contact_phone}
@@ -653,7 +653,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                               <span className="text-gray-600 w-20">Phone:</span>
                               <a
                                 href={`tel:${orderDetails.order.rider_phone}`}
-                                className="font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                                className="font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1"
                               >
                                 <Phone className="w-4 h-4" />
                                 {orderDetails.order.rider_phone}
@@ -673,7 +673,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                     {/* Order Metrics */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="bg-white p-4 rounded-xl border border-gray-200 text-center">
-                        <Route className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                        <Route className="w-8 h-8 text-teal-600 mx-auto mb-2" />
                         <p className="text-sm text-gray-600">Distance</p>
                         <p className="text-lg font-bold text-gray-900">
                           {orderDetails.order.estimated_distance_km?.toFixed(1) || 'N/A'} km
@@ -711,7 +711,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                 {activeTab === 'chain' && (
                   <div className="space-y-6">
                     <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                      <Activity className="w-6 h-6 text-blue-600" />
+                      <Activity className="w-6 h-6 text-teal-600" />
                       Chain of Custody Timeline
                     </h3>
 
@@ -839,7 +839,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                       <button
                         onClick={handleRefreshLocation}
                         disabled={refreshing}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50"
                       >
                         <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                         Refresh Location

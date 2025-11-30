@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "TransFleet Operations Dashboard",
   description: "Operations management dashboard for TransFleet healthcare delivery network",
+  icons: {
+    icon: '/newfavicon.png',
+    shortcut: '/newfavicon.png',
+    apple: '/newfavicon.png',
+  },
   verification: {
     google: "fnfAH0_BJNm-dhMzaYFAT7e7ifoBCPrMij2W-oQnqSM",
   },

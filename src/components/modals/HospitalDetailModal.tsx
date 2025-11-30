@@ -252,14 +252,14 @@ export function HospitalDetailModal({
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-teal-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-blue-600 font-medium">Approved Relations</p>
-                    <p className="text-2xl font-bold text-blue-800">{approvedCenters.length}</p>
+                    <p className="text-sm text-teal-600 font-medium">Approved Relations</p>
+                    <p className="text-2xl font-bold text-teal-800">{approvedCenters.length}</p>
                   </div>
-                  <div className="w-12 h-12 bg-blue-200 rounded-xl flex items-center justify-center">
-                    <CheckCircle2 className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-teal-200 rounded-xl flex items-center justify-center">
+                    <CheckCircle2 className="w-6 h-6 text-teal-600" />
                   </div>
                 </div>
               </div>
@@ -296,10 +296,10 @@ export function HospitalDetailModal({
                 
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
                       {hospital.is_main_hospital ? 
-                        <Hospital className="w-6 h-6 text-blue-600" /> : 
-                        <Building className="w-6 h-6 text-blue-600" />
+                        <Hospital className="w-6 h-6 text-teal-600" /> : 
+                        <Building className="w-6 h-6 text-teal-600" />
                       }
                     </div>
                     <div>
@@ -333,7 +333,7 @@ export function HospitalDetailModal({
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
                       <StatusIcon className={`w-6 h-6 ${statusConfig.className}`} />
                     </div>
                     <div>
@@ -407,12 +407,12 @@ export function HospitalDetailModal({
                           <div className="flex items-center space-x-4">
                             <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                               center.center_type === 'independent' 
-                                ? 'bg-blue-100' 
+                                ? 'bg-teal-100' 
                                 : 'bg-purple-100'
                             }`}>
                               <FlaskConical className={`w-5 h-5 ${
                                 center.center_type === 'independent' 
-                                  ? 'text-blue-600' 
+                                  ? 'text-teal-600' 
                                   : 'text-purple-600'
                               }`} />
                             </div>
@@ -421,7 +421,7 @@ export function HospitalDetailModal({
                                 <p className="font-semibold text-gray-800">{center.center_name}</p>
                                 <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                                   center.center_type === 'independent'
-                                    ? 'bg-blue-100 text-blue-800'
+                                    ? 'bg-teal-100 text-teal-800'
                                     : 'bg-purple-100 text-purple-800'
                                 }`}>
                                   {center.center_type}

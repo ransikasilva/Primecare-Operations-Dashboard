@@ -111,7 +111,7 @@ export function ApprovalDetailModal({
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'High': return '#ef4444';
-      case 'Normal': return '#5DADE2';
+      case 'Normal': return '#4ECDC4';
       case 'Low': return '#10b981';
       default: return '#6b7280';
     }
@@ -291,12 +291,12 @@ export function ApprovalDetailModal({
                             key={index}
                             className="p-4 rounded-2xl"
                             style={{
-                              background: 'linear-gradient(135deg, rgba(93, 173, 226, 0.1) 0%, rgba(74, 155, 199, 0.05) 100%)',
-                              border: '1px solid rgba(93, 173, 226, 0.2)'
+                              background: 'linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(74, 155, 199, 0.05) 100%)',
+                              border: '1px solid rgba(78, 205, 196, 0.2)'
                             }}
                           >
                             <div className="flex items-center space-x-3">
-                              <Building2 className="w-6 h-6 text-blue-600" />
+                              <Building2 className="w-6 h-6 text-teal-600" />
                               <div>
                                 <p className="font-semibold text-gray-800">{hospital.name}</p>
                                 <p className="text-sm text-gray-600">{hospital.region} Region</p>
@@ -373,12 +373,12 @@ export function ApprovalDetailModal({
                             key={index}
                             className="p-4 rounded-2xl"
                             style={{
-                              background: 'linear-gradient(135deg, rgba(93, 173, 226, 0.1) 0%, rgba(74, 155, 199, 0.05) 100%)',
-                              border: '1px solid rgba(93, 173, 226, 0.2)'
+                              background: 'linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(74, 155, 199, 0.05) 100%)',
+                              border: '1px solid rgba(78, 205, 196, 0.2)'
                             }}
                           >
                             <div className="flex items-center space-x-3">
-                              <Building2 className="w-6 h-6 text-blue-600" />
+                              <Building2 className="w-6 h-6 text-teal-600" />
                               <div>
                                 <p className="font-semibold text-gray-800">{hospital.name}</p>
                                 <p className="text-sm text-gray-600">{hospital.location}</p>
@@ -523,7 +523,7 @@ export function ApprovalDetailModal({
               )}
 
               {item.type === 'hospital' && (
-                <div className="p-6 rounded-2xl bg-blue-50 border border-blue-200">
+                <div className="p-6 rounded-2xl bg-teal-50 border border-teal-200">
                   <p className="text-gray-600">Hospital networks receive full system access upon approval, including rider management, collection center oversight, and reporting capabilities.</p>
                 </div>
               )}
@@ -666,7 +666,7 @@ export function ApprovalDetailModal({
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500"
                 placeholder="Add notes about this approval decision..."
               />
             </div>

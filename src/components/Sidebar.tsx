@@ -26,7 +26,7 @@ import {
 const quickActions = [
   { icon: Activity, label: "System Status", color: "#10B981" },
   { icon: Bell, label: "Notifications", color: "#F59E0B" },
-  { icon: HelpCircle, label: "Help Center", color: "#5DADE2" },
+  { icon: HelpCircle, label: "Help Center", color: "#4ECDC4" },
 ];
 
 export function Sidebar() {
@@ -135,7 +135,7 @@ export function Sidebar() {
           <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center relative overflow-hidden bg-white"
             style={{
-              boxShadow: '0 8px 32px rgba(93, 173, 226, 0.3)'
+              boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
             }}
           >
             <img
@@ -168,7 +168,7 @@ export function Sidebar() {
         className="flex-1 overflow-y-auto px-4 py-3 space-y-2"
         style={{
           scrollbarWidth: 'thin',
-          scrollbarColor: '#5DADE2 transparent'
+          scrollbarColor: '#4ECDC4 transparent'
         }}
       >
         {navigation.map((item) => {
@@ -191,14 +191,14 @@ export function Sidebar() {
                 `}
                 style={{
                   background: isActive 
-                    ? '#5DADE2'
+                    ? '#4ECDC4'
                     : isHovered 
-                      ? 'rgba(93, 173, 226, 0.08)'
+                      ? 'rgba(78, 205, 196, 0.08)'
                       : 'transparent',
                   boxShadow: isActive 
-                    ? '0 8px 32px rgba(93, 173, 226, 0.3), 0 0 0 1px rgba(93, 173, 226, 0.1)'
+                    ? '0 8px 32px rgba(78, 205, 196, 0.3), 0 0 0 1px rgba(78, 205, 196, 0.1)'
                     : isHovered
-                      ? '0 4px 16px rgba(93, 173, 226, 0.1)'
+                      ? '0 4px 16px rgba(78, 205, 196, 0.1)'
                       : 'none'
                 }}
               >
@@ -268,7 +268,7 @@ export function Sidebar() {
                   <div 
                     className="absolute inset-0 rounded-2xl opacity-50"
                     style={{
-                      background: 'radial-gradient(circle at center, rgba(93, 173, 226, 0.1) 0%, transparent 70%)'
+                      background: 'radial-gradient(circle at center, rgba(78, 205, 196, 0.1) 0%, transparent 70%)'
                     }}
                   />
                 )}

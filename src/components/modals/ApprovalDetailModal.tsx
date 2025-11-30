@@ -85,18 +85,18 @@ export function ApprovalDetailModal({
         return {
           icon: Hospital,
           color: '#3b82f6',
-          bg: 'bg-blue-100',
+          bg: 'bg-teal-100',
           text: 'Hospital Network',
-          className: 'text-blue-800',
+          className: 'text-teal-800',
           gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
         };
       case 'main_hospital':
         return {
           icon: Hospital,
           color: '#2563eb',
-          bg: 'bg-blue-100',
+          bg: 'bg-teal-100',
           text: 'Main Hospital',
-          className: 'text-blue-800',
+          className: 'text-teal-800',
           gradient: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)'
         };
       case 'collection_center':
@@ -177,9 +177,9 @@ export function ApprovalDetailModal({
         };
       case 'Normal':
         return {
-          bg: 'bg-blue-100',
-          text: 'text-blue-800',
-          border: 'border-blue-200'
+          bg: 'bg-teal-100',
+          text: 'text-teal-800',
+          border: 'border-teal-200'
         };
       case 'Low':
         return {
@@ -230,8 +230,8 @@ export function ApprovalDetailModal({
 
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <Hospital className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <Hospital className="w-6 h-6 text-teal-600" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Hospital Name</p>
@@ -266,8 +266,8 @@ export function ApprovalDetailModal({
 
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                    <Mail className="w-6 h-6 text-indigo-600" />
+                  <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <Mail className="w-6 h-6 text-teal-600" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Email</p>
@@ -307,8 +307,8 @@ export function ApprovalDetailModal({
 
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <Hospital className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <Hospital className="w-6 h-6 text-teal-600" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Hospital Name</p>
@@ -353,8 +353,8 @@ export function ApprovalDetailModal({
 
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                    <Mail className="w-6 h-6 text-indigo-600" />
+                  <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <Mail className="w-6 h-6 text-teal-600" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Admin Email</p>
@@ -395,8 +395,8 @@ export function ApprovalDetailModal({
                 )}
               </div>
 
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-blue-800">
+              <div className="mt-6 p-4 bg-teal-50 border border-teal-200 rounded-lg">
+                <p className="text-sm text-teal-800">
                   <strong>Note:</strong> Approving this main hospital will approve the entire network and trigger an email notification with the hospital code.
                 </p>
               </div>
@@ -423,8 +423,8 @@ export function ApprovalDetailModal({
                   </div>
                   
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                      <Globe className="w-6 h-6 text-blue-600" />
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                      <Globe className="w-6 h-6 text-teal-600" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Center Type</p>
@@ -459,8 +459,8 @@ export function ApprovalDetailModal({
                   </div>
 
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                      <MapPin className="w-6 h-6 text-indigo-600" />
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                      <MapPin className="w-6 h-6 text-teal-600" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Address</p>
@@ -520,14 +520,14 @@ export function ApprovalDetailModal({
                               request.feature_type === 'enterprise'
                                 ? 'bg-purple-100'
                                 : request.feature_type === 'premium'
-                                ? 'bg-blue-100'
+                                ? 'bg-teal-100'
                                 : 'bg-gray-100'
                             }`}>
                               <Activity className={`w-5 h-5 ${
                                 request.feature_type === 'enterprise'
                                   ? 'text-purple-600'
                                   : request.feature_type === 'premium'
-                                  ? 'text-blue-600'
+                                  ? 'text-teal-600'
                                   : 'text-gray-600'
                               }`} />
                             </div>
@@ -539,7 +539,7 @@ export function ApprovalDetailModal({
                                   request.feature_type === 'enterprise'
                                     ? 'bg-purple-100 text-purple-800 border-purple-200'
                                     : request.feature_type === 'premium'
-                                    ? 'bg-blue-100 text-blue-800 border-blue-200'
+                                    ? 'bg-teal-100 text-teal-800 border-teal-200'
                                     : 'bg-gray-100 text-gray-800 border-gray-200'
                                 }`}>
                                   {request.feature_type.toUpperCase()}
@@ -628,8 +628,8 @@ export function ApprovalDetailModal({
                 </div>
                 
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <Phone className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <Phone className="w-6 h-6 text-teal-600" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Mobile Number</p>
@@ -676,8 +676,8 @@ export function ApprovalDetailModal({
                 </div>
 
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-indigo-600" />
+                  <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <FileText className="w-6 h-6 text-teal-600" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Vehicle Number</p>
@@ -860,7 +860,7 @@ export function ApprovalDetailModal({
                         value={rejectionReason}
                         onChange={(e) => setRejectionReason(e.target.value)}
                         placeholder="Please provide a detailed reason for rejecting this application..."
-                        className="w-full p-4 border border-gray-300 rounded-xl focus:border-blue-500 focus:ring-blue-500 resize-none"
+                        className="w-full p-4 border border-gray-300 rounded-xl focus:border-teal-500 focus:ring-blue-500 resize-none"
                         rows={3}
                       />
                     </div>

@@ -255,7 +255,7 @@ export default function OrderTrackingMap({ orderDetails, onRefresh }: OrderTrack
           <div class="space-y-1 text-sm">
             <div><strong>${orderDetails.order.hospital_name}</strong></div>
             <div class="text-gray-600">${orderDetails.order.hospital_address}</div>
-            <div class="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">
+            <div class="inline-block px-2 py-1 bg-teal-100 text-teal-800 rounded text-xs font-medium">
               Hospital
             </div>
           </div>
@@ -477,7 +477,7 @@ export default function OrderTrackingMap({ orderDetails, onRefresh }: OrderTrack
             <span>Pickup</span>
           </div>
           <div className="flex items-center space-x-1">
-            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+            <div className="w-3 h-3 rounded-full bg-teal-500"></div>
             <span>Delivery</span>
           </div>
           {orderDetails.location_tracking?.[0] && (

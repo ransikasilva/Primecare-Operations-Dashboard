@@ -97,7 +97,7 @@ export default function ApprovalsPage() {
     return (
       <div className="space-y-8">
         <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
           <p className="text-gray-500">Loading pending approvals and feature requests...</p>
         </div>
       </div>
@@ -121,8 +121,8 @@ export default function ApprovalsPage() {
       <div 
         className="relative overflow-hidden rounded-3xl p-8"
         style={{
-          background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)',
-          boxShadow: '0 20px 40px rgba(93, 173, 226, 0.3)'
+          background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+          boxShadow: '0 20px 40px rgba(78, 205, 196, 0.3)'
         }}
       >
         <div className="relative z-10">
@@ -168,11 +168,11 @@ export default function ApprovalsPage() {
             <div 
               className="w-12 h-12 rounded-2xl flex items-center justify-center"
               style={{
-                backgroundColor: '#5DADE2' + '20',
-                border: `2px solid #5DADE2` + '30'
+                backgroundColor: '#4ECDC4' + '20',
+                border: `2px solid #4ECDC4` + '30'
               }}
             >
-              <Network className="w-6 h-6" style={{ color: '#5DADE2' }} />
+              <Network className="w-6 h-6" style={{ color: '#4ECDC4' }} />
             </div>
           </div>
           <h3 className="text-3xl font-bold text-gray-800 mb-2">{mainHospitalsCount}</h3>
@@ -504,7 +504,7 @@ function MainHospitalsSection({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-800 mb-1 flex items-center gap-2">
-              <Hospital className="w-6 h-6 text-blue-600" />
+              <Hospital className="w-6 h-6 text-teal-600" />
               Main Hospitals ({mainHospitals.length})
             </h2>
             <p className="text-gray-600 text-base">Main hospitals pending TransFleet HQ approval (approving approves the entire network)</p>
@@ -551,7 +551,7 @@ function MainHospitalsSection({
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <h3 className="text-lg font-bold text-gray-900">{hospital.name}</h3>
-                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-teal-100 text-teal-800 border border-teal-200">
                               Main Hospital
                             </span>
                             <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-200">
@@ -593,7 +593,7 @@ function MainHospitalsSection({
 
                       <div className="flex items-center gap-3">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          networkData?.hospitals?.length > 1 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
+                          networkData?.hospitals?.length > 1 ? 'bg-teal-100 text-teal-800' : 'bg-gray-100 text-gray-600'
                         }`}>
                           Network: {networkData?.hospitals?.length || 1} hospitals
                         </span>
@@ -610,10 +610,10 @@ function MainHospitalsSection({
 
                         <button
                           onClick={() => onViewDetails(hospital)}
-                          className="p-3 hover:bg-blue-50 rounded-xl transition-colors"
+                          className="p-3 hover:bg-teal-50 rounded-xl transition-colors"
                           title="View Hospital Details"
                         >
-                          <Eye className="w-4 h-4 text-blue-600" />
+                          <Eye className="w-4 h-4 text-teal-600" />
                         </button>
 
                         <button
@@ -641,17 +641,17 @@ function MainHospitalsSection({
                           {networkData.hospitals.map((h: any) => (
                             <div key={h.id} className={`p-3 rounded-lg border ${
                               h.is_main_hospital
-                                ? 'bg-blue-50 border-blue-100'
+                                ? 'bg-teal-50 border-teal-100'
                                 : 'bg-green-50 border-green-100'
                             }`}>
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-2">
                                   <Hospital className={`w-4 h-4 ${
-                                    h.is_main_hospital ? 'text-blue-600' : 'text-green-600'
+                                    h.is_main_hospital ? 'text-teal-600' : 'text-green-600'
                                   }`} />
                                   <span className="text-sm font-medium text-gray-800">{h.name}</span>
                                   {h.is_main_hospital && (
-                                    <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                                    <span className="text-xs px-2 py-1 bg-teal-100 text-teal-700 rounded-full font-medium">
                                       Main Hospital
                                     </span>
                                   )}
@@ -678,7 +678,7 @@ function MainHospitalsSection({
                                 </div>
                               </div>
                               {h.hospital_code && (
-                                <div className="mt-2 text-xs text-blue-600 bg-blue-50 p-2 rounded">
+                                <div className="mt-2 text-xs text-teal-600 bg-teal-50 p-2 rounded">
                                   <span className="font-medium">Hospital Code:</span> {h.hospital_code}
                                 </div>
                               )}
@@ -803,7 +803,7 @@ function IndependentCentersSection({
 
                       <div className="flex items-center gap-3">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          centerData?.hospital_relationships?.length > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
+                          centerData?.hospital_relationships?.length > 0 ? 'bg-teal-100 text-teal-800' : 'bg-gray-100 text-gray-600'
                         }`}>
                           {centerData?.hospital_relationships?.length || 0} Hospital Relations
                         </span>
@@ -848,13 +848,13 @@ function IndependentCentersSection({
                         </h4>
                         <div className="space-y-3">
                           {centerData.hospital_relationships.map((relationship: any) => (
-                            <div key={relationship.hospital_id} className="p-3 bg-blue-50 rounded-lg border border-blue-100">
+                            <div key={relationship.hospital_id} className="p-3 bg-teal-50 rounded-lg border border-teal-100">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-2">
-                                  <Hospital className="w-4 h-4 text-blue-600" />
+                                  <Hospital className="w-4 h-4 text-teal-600" />
                                   <span className="text-sm font-medium text-gray-800">{relationship.hospital_name}</span>
                                   {relationship.is_main_hospital && (
-                                    <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                                    <span className="text-xs px-2 py-1 bg-teal-100 text-teal-700 rounded-full font-medium">
                                       Main Hospital
                                     </span>
                                   )}
@@ -1060,7 +1060,7 @@ function DependentCentersSection({
                                   <Hospital className="w-4 h-4 text-purple-600" />
                                   <span className="text-sm font-medium text-gray-800">{relationship.hospital_name}</span>
                                   {relationship.is_main_hospital && (
-                                    <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                                    <span className="text-xs px-2 py-1 bg-teal-100 text-teal-700 rounded-full font-medium">
                                       Main Hospital
                                     </span>
                                   )}

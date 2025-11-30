@@ -267,7 +267,7 @@ export function CollectionCenterFeatureManager({
             <div 
               className="w-16 h-16 rounded-2xl flex items-center justify-center"
               style={{
-                background: 'linear-gradient(135deg, #5DADE2 0%, #4A9BC7 100%)'
+                background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
               }}
             >
               <Settings className="w-8 h-8 text-white" />
@@ -368,14 +368,14 @@ export function CollectionCenterFeatureManager({
                   placeholder="Search centers..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500"
                 />
               </div>
 
               <select 
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -386,7 +386,7 @@ export function CollectionCenterFeatureManager({
               <select 
                 value={selectedFeature}
                 onChange={(e) => setSelectedFeature(e.target.value)}
-                className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500"
               >
                 <option value="all">All Features</option>
                 <option value="sampleTypeQuantity">Sample Type & Quantity</option>
@@ -402,7 +402,7 @@ export function CollectionCenterFeatureManager({
                 <select 
                   value={bulkFeature}
                   onChange={(e) => setBulkFeature(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500"
                 >
                   <option value="">Select Feature</option>
                   <option value="sampleTypeQuantity">Sample Type & Quantity</option>
@@ -413,7 +413,7 @@ export function CollectionCenterFeatureManager({
                 <select 
                   value={bulkEnabled.toString()}
                   onChange={(e) => setBulkEnabled(e.target.value === 'true')}
-                  className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-teal-500"
                 >
                   <option value="true">Enable</option>
                   <option value="false">Disable</option>
@@ -422,7 +422,7 @@ export function CollectionCenterFeatureManager({
                 <button
                   onClick={handleBulkUpdate}
                   disabled={bulkLoading || !bulkFeature}
-                  className="px-6 py-2 bg-blue-500 text-white rounded-xl font-semibold hover:bg-blue-600 transition-colors disabled:opacity-50"
+                  className="px-6 py-2 bg-teal-500 text-white rounded-xl font-semibold hover:bg-teal-600 transition-colors disabled:opacity-50"
                 >
                   {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
                 </button>
@@ -435,7 +435,7 @@ export function CollectionCenterFeatureManager({
         <div className="p-8 max-h-[50vh] overflow-y-auto">
           {centersLoading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : (
             <div className="space-y-4">
@@ -464,7 +464,7 @@ export function CollectionCenterFeatureManager({
                               setSelectedCenters(selectedCenters.filter(id => id !== center.id));
                             }
                           }}
-                          className="w-4 h-4 text-blue-600 rounded"
+                          className="w-4 h-4 text-teal-600 rounded"
                         />
                         
                         <div 
@@ -562,7 +562,7 @@ export function CollectionCenterFeatureManager({
                               onClick={() => handleFeatureToggle(center.id, 'multiParcel', !center.features.multiParcel)}
                               disabled={updateLoading}
                               className={`w-12 h-6 rounded-full transition-all duration-200 ${
-                                center.features.multiParcel ? 'bg-blue-500' : 'bg-gray-300'
+                                center.features.multiParcel ? 'bg-teal-500' : 'bg-gray-300'
                               }`}
                             >
                               <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-200 ${

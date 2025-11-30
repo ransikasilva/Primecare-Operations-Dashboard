@@ -160,7 +160,7 @@ export function OperationsSLAChart({ data, thresholds }: OperationsSLAChartProps
         </div>
         <div className="flex flex-col items-center">
           <div className="flex items-center space-x-2 mb-1">
-            <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+            <div className="w-4 h-4 bg-teal-500 rounded-full"></div>
             <span className="text-sm font-semibold text-gray-700">Standard SLA</span>
           </div>
           <span className="text-xs text-gray-500">
