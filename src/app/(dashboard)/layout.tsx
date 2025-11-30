@@ -22,8 +22,15 @@ export default function DashboardLayout({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2" style={{ borderColor: '#4ECDC4' }}></div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <img
+            src="/logo.png"
+            alt="TransFleet Logo"
+            className="w-32 h-32 mx-auto mb-4 animate-pulse"
+          />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto" style={{ borderColor: '#4ECDC4' }}></div>
+        </div>
       </div>
     );
   }
