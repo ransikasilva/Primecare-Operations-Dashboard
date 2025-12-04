@@ -1467,6 +1467,11 @@ class OperationsApiClient {
       };
     }>(`/api/operations/sla/metrics?${queryParams.toString()}`);
   }
+
+  // Rider-Center Assignments (Read-only for operations)
+  async getRidersForCenter(centerId: string) {
+    return this.request<any[]>(`/api/rider-center-assignments/center/${centerId}/riders`);
+  }
 }
 
 export const operationsApi = new OperationsApiClient(API_URL);

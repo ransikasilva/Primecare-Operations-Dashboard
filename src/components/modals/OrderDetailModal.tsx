@@ -28,6 +28,7 @@ import {
   RefreshCw,
   ExternalLink,
   Copy,
+  Users,
 } from 'lucide-react';
 import OrderTrackingMap from '@/components/OrderTrackingMap';
 
@@ -295,7 +296,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
           },
           qr_scans: (response.data as any).qr_scans || [],
           location_tracking: (response.data as any).location_tracking || [],
-          handover_history: []
+          handover_history: (response.data as any).handover_history || []
         };
         setOrderDetails(mappedData);
       } else {
@@ -703,6 +704,134 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                           Special Instructions
                         </h3>
                         <p className="text-amber-800">{orderDetails.order.special_instructions}</p>
+                      </div>
+                    )}
+
+                    {/* Handover History */}
+                    {orderDetails.handover_history && orderDetails.handover_history.length > 0 && (
+                      <div className="bg-white p-6 rounded-xl border border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          <Users className="w-5 h-5 text-purple-600" />
+                          Handover History
+                        </h3>
+                        <div className="space-y-4">
+                          {orderDetails.handover_history.map((handover, index) => {
+                            const isCompleted = handover.status === 'confirmed';
+                            const isCancelledDeclined = ['cancelled', 'declined', 'expired'].includes(handover.status);
+                            const isPending = handover.status === 'pending';
+
+                            return (
+                              <div key={handover.id || index} className={`p-5 rounded-xl border-2 ${
+                                isCompleted
+                                  ? 'bg-green-50 border-green-300'
+                                  : isCancelledDeclined
+                                    ? 'bg-red-50 border-red-300'
+                                    : 'bg-yellow-50 border-yellow-300'
+                              }`}>
+                                <div className="flex items-center justify-between mb-4">
+                                  <div className="flex items-center gap-3">
+                                    <div className={`p-2 rounded-lg ${
+                                      isCompleted
+                                        ? 'bg-green-100'
+                                        : isCancelledDeclined
+                                          ? 'bg-red-100'
+                                          : 'bg-yellow-100'
+                                    }`}>
+                                      <Users className={`w-5 h-5 ${
+                                        isCompleted
+                                          ? 'text-green-700'
+                                          : isCancelledDeclined
+                                            ? 'text-red-700'
+                                            : 'text-yellow-700'
+                                      }`} />
+                                    </div>
+                                    <div>
+                                      <span className={`font-semibold text-base ${
+                                        isCompleted
+                                          ? 'text-green-900'
+                                          : isCancelledDeclined
+                                            ? 'text-red-900'
+                                            : 'text-yellow-900'
+                                      }`}>
+                                        {handover.status === 'confirmed' && '✅ Handover Completed'}
+                                        {handover.status === 'cancelled' && '❌ Handover Cancelled'}
+                                        {handover.status === 'declined' && '🚫 Handover Declined'}
+                                        {handover.status === 'expired' && '⏱️ Handover Expired'}
+                                        {handover.status === 'pending' && '⏳ Handover Pending'}
+                                      </span>
+                                      <p className="text-sm text-gray-600 mt-1">
+                                        {new Date(handover.initiated_at).toLocaleString()}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                  <div className="bg-white bg-opacity-60 p-3 rounded-lg">
+                                    <label className="text-xs text-gray-600 font-medium">Original Rider</label>
+                                    <p className="font-semibold text-gray-900 mt-1">{handover.original_rider_name}</p>
+                                    <p className="text-sm text-gray-600">ID: {handover.original_rider_id}</p>
+                                  </div>
+                                  {handover.new_rider_name && (
+                                    <div className="bg-white bg-opacity-60 p-3 rounded-lg">
+                                      <label className="text-xs text-gray-600 font-medium">New Rider</label>
+                                      <p className="font-semibold text-gray-900 mt-1">{handover.new_rider_name}</p>
+                                      <p className="text-sm text-gray-600">ID: {handover.new_rider_id}</p>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {handover.handover_reason && (
+                                  <div className="mb-3">
+                                    <label className="text-xs text-gray-600 font-medium">Reason</label>
+                                    <p className="text-sm text-gray-900 mt-1 bg-white bg-opacity-60 p-2 rounded">
+                                      {handover.handover_reason}
+                                    </p>
+                                  </div>
+                                )}
+
+                                {handover.notes && (
+                                  <div className="mb-3">
+                                    <label className="text-xs text-gray-600 font-medium">Notes</label>
+                                    <p className="text-sm text-gray-900 mt-1 bg-white bg-opacity-60 p-2 rounded">
+                                      {handover.notes}
+                                    </p>
+                                  </div>
+                                )}
+
+                                {handover.handover_location && handover.handover_location.lat && handover.handover_location.lng && (
+                                  <div className="mb-3">
+                                    <label className="text-xs text-gray-600 font-medium">Handover Location</label>
+                                    <p className="text-sm text-gray-900 mt-1 bg-white bg-opacity-60 p-2 rounded font-mono">
+                                      {handover.handover_location.lat.toFixed(6)}, {handover.handover_location.lng.toFixed(6)}
+                                    </p>
+                                  </div>
+                                )}
+
+                                <div className="flex items-center gap-6 text-xs text-gray-700 mt-4 pt-4 border-t border-gray-300">
+                                  {handover.initiated_at && (
+                                    <div>
+                                      <span className="font-semibold">Initiated:</span>{' '}
+                                      <span>{new Date(handover.initiated_at).toLocaleString()}</span>
+                                    </div>
+                                  )}
+                                  {handover.accepted_at && (
+                                    <div>
+                                      <span className="font-semibold">Accepted:</span>{' '}
+                                      <span>{new Date(handover.accepted_at).toLocaleString()}</span>
+                                    </div>
+                                  )}
+                                  {handover.confirmed_at && (
+                                    <div>
+                                      <span className="font-semibold">Confirmed:</span>{' '}
+                                      <span>{new Date(handover.confirmed_at).toLocaleString()}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     )}
                   </div>

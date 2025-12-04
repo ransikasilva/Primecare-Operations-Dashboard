@@ -20,7 +20,9 @@ import {
   User,
   Package,
   Truck,
-  Timer
+  Timer,
+  Users,
+  RefreshCw
 } from "lucide-react";
 
 import { useState, useEffect } from "react";
@@ -97,6 +99,13 @@ export function CollectionCenterDetailModal({
   const [currentPage, setCurrentPage] = useState(1);
   const [ordersPerPage] = useState(10);
 
+  // Riders state
+  const [assignedRiders, setAssignedRiders] = useState<any[]>([]);
+  const [ridersLoading, setRidersLoading] = useState(false);
+
+  // Tab navigation state
+  const [activeTab, setActiveTab] = useState<'features' | 'orders' | 'riders'>('features');
+
   // Fetch features when modal opens with a center
   useEffect(() => {
     const fetchFeatures = async () => {
@@ -167,6 +176,55 @@ export function CollectionCenterDetailModal({
       setDateFrom(thirtyDaysAgo.toISOString().split('T')[0]);
     }
   }, [isOpen]);
+
+  // Reset riders when center changes or modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setAssignedRiders([]);
+      setRidersLoading(false);
+    }
+  }, [isOpen]);
+
+  // Fetch assigned riders when modal opens or center changes
+  useEffect(() => {
+    const fetchRiders = async () => {
+      if (!center?.id || !isOpen) {
+        setAssignedRiders([]);
+        return;
+      }
+
+      console.log('Fetching riders for center ID:', center.id);
+      // Reset riders first to avoid showing stale data
+      setAssignedRiders([]);
+      setRidersLoading(true);
+
+      try {
+        const response = await operationsApi.getRidersForCenter(center.id);
+        console.log('Full riders response:', JSON.stringify(response, null, 2));
+
+        if (response.success && response.data) {
+          // Handle nested data structure
+          const ridersData = Array.isArray(response.data)
+            ? response.data
+            : (response.data as any).riders || [];
+
+          console.log('Parsed riders data:', ridersData);
+          console.log('Number of riders:', ridersData.length);
+          setAssignedRiders(ridersData);
+        } else {
+          console.log('Response not successful or no data');
+          setAssignedRiders([]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch riders:', error);
+        setAssignedRiders([]);
+      } finally {
+        setRidersLoading(false);
+      }
+    };
+
+    fetchRiders();
+  }, [center?.id, isOpen]);
 
   // Calculate pagination
   const totalPages = Math.ceil(orders.length / ordersPerPage);
@@ -390,20 +448,79 @@ export function CollectionCenterDetailModal({
             </div>
           </div>
 
+          {/* Tab Navigation */}
+          <div className="border-b border-gray-200 bg-gray-50">
+            <div className="flex space-x-1 px-8">
+              <button
+                onClick={() => setActiveTab('features')}
+                className={`flex items-center space-x-2 px-6 py-4 font-medium transition-all duration-200 border-b-2 ${
+                  activeTab === 'features'
+                    ? 'border-green-500 text-green-600 bg-white'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <Settings className="w-5 h-5" />
+                <span>Features</span>
+                {pendingRequests > 0 && (
+                  <span className="ml-1 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-700 rounded-full">
+                    {pendingRequests}
+                  </span>
+                )}
+              </button>
+
+              <button
+                onClick={() => setActiveTab('orders')}
+                className={`flex items-center space-x-2 px-6 py-4 font-medium transition-all duration-200 border-b-2 ${
+                  activeTab === 'orders'
+                    ? 'border-green-500 text-green-600 bg-white'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <Package className="w-5 h-5" />
+                <span>Orders</span>
+                {orders.length > 0 && (
+                  <span className="ml-1 px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded-full">
+                    {orders.length}
+                  </span>
+                )}
+              </button>
+
+              <button
+                onClick={() => setActiveTab('riders')}
+                className={`flex items-center space-x-2 px-6 py-4 font-medium transition-all duration-200 border-b-2 ${
+                  activeTab === 'riders'
+                    ? 'border-green-500 text-green-600 bg-white'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <Users className="w-5 h-5" />
+                <span>Riders</span>
+                {assignedRiders.length > 0 && (
+                  <span className="ml-1 px-2 py-0.5 text-xs bg-green-100 text-green-700 rounded-full">
+                    {assignedRiders.length}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+
           {/* Content */}
-          <div className="p-8">
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-                <p className="text-gray-500">Loading features...</p>
-              </div>
-            ) : error ? (
-              <div className="text-center py-12">
-                <div className="text-red-500 text-lg font-medium mb-2">Error Loading Features</div>
-                <p className="text-gray-500">{error}</p>
-              </div>
-            ) : (
-              <>
+          <div>
+                {loading ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+                    <p className="text-gray-500">Loading features...</p>
+                  </div>
+                ) : error ? (
+                  <div className="text-center py-12">
+                    <div className="text-red-500 text-lg font-medium mb-2">Error Loading Features</div>
+                    <p className="text-gray-500">{error}</p>
+                  </div>
+                ) : null}
+
+            {/* Features Tab Content */}
+            {activeTab === 'features' && (
+              <div className="p-8">
                 {/* Feature Statistics */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                   <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-teal-200">
@@ -573,9 +690,12 @@ export function CollectionCenterDetailModal({
                     )}
                   </div>
                 </div>
+              </div>
+            )}
 
-                {/* Orders Section - Full Width */}
-                <div className="mt-8 pt-6 border-t border-gray-200">
+            {/* Orders Tab Content */}
+            {activeTab === 'orders' && (
+              <div className="p-8">
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-xl font-bold text-gray-800">Recent Orders</h3>
                     <div className="flex items-center space-x-4">
@@ -747,9 +867,132 @@ export function CollectionCenterDetailModal({
                       )}
                     </div>
                   )}
-                </div>
-              </>
+              </div>
             )}
+
+            {/* Riders Tab Content */}
+            {activeTab === 'riders' && (() => {
+              console.log('🎯 RIDERS TAB RENDERING');
+              console.log('   assignedRiders:', assignedRiders);
+              console.log('   ridersLoading:', ridersLoading);
+              console.log('   assignedRiders.length:', assignedRiders.length);
+              return (
+              <div className="p-8">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">Assigned Riders</h3>
+                  <p className="text-sm text-gray-500">
+                    Riders assigned to this collection center ({assignedRiders.length})
+                  </p>
+                </div>
+
+                {ridersLoading ? (
+                  <div className="p-8 text-center">
+                    <RefreshCw className="w-6 h-6 text-gray-400 animate-spin mx-auto mb-2" />
+                    <p className="text-gray-500">Loading riders...</p>
+                  </div>
+                ) : assignedRiders.length === 0 ? (
+                  <div className="p-12 text-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                    <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600 font-medium mb-2">No riders assigned</p>
+                    <p className="text-gray-500 text-sm">
+                      This collection center doesn't have any riders assigned yet
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {assignedRiders.map((rider: any) => (
+                      <div
+                        key={rider.rider_id}
+                        className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200"
+                      >
+                        <div className="flex items-start space-x-3 mb-3">
+                          {rider.profile_picture ? (
+                            <img
+                              src={rider.profile_picture}
+                              alt={rider.rider_name}
+                              className="w-12 h-12 rounded-full object-cover border-2 border-green-200 flex-shrink-0"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                              <User className="w-6 h-6 text-green-600" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-gray-800 truncate">{rider.rider_name}</p>
+                            <p className="text-xs text-gray-500 truncate">{rider.phone}</p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-500">Status:</span>
+                            <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                              rider.assignment_status === 'active'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-gray-100 text-gray-700'
+                            }`}>
+                              {rider.assignment_status === 'active' ? 'Active' : rider.assignment_status}
+                            </span>
+                          </div>
+
+                          {rider.total_pickups > 0 && (
+                            <>
+                              <div className="flex justify-between pt-2 border-t border-gray-100">
+                                <span className="text-gray-500">Pickups:</span>
+                                <span className="font-medium text-gray-800">{rider.total_pickups}</span>
+                              </div>
+                              {rider.avg_pickup_time_minutes && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">Avg Time:</span>
+                                  <span className="font-medium text-gray-800">
+                                    {Math.round(rider.avg_pickup_time_minutes)} min
+                                  </span>
+                                </div>
+                              )}
+                              {rider.rating && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">Rating:</span>
+                                  <span className="font-medium text-yellow-600">
+                                    ⭐ {Number(rider.rating).toFixed(1)}
+                                  </span>
+                                </div>
+                              )}
+                            </>
+                          )}
+
+                          <div className="flex justify-between pt-2 border-t border-gray-100">
+                            <span className="text-gray-500 text-xs">Assigned:</span>
+                            <span className="text-xs text-gray-600">
+                              {new Date(rider.assigned_at).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start space-x-3">
+                    <AlertTriangle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-blue-900">Read-Only View</p>
+                      <p className="text-sm text-blue-700 mt-1">
+                        Rider assignments can only be managed from the Hospital Dashboard.
+                        This view is for monitoring purposes only.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+              );
+            })()}
           </div>
         </div>
       </div>
