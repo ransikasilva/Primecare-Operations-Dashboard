@@ -612,20 +612,20 @@ export function CollectionCenterDetailModal({
                         const StatusIcon = statusConfig.icon;
                         
                         return (
-                          <div key={feature.feature_id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                            <div className="flex items-center space-x-4">
-                              <div className={`w-10 h-10 ${typeConfig.bg} rounded-lg flex items-center justify-center`}>
+                          <div key={feature.feature_id} className="flex items-start justify-between p-4 bg-gray-50 rounded-xl gap-4">
+                            <div className="flex items-start space-x-4 flex-1 min-w-0">
+                              <div className={`w-10 h-10 ${typeConfig.bg} rounded-lg flex items-center justify-center flex-shrink-0`}>
                                 <TypeIcon className={`w-5 h-5 ${typeConfig.className}`} />
                               </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1 flex-wrap">
                                   <p className="font-semibold text-gray-800">{feature.feature_name}</p>
-                                  <span className={`text-xs px-2 py-1 rounded-full ${typeConfig.bg} ${typeConfig.className} font-medium`}>
+                                  <span className={`text-xs px-2 py-1 rounded-full ${typeConfig.bg} ${typeConfig.className} font-medium whitespace-nowrap`}>
                                     {typeConfig.text}
                                   </span>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-1">{feature.description}</p>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
                                   <StatusIcon className={`w-4 h-4 ${statusConfig.className}`} />
                                   <span className={`text-sm ${statusConfig.className} font-medium`}>
                                     {statusConfig.text}
@@ -633,20 +633,20 @@ export function CollectionCenterDetailModal({
                                   {feature.enabled_at && (
                                     <span className="text-xs text-gray-500">• {new Date(feature.enabled_at).toLocaleDateString()}</span>
                                   )}
+                                  {feature.requires_approval && feature.status === 'requested' && (
+                                    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full font-medium whitespace-nowrap">
+                                      Action Required
+                                    </span>
+                                  )}
                                 </div>
                               </div>
                             </div>
-                            
-                            <div className="flex items-center gap-3">
-                              {feature.requires_approval && feature.status === 'requested' && (
-                                <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full font-medium">
-                                  Approval Required
-                                </span>
-                              )}
+
+                            <div className="flex items-center gap-3 flex-shrink-0">
                               <button
                                 onClick={() => handleFeatureToggle(feature.feature_id, feature.enabled)}
                                 disabled={processingFeature === feature.feature_id}
-                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
+                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex-shrink-0 ${
                                   feature.enabled
                                     ? 'bg-green-600'
                                     : 'bg-gray-200'
@@ -669,22 +669,26 @@ export function CollectionCenterDetailModal({
                       <div className="pt-6 border-t border-gray-200">
                         <h4 className="text-lg font-semibold text-gray-800 mb-4">Status Management</h4>
                         <div className="space-y-3">
-                          {['approved', 'rejected'].map((status) => (
+                          {/* Show Approve button only if not already approved */}
+                          {center.center_status !== 'approved' && (
                             <button
-                              key={status}
-                              onClick={() => handleStatusChange(status)}
-                              disabled={isProcessing || center.center_status === status}
-                              className={`w-full px-4 py-3 rounded-xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50 ${
-                                center.center_status === status
-                                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                  : status === 'approved'
-                                    ? 'bg-green-500 text-white hover:bg-green-600'
-                                    : 'bg-red-500 text-white hover:bg-red-600'
-                              }`}
+                              onClick={() => handleStatusChange('approved')}
+                              disabled={isProcessing}
+                              className="w-full px-4 py-3 rounded-xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
                             >
-                              {isProcessing ? 'Processing...' : `Mark as ${status.charAt(0).toUpperCase() + status.slice(1)}`}
+                              {isProcessing ? 'Processing...' : 'Mark as Approved'}
                             </button>
-                          ))}
+                          )}
+                          {/* Show Reject button only if not already rejected */}
+                          {center.center_status !== 'rejected' && (
+                            <button
+                              onClick={() => handleStatusChange('rejected')}
+                              disabled={isProcessing}
+                              className="w-full px-4 py-3 rounded-xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50 bg-red-500 text-white hover:bg-red-600"
+                            >
+                              {isProcessing ? 'Processing...' : 'Mark as Rejected'}
+                            </button>
+                          )}
                         </div>
                       </div>
                     )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useOperationsPendingApprovals, usePendingFeatureRequests, useSystemOverview, useApproveHospitalNetwork, useApproveCollectionCenterFinal, useEnableCenterFeature } from '@/hooks/useApi';
+import { useOperationsPendingApprovals, usePendingFeatureRequests, useSystemOverview, useApproveHospitalNetwork, useApproveCollectionCenterFinal, useEnableCenterFeature, useRejectApproval } from '@/hooks/useApi';
 import { useState } from 'react';
 import { ApprovalDetailModal } from '@/components/modals/ApprovalDetailModal';
 import {
@@ -315,7 +315,7 @@ export default function ApprovalsPage() {
       />
       
       {/* Independent Collection Centers Section */}
-      <IndependentCentersSection 
+      <IndependentCentersSection
         centers={independentCenters}
         collectionCenterMap={collectionCenterMap}
         expandedCenters={expandedCenters}
@@ -324,26 +324,41 @@ export default function ApprovalsPage() {
           const centerData = collectionCenterMap[center.id];
           // Get feature requests for this center
           const centerFeatureRequests = pendingFeatureRequests.filter((req: any) => req.center_id === center.id);
-          
+
           setSelectedEntity({
             id: center.id,
             type: 'collection_center',
             applicantName: center.name || centerData?.center_name,
             status: 'pending_operations_approval',
             appliedDate: center.created_at,
-            details: { 
-              ...centerData || center, 
-              featureRequests: centerFeatureRequests 
+            details: {
+              ...centerData || center,
+              featureRequests: centerFeatureRequests
             },
             priority: centerData?.center_type === 'independent' ? 'High' : 'Normal',
             requestingNetwork: centerData?.hospital_relationships?.[0]?.hospital_name || 'Multiple Networks'
           });
           setShowDetailModal(true);
         }}
+        onApprove={async (center: any) => {
+          setIsProcessing(true);
+          try {
+            console.log('Direct approval - collection center:', center.id, center.name);
+            await approveCenter(center.id, `Approved by operations: ${center.name || collectionCenterMap[center.id]?.center_name}`);
+            console.log('Collection center approved successfully');
+            await refetchApprovals();
+            alert(`${center.name || collectionCenterMap[center.id]?.center_name} has been approved successfully!`);
+          } catch (error) {
+            console.error('Approval failed:', error);
+            alert(`Approval failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          } finally {
+            setIsProcessing(false);
+          }
+        }}
       />
       
       {/* Dependent Collection Centers Section */}
-      <DependentCentersSection 
+      <DependentCentersSection
         centers={dependentCenters}
         collectionCenterMap={collectionCenterMap}
         expandedCenters={expandedCenters}
@@ -352,21 +367,36 @@ export default function ApprovalsPage() {
           const centerData = collectionCenterMap[center.id];
           // Get feature requests for this center
           const centerFeatureRequests = pendingFeatureRequests.filter((req: any) => req.center_id === center.id);
-          
+
           setSelectedEntity({
             id: center.id,
             type: 'collection_center',
             applicantName: center.name || centerData?.center_name,
             status: 'pending_operations_approval',
             appliedDate: center.created_at,
-            details: { 
-              ...centerData || center, 
-              featureRequests: centerFeatureRequests 
+            details: {
+              ...centerData || center,
+              featureRequests: centerFeatureRequests
             },
             priority: 'Normal',
             requestingNetwork: centerData?.hospital_relationships?.find((rel: any) => rel.is_main_hospital_relation)?.hospital_name || 'N/A'
           });
           setShowDetailModal(true);
+        }}
+        onApprove={async (center: any) => {
+          setIsProcessing(true);
+          try {
+            console.log('Direct approval - collection center:', center.id, center.name);
+            await approveCenter(center.id, `Approved by operations: ${center.name || collectionCenterMap[center.id]?.center_name}`);
+            console.log('Collection center approved successfully');
+            await refetchApprovals();
+            alert(`${center.name || collectionCenterMap[center.id]?.center_name} has been approved successfully!`);
+          } catch (error) {
+            console.error('Approval failed:', error);
+            alert(`Approval failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          } finally {
+            setIsProcessing(false);
+          }
         }}
       />
 
@@ -699,18 +729,20 @@ function MainHospitalsSection({
 }
 
 // Independent Collection Centers Section Component
-function IndependentCentersSection({ 
-  centers, 
+function IndependentCentersSection({
+  centers,
   collectionCenterMap,
-  expandedCenters, 
-  onToggleExpanded, 
-  onViewDetails 
+  expandedCenters,
+  onToggleExpanded,
+  onViewDetails,
+  onApprove
 }: {
   centers: any[];
   collectionCenterMap: any;
   expandedCenters: string[];
   onToggleExpanded: (centerId: string) => void;
   onViewDetails: (center: any) => void;
+  onApprove: (center: any) => Promise<void>;
 }) {
   return (
     <div 
@@ -826,7 +858,8 @@ function IndependentCentersSection({
                           <Eye className="w-4 h-4 text-green-600" />
                         </button>
                         
-                        <button 
+                        <button
+                          onClick={() => onApprove(center)}
                           className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 hover:transform hover:scale-105"
                           style={{
                             background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
@@ -899,18 +932,20 @@ function IndependentCentersSection({
 }
 
 // Dependent Collection Centers Section Component
-function DependentCentersSection({ 
-  centers, 
+function DependentCentersSection({
+  centers,
   collectionCenterMap,
-  expandedCenters, 
-  onToggleExpanded, 
-  onViewDetails 
+  expandedCenters,
+  onToggleExpanded,
+  onViewDetails,
+  onApprove
 }: {
   centers: any[];
   collectionCenterMap: any;
   expandedCenters: string[];
   onToggleExpanded: (centerId: string) => void;
   onViewDetails: (center: any) => void;
+  onApprove: (center: any) => Promise<void>;
 }) {
   return (
     <div 
@@ -1032,7 +1067,8 @@ function DependentCentersSection({
                           <Eye className="w-4 h-4 text-purple-600" />
                         </button>
                         
-                        <button 
+                        <button
+                          onClick={() => onApprove(center)}
                           className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 hover:transform hover:scale-105"
                           style={{
                             background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',

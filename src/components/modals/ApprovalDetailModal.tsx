@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRejectApproval } from "@/hooks/useApi";
 import {
   X,
   MapPin,
@@ -55,6 +56,7 @@ export function ApprovalDetailModal({
   const [rejectionReason, setRejectionReason] = useState("");
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [selectedFeatures, setSelectedFeatures] = useState<{ [key: string]: boolean }>({});
+  const { rejectApproval, loading: rejectingApproval } = useRejectApproval();
 
   // Initialize selected features when item changes
   useEffect(() => {
@@ -212,10 +214,23 @@ export function ApprovalDetailModal({
       alert('Please provide a rejection reason');
       return;
     }
-    await onReject(item.id, item.applicantName, rejectionReason);
-    setShowRejectForm(false);
-    setRejectionReason("");
-    onClose();
+
+    try {
+      // Call the rejection API directly
+      await rejectApproval(item.type, item.id, rejectionReason);
+
+      // Also call the parent onReject for any additional handling
+      await onReject(item.id, item.applicantName, rejectionReason);
+
+      setShowRejectForm(false);
+      setRejectionReason("");
+      onClose();
+
+      alert(`${item.applicantName} has been rejected successfully!`);
+    } catch (error) {
+      console.error('Rejection failed:', error);
+      alert(`Rejection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   };
 
   const renderTypeSpecificDetails = () => {
@@ -814,41 +829,47 @@ export function ApprovalDetailModal({
             {renderTypeSpecificDetails()}
 
             {/* Action Buttons */}
-            {(item.status === "pending_operations_approval" || item.status === "pending") && (
+            {(item.status === "pending_operations_approval" || item.status === "pending" || item.status === "rejected" || item.status === "approved") && (
               <div className="mt-8 pt-6 border-t border-gray-200">
                 {!showRejectForm ? (
                   <div className="flex justify-end space-x-4">
-                    <button
-                      onClick={() => setShowRejectForm(true)}
-                      disabled={isProcessing}
-                      className="px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50"
-                      style={{
-                        backgroundColor: '#ef4444',
-                        color: '#ffffff',
-                        boxShadow: '0 8px 32px rgba(239, 68, 68, 0.3)'
-                      }}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <XCircle className="w-5 h-5" />
-                        <span>Reject Application</span>
-                      </div>
-                    </button>
-                    
-                    <button
-                      onClick={handleApprove}
-                      disabled={isProcessing}
-                      className="px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50"
-                      style={{
-                        backgroundColor: '#10b981',
-                        color: '#ffffff',
-                        boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)'
-                      }}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle2 className="w-5 h-5" />
-                        <span>{isProcessing ? 'Processing...' : 'Give Final Approval'}</span>
-                      </div>
-                    </button>
+                    {/* Show Reject button only if not already rejected */}
+                    {item.status !== "rejected" && (
+                      <button
+                        onClick={() => setShowRejectForm(true)}
+                        disabled={isProcessing}
+                        className="px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50"
+                        style={{
+                          backgroundColor: '#ef4444',
+                          color: '#ffffff',
+                          boxShadow: '0 8px 32px rgba(239, 68, 68, 0.3)'
+                        }}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <XCircle className="w-5 h-5" />
+                          <span>Reject Application</span>
+                        </div>
+                      </button>
+                    )}
+
+                    {/* Show Approve button only if not already approved */}
+                    {item.status !== "approved" && (
+                      <button
+                        onClick={handleApprove}
+                        disabled={isProcessing}
+                        className="px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50"
+                        style={{
+                          backgroundColor: '#10b981',
+                          color: '#ffffff',
+                          boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)'
+                        }}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle2 className="w-5 h-5" />
+                          <span>{isProcessing ? 'Processing...' : 'Give Final Approval'}</span>
+                        </div>
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -882,7 +903,7 @@ export function ApprovalDetailModal({
                       
                       <button
                         onClick={handleReject}
-                        disabled={isProcessing || !rejectionReason.trim()}
+                        disabled={isProcessing || rejectingApproval || !rejectionReason.trim()}
                         className="px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50"
                         style={{
                           backgroundColor: '#ef4444',
@@ -892,7 +913,7 @@ export function ApprovalDetailModal({
                       >
                         <div className="flex items-center space-x-2">
                           <XCircle className="w-5 h-5" />
-                          <span>{isProcessing ? 'Rejecting...' : 'Confirm Rejection'}</span>
+                          <span>{(isProcessing || rejectingApproval) ? 'Rejecting...' : 'Confirm Rejection'}</span>
                         </div>
                       </button>
                     </div>

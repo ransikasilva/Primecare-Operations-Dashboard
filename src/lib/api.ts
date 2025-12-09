@@ -175,35 +175,13 @@ class OperationsApiClient {
   
   // Dashboard metrics - Operations hospital statistics
   async getOperationsDashboard() {
-    try {
-      return await this.request<{
-        statistics: {
-          networks: {
-            total_networks: number;
-            pending_approval: number;
-            approved_networks: number;
-          };
-          hospitals: {
-            total_hospitals: number;
-            main_hospitals: number;
-            regional_hospitals: number;
-            active_hospitals: number;
-            inactive_hospitals: number;
-          };
-        };
-      }>('/api/hospitals/statistics');
-    } catch (error) {
-      console.warn('Operations dashboard falling back to mock data:', error);
-      return {
-        success: true,
-        data: {
-          active_orders: { value: 847, previous_value: 792, sparkline: [750, 780, 820, 790, 830, 810, 847] },
-          available_riders: { value: 234, previous_value: 218, sparkline: [200, 210, 225, 215, 230, 228, 234] },
-          completed_today: { value: 12, previous_value: 11, sparkline: [10, 10, 11, 11, 11, 12, 12] },
-          sla_compliance: { value: 98, previous_value: 96, sparkline: [94, 95, 97, 96, 98, 97, 98] }
-        }
-      };
-    }
+    return await this.request<{
+      hospital_networks: any[];
+      collection_centers: any[];
+      riders: any[];
+      totalActiveOrders: number;
+      onlineRiders: number;
+    }>('/api/operations/system/overview');
   }
 
   // Hospital networks - all networks visible to operations
@@ -714,9 +692,9 @@ class OperationsApiClient {
   }
 
   async enableCenterFeature(centerId: string, feature: string, enabled: boolean, notes?: string) {
-    return this.request(`/api/collection-centers/${centerId}/features`, {
+    return this.request(`/api/operations/centers/${centerId}/features/${feature}`, {
       method: 'PATCH',
-      body: JSON.stringify({ feature, enabled, notes }),
+      body: JSON.stringify({ enabled, notes }),
     });
   }
 

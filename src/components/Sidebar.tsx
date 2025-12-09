@@ -39,12 +39,11 @@ export function Sidebar() {
   
   // Only use data on dashboard page
   const isDashboardPage = pathname === '/dashboard';
-  
-  // Calculate counts only if we're on dashboard and have data
-  const totalActiveOrders = isDashboardPage && dashboardData?.data?.totalActiveOrders || 0;
-  const onlineRiders = isDashboardPage && dashboardData?.data?.onlineRiders || 0;
-  const pendingApprovals = pendingData?.data?.total || 0;
-  const systemAlerts = isDashboardPage && dashboardData?.data?.systemAlerts || 0;
+
+  // Calculate counts from API data (no fallback data)
+  const totalActiveOrders = dashboardData?.data?.totalActiveOrders ?? 0;
+  const onlineRiders = dashboardData?.data?.onlineRiders ?? 0;
+  const pendingApprovals = pendingData?.data?.total ?? 0;
 
   const navigation = [
     {
