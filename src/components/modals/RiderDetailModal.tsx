@@ -100,6 +100,7 @@ export function RiderDetailModal({
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [ordersPerPage] = useState(10);
+  const [imagePreview, setImagePreview] = useState<{ url: string; title: string } | null>(null);
 
   // Fetch orders when modal opens or filters change
   const fetchOrders = async () => {
@@ -920,7 +921,8 @@ export function RiderDetailModal({
                         <img
                           src={rider.profile_image_url || rider.profile_picture}
                           alt="Profile"
-                          className="w-full h-32 object-cover rounded-lg"
+                          className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => setImagePreview({ url: rider.profile_image_url || rider.profile_picture!, title: 'Profile Picture' })}
                           onError={(e) => {
                             // Fallback to no image state if loading fails
                             const container = e.currentTarget.parentElement;
@@ -962,7 +964,8 @@ export function RiderDetailModal({
                         <img
                           src={rider.license_image_url || rider.driver_license_front}
                           alt="Driver License Front"
-                          className="w-full h-32 object-cover rounded-lg"
+                          className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => setImagePreview({ url: rider.license_image_url || rider.driver_license_front!, title: 'Driver License (Front)' })}
                           onError={(e) => {
                             const container = e.currentTarget.parentElement;
                             if (container) {
@@ -1003,7 +1006,8 @@ export function RiderDetailModal({
                         <img
                           src={rider.license_image_back_url || rider.driver_license_back}
                           alt="Driver License Back"
-                          className="w-full h-32 object-cover rounded-lg"
+                          className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => setImagePreview({ url: rider.license_image_back_url || rider.driver_license_back!, title: 'Driver License (Back)' })}
                           onError={(e) => {
                             const container = e.currentTarget.parentElement;
                             if (container) {
@@ -1044,7 +1048,8 @@ export function RiderDetailModal({
                         <img
                           src={rider.nic_image_url || rider.nic_front}
                           alt="NIC Front"
-                          className="w-full h-32 object-cover rounded-lg"
+                          className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => setImagePreview({ url: rider.nic_image_url || rider.nic_front!, title: 'NIC (Front)' })}
                           onError={(e) => {
                             const container = e.currentTarget.parentElement;
                             if (container) {
@@ -1085,7 +1090,8 @@ export function RiderDetailModal({
                         <img
                           src={rider.nic_image_back_url || rider.nic_back}
                           alt="NIC Back"
-                          className="w-full h-32 object-cover rounded-lg"
+                          className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => setImagePreview({ url: rider.nic_image_back_url || rider.nic_back!, title: 'NIC (Back)' })}
                           onError={(e) => {
                             const container = e.currentTarget.parentElement;
                             if (container) {
@@ -1182,6 +1188,34 @@ export function RiderDetailModal({
           </div>
         </div>
       </div>
+
+      {/* Image Preview Modal */}
+      {imagePreview && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-90 z-[60] flex items-center justify-center p-4"
+          onClick={() => setImagePreview(null)}
+        >
+          <div className="relative max-w-6xl max-h-screen">
+            <button
+              onClick={() => setImagePreview(null)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="text-white text-lg font-semibold mb-4 text-center">
+              {imagePreview.title}
+            </div>
+            <img
+              src={imagePreview.url}
+              alt={imagePreview.title}
+              className="max-w-full max-h-[80vh] object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
