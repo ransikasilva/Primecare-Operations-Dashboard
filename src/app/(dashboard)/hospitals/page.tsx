@@ -403,7 +403,10 @@ function HospitalNetworkCard({
       }}
     >
       <div className="p-6">
-        <div className="flex items-center justify-between mb-4">
+        <div
+          className="flex items-center justify-between mb-4 cursor-pointer hover:bg-gray-50 -mx-6 -mt-6 px-6 pt-6 pb-4 rounded-t-2xl transition-colors"
+          onClick={() => onViewMainHospital(network)}
+        >
           <div className="flex items-start gap-4">
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center"
@@ -479,7 +482,7 @@ function HospitalNetworkCard({
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
             {network.regionalHospitals?.length > 0 && (
               <button
                 onClick={() => setExpanded(!expanded)}
@@ -519,7 +522,11 @@ function HospitalNetworkCard({
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {network.regionalHospitals.map((hospital: any, index: number) => (
-                <div key={index} className="p-3 rounded-lg border bg-teal-50 border-teal-100">
+                <div
+                  key={index}
+                  className="p-3 rounded-lg border bg-teal-50 border-teal-100 cursor-pointer hover:bg-teal-100 transition-colors"
+                  onClick={() => onViewRegionalHospital({...hospital, network_name: network.network_name, network_id: network.network_id})}
+                >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <Building className="w-4 h-4 text-teal-600" />
@@ -528,7 +535,7 @@ function HospitalNetworkCard({
                         Regional
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                         hospital.status === 'active'
                           ? 'bg-green-100 text-green-700'
@@ -543,7 +550,7 @@ function HospitalNetworkCard({
                       </span>
                       <button
                         onClick={() => onViewRegionalHospital({...hospital, network_name: network.network_name, network_id: network.network_id})}
-                        className="p-1 hover:bg-teal-100 rounded-lg transition-colors"
+                        className="p-1 hover:bg-teal-200 rounded-lg transition-colors"
                         title="View Regional Hospital Details"
                       >
                         <Eye className="w-3 h-3 text-teal-600" />

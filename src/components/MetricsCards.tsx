@@ -58,12 +58,12 @@ const getMetricTemplate = () => [
     key: "totalRiders"
   },
   {
-    title: "Total Regional Hospitals",
+    title: "Total Collection Centers",
     icon: Building2,
     gradient: ["#4ECDC4", "#7BBFEA"],
     type: "number" as const,
-    description: "Regional hospitals across networks",
-    key: "totalRegionalHospitals"
+    description: "Collection centers nationwide",
+    key: "totalCollectionCenters"
   }
 ];
 
@@ -209,7 +209,12 @@ export function MetricsCards() {
     : [];
 
   const totalMainHospitals = allHospitals.filter((h: any) => h.is_main_hospital === true).length;
-  const totalRegionalHospitals = allHospitals.filter((h: any) => h.is_main_hospital === false).length;
+
+  // Get collection centers from system data
+  const allCollectionCenters = Array.isArray((systemData as any)?.collection_centers)
+    ? (systemData as any).collection_centers
+    : [];
+  const totalCollectionCenters = allCollectionCenters.length;
 
   const totalRiders = allRiders.filter((rider: any) => rider.rider_status === 'approved').length;
 
@@ -218,7 +223,7 @@ export function MetricsCards() {
     active_orders: { value: 0, previous_value: 0, sparkline: [0, 0, 0, 0, 0, 0, 0] },
     main_hospitals: { value: 0, previous_value: 0, sparkline: [0, 0, 0, 0, 0, 0, 0] },
     total_riders: { value: 0, previous_value: 0, sparkline: [0, 0, 0, 0, 0, 0, 0] },
-    regional_hospitals: { value: 0, previous_value: 0, sparkline: [0, 0, 0, 0, 0, 0, 0] }
+    collection_centers: { value: 0, previous_value: 0, sparkline: [0, 0, 0, 0, 0, 0, 0] }
   };
 
   // Use real data when available, fallback to defaults
@@ -238,16 +243,16 @@ export function MetricsCards() {
       previous_value: Math.max(0, totalRiders - 3),
       sparkline: [0, 0, 0, 0, 0, 0, totalRiders]
     },
-    totalRegionalHospitals: {
-      value: totalRegionalHospitals,
-      previous_value: Math.max(0, totalRegionalHospitals - 2),
-      sparkline: [0, 0, 0, 0, 0, 0, totalRegionalHospitals]
+    totalCollectionCenters: {
+      value: totalCollectionCenters,
+      previous_value: Math.max(0, totalCollectionCenters - 2),
+      sparkline: [0, 0, 0, 0, 0, 0, totalCollectionCenters]
     }
   } : {
     totalActiveOrders: defaultMetrics.active_orders,
     totalMainHospitals: defaultMetrics.main_hospitals,
     totalRiders: defaultMetrics.total_riders,
-    totalRegionalHospitals: defaultMetrics.regional_hospitals
+    totalCollectionCenters: defaultMetrics.collection_centers
   };
   
   if (loading) {

@@ -77,97 +77,86 @@ export function Header() {
       try {
         const query = searchQuery.toLowerCase();
         const results: any[] = [];
-        const token = apiClient.currentToken;
-        const headers: HeadersInit = {
-          'Content-Type': 'application/json'
-        };
-        if (token) {
-          headers['Authorization'] = `Bearer ${token}`;
-        }
 
-        // Search hospitals/networks
+        // Search using apiClient methods
         try {
-          const hospitalsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/operations/hospitals`, { headers });
-          if (hospitalsRes.ok) {
-            const hospitalsData = await hospitalsRes.json();
-            if (hospitalsData?.data?.networks) {
-              hospitalsData.data.networks.forEach((network: any) => {
-                if (network.network_name?.toLowerCase().includes(query)) {
+          // Search hospital networks
+          const systemOverview = await apiClient.getSystemOverview();
+          const systemData: any = systemOverview?.data?.data || systemOverview?.data || {};
+          if (systemOverview?.success && systemData.hospital_networks) {
+            systemData.hospital_networks.forEach((network: any) => {
+              if (network.network_name?.toLowerCase().includes(query)) {
+                results.push({
+                  type: 'hospital',
+                  id: network.id,
+                  title: network.network_name,
+                  subtitle: `${network.hospitals?.length || 0} hospitals • Network`,
+                  icon: Hospital
+                });
+              }
+              // Also search individual hospitals
+              network.hospitals?.forEach((hospital: any) => {
+                if (hospital.name?.toLowerCase().includes(query)) {
                   results.push({
                     type: 'hospital',
-                    id: network.id,
-                    title: network.network_name,
-                    subtitle: `${network.total_hospitals || 0} hospitals • ${network.region || 'Unknown Region'}`,
+                    id: hospital.id,
+                    title: hospital.name,
+                    subtitle: `${hospital.city || 'Unknown'} • ${network.network_name}`,
                     icon: Hospital
                   });
                 }
               });
-            }
+            });
           }
-        } catch (e) { console.error('Hospital search error:', e); }
 
-        // Search collection centers
-        try {
-          const centersRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/operations/collection-centers`, { headers });
-          if (centersRes.ok) {
-            const centersData = await centersRes.json();
-            if (centersData?.data?.centers) {
-              centersData.data.centers.forEach((center: any) => {
-                if (center.center_name?.toLowerCase().includes(query)) {
-                  results.push({
-                    type: 'center',
-                    id: center.id,
-                    title: center.center_name,
-                    subtitle: `${center.hospital_name || 'Unknown Hospital'}`,
-                    icon: Building2
-                  });
-                }
-              });
-            }
+          // Search collection centers
+          if (systemOverview?.success && systemData.collection_centers) {
+            systemData.collection_centers.forEach((center: any) => {
+              if (center.center_name?.toLowerCase().includes(query)) {
+                results.push({
+                  type: 'center',
+                  id: center.id,
+                  title: center.center_name,
+                  subtitle: center.hospital_relationships?.[0]?.hospital_name || 'Collection Center',
+                  icon: Building2
+                });
+              }
+            });
           }
-        } catch (e) { console.error('Center search error:', e); }
 
-        // Search riders
-        try {
-          const ridersRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/operations/riders`, { headers });
-          if (ridersRes.ok) {
-            const ridersData = await ridersRes.json();
-            if (ridersData?.data?.riders) {
-              ridersData.data.riders.forEach((rider: any) => {
-                if (rider.rider_name?.toLowerCase().includes(query) || rider.rider_id?.toLowerCase().includes(query)) {
-                  results.push({
-                    type: 'rider',
-                    id: rider.id,
-                    title: rider.rider_name,
-                    subtitle: `${rider.hospital_name || 'Unknown Hospital'} • ${rider.availability_status || 'Unknown'}`,
-                    icon: UsersIcon
-                  });
-                }
-              });
-            }
+          // Search riders
+          if (systemOverview?.success && systemData.riders) {
+            systemData.riders.forEach((rider: any) => {
+              if (rider.rider_name?.toLowerCase().includes(query) || rider.phone?.includes(query)) {
+                results.push({
+                  type: 'rider',
+                  id: rider.id,
+                  title: rider.rider_name,
+                  subtitle: `${rider.hospital_affiliation?.hospital_name || 'Unknown Hospital'} • ${rider.availability_status || 'Unknown'}`,
+                  icon: UsersIcon
+                });
+              }
+            });
           }
-        } catch (e) { console.error('Rider search error:', e); }
 
-        // Search orders
-        try {
-          const ordersRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/operations/orders?limit=50`, { headers });
-          if (ordersRes.ok) {
-            const ordersData = await ordersRes.json();
-            if (ordersData?.data?.orders) {
-              ordersData.data.orders.forEach((order: any) => {
-                if (order.order_number?.toLowerCase().includes(query)) {
-                  results.push({
-                    type: 'order',
-                    id: order.id,
-                    title: order.order_number,
-                    subtitle: `${order.center_name || 'Unknown'} → ${order.hospital_name || 'Unknown'}`,
-                    icon: Package
-                  });
-                }
-              });
-            }
+          // Search orders
+          const ordersResponse = await apiClient.getAllOrders({ search: query, limit: 20 });
+          if (ordersResponse?.success && ordersResponse?.data?.orders) {
+            ordersResponse.data.orders.forEach((order: any) => {
+              if (order.order_number?.toLowerCase().includes(query)) {
+                results.push({
+                  type: 'order',
+                  id: order.id,
+                  title: order.order_number,
+                  subtitle: `${order.center_name || 'Unknown'} → ${order.hospital_name || 'Unknown'}`,
+                  icon: Package
+                });
+              }
+            });
           }
-        } catch (e) { console.error('Order search error:', e); }
+        } catch (e) {
+          console.error('Search error:', e);
+        }
 
         setSearchResults(results.slice(0, 10)); // Limit to 10 results
       } catch (error) {
@@ -288,7 +277,7 @@ export function Header() {
               placeholder="Search hospitals, centers, riders, orders..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-2xl border-0 text-gray-800 placeholder-gray-500 transition-all duration-300 focus:outline-none focus:ring-2"
+              className="w-full pl-12 pr-4 py-3 rounded-2xl border-0 text-gray-800 placeholder-gray-500 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
               style={{
                 background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.8) 100%)',
                 boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5)',

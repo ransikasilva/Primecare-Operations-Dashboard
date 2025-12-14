@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useSystemOverview, useSystemAlerts, useAllOrders } from '@/hooks/useApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { HospitalNetworkDetailModal } from '@/components/HospitalNetworkDetailModal';
+import { OrderDetailModal } from '@/components/modals/OrderDetailModal';
 import {
   Building2,
   Bell,
@@ -34,6 +35,8 @@ export default function DashboardPage() {
   const [selectedNetworkId, setSelectedNetworkId] = useState<string | null>(null);
   const [selectedNetworkData, setSelectedNetworkData] = useState<any>(null);
   const [showNetworkModal, setShowNetworkModal] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [showOrderModal, setShowOrderModal] = useState(false);
   const [expandedNetworks, setExpandedNetworks] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -428,15 +431,15 @@ export default function DashboardPage() {
                           <div
                             className="flex items-center space-x-2 px-4 py-2 rounded-full border"
                             style={{
-                              background: hospital.status === 'active' ? getHospitalStatusConfig('Excellent').bg : getHospitalStatusConfig('Watch').bg,
-                              borderColor: hospital.status === 'active' ? getHospitalStatusConfig('Excellent').border : getHospitalStatusConfig('Watch').border
+                              background: (hospital.status === 'active' || hospital.status === 'approved') ? getHospitalStatusConfig('Excellent').bg : getHospitalStatusConfig('Watch').bg,
+                              borderColor: (hospital.status === 'active' || hospital.status === 'approved') ? getHospitalStatusConfig('Excellent').border : getHospitalStatusConfig('Watch').border
                             }}
                           >
                             <span
                               className="text-sm font-bold"
-                              style={{ color: hospital.status === 'active' ? getHospitalStatusConfig('Excellent').color : getHospitalStatusConfig('Watch').color }}
+                              style={{ color: (hospital.status === 'active' || hospital.status === 'approved') ? getHospitalStatusConfig('Excellent').color : getHospitalStatusConfig('Watch').color }}
                             >
-                              {hospital.status === 'active' ? 'Active' : 'Inactive'}
+                              {(hospital.status === 'active' || hospital.status === 'approved') ? 'Active' : 'Inactive'}
                             </span>
                           </div>
 
@@ -617,18 +620,20 @@ export default function DashboardPage() {
                           </div>
                         </div>
 
-                        <Link href={`/orders`}>
-                          <button
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:transform hover:scale-105"
-                            style={{
-                              background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
-                              boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
-                            }}
-                          >
-                            <Eye className="w-4 h-4 text-white" />
-                            <span className="text-white font-semibold">View</span>
-                          </button>
-                        </Link>
+                        <button
+                          onClick={() => {
+                            setSelectedOrderId(order.id);
+                            setShowOrderModal(true);
+                          }}
+                          className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:transform hover:scale-105"
+                          style={{
+                            background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)',
+                            boxShadow: '0 8px 32px rgba(78, 205, 196, 0.3)'
+                          }}
+                        >
+                          <Eye className="w-4 h-4 text-white" />
+                          <span className="text-white font-semibold">View</span>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -649,6 +654,18 @@ export default function DashboardPage() {
           }}
           networkId={selectedNetworkId || ''}
           networkData={selectedNetworkData}
+        />
+      )}
+
+      {/* Order Detail Modal */}
+      {showOrderModal && selectedOrderId && (
+        <OrderDetailModal
+          isOpen={showOrderModal}
+          onClose={() => {
+            setShowOrderModal(false);
+            setSelectedOrderId(null);
+          }}
+          orderId={selectedOrderId}
         />
       )}
     </div>

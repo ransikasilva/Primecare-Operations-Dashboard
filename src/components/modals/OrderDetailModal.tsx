@@ -109,8 +109,10 @@ interface OrderDetails {
     id: string;
     original_rider_id: string;
     original_rider_name: string;
+    original_rider_phone?: string;
     new_rider_id?: string;
     new_rider_name?: string;
+    new_rider_phone?: string;
     handover_reason: string;
     handover_location?: {
       lat: number;
@@ -296,7 +298,22 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
           },
           qr_scans: (response.data as any).qr_scans || [],
           location_tracking: (response.data as any).location_tracking || [],
-          handover_history: (response.data as any).handover_history || []
+          handover_history: ((response.data as any).handover_history || []).map((h: any) => ({
+            id: h.handover_id,
+            original_rider_id: h.original_rider?.id,
+            original_rider_name: h.original_rider?.name,
+            original_rider_phone: h.original_rider?.phone,
+            new_rider_id: h.new_rider?.id,
+            new_rider_name: h.new_rider?.name,
+            new_rider_phone: h.new_rider?.phone,
+            handover_reason: h.reason,
+            handover_location: h.location,
+            status: h.status,
+            notes: h.notes,
+            initiated_at: h.timeline?.initiated_at,
+            accepted_at: h.timeline?.accepted_at,
+            confirmed_at: h.timeline?.confirmed_at
+          }))
         };
         setOrderDetails(mappedData);
       } else {
@@ -770,13 +787,17 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                                   <div className="bg-white bg-opacity-60 p-3 rounded-lg">
                                     <label className="text-xs text-gray-600 font-medium">Original Rider</label>
                                     <p className="font-semibold text-gray-900 mt-1">{handover.original_rider_name}</p>
-                                    <p className="text-sm text-gray-600">ID: {handover.original_rider_id}</p>
+                                    {handover.original_rider_phone && (
+                                      <p className="text-sm text-gray-600">{handover.original_rider_phone}</p>
+                                    )}
                                   </div>
                                   {handover.new_rider_name && (
                                     <div className="bg-white bg-opacity-60 p-3 rounded-lg">
                                       <label className="text-xs text-gray-600 font-medium">New Rider</label>
                                       <p className="font-semibold text-gray-900 mt-1">{handover.new_rider_name}</p>
-                                      <p className="text-sm text-gray-600">ID: {handover.new_rider_id}</p>
+                                      {handover.new_rider_phone && (
+                                        <p className="text-sm text-gray-600">{handover.new_rider_phone}</p>
+                                      )}
                                     </div>
                                   )}
                                 </div>
@@ -845,44 +866,194 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                     </h3>
 
                     <div className="relative">
-                      {generateStatusHistory(orderDetails.order).map((event, index) => {
-                        const isLast = index === generateStatusHistory(orderDetails.order).length - 1;
-                        const statusConfig = getStatusConfig(event.status);
-                        const StatusIcon = statusConfig.icon;
+                      {/* Vertical timeline line */}
+                      <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200"></div>
 
-                        return (
-                          <div key={event.id} className="relative flex items-start space-x-4 pb-8">
-                            {/* Timeline line */}
-                            {!isLast && (
-                              <div className="absolute left-6 top-12 w-0.5 h-full bg-gray-200" />
-                            )}
-
-                            {/* Status icon */}
-                            <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${statusConfig.bg}`}>
-                              <StatusIcon className={`w-6 h-6 ${statusConfig.color}`} />
+                      <div className="space-y-6">
+                        {/* Order Created */}
+                        {orderDetails.order.created_at && (
+                          <div className="relative pl-16">
+                            <div className="absolute left-0 w-12 h-12 rounded-full bg-blue-100 border-4 border-white flex items-center justify-center shadow-lg">
+                              <FileText className="w-5 h-5 text-blue-600" />
                             </div>
-
-                            {/* Event details */}
-                            <div className="flex-grow bg-white p-4 rounded-xl border border-gray-200">
-                              <div className="flex items-center justify-between mb-2">
-                                <h4 className={`font-semibold ${statusConfig.color}`}>
-                                  {statusConfig.text}
-                                </h4>
-                                <time className="text-sm text-gray-500">
-                                  {new Date(event.changed_at).toLocaleString()}
-                                </time>
+                            <div className="bg-white p-5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="font-bold text-gray-900 text-lg">📄 Order Created</h4>
+                                <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                                  {new Date(orderDetails.order.created_at).toLocaleString()}
+                                </span>
                               </div>
-
-
-                              {event.notes && (
-                                <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded">
-                                  {event.notes}
+                              <p className="text-sm text-gray-700 mb-2">
+                                <span className="font-semibold text-blue-600">{orderDetails.order.center_name}</span> created order for sample delivery
+                              </p>
+                              {orderDetails.order.center_phone && (
+                                <p className="text-xs text-gray-600 flex items-center gap-1">
+                                  <Phone className="w-3 h-3" />
+                                  Contact: {orderDetails.order.center_phone}
                                 </p>
                               )}
                             </div>
                           </div>
-                        );
-                      })}
+                        )}
+
+                        {/* Rider Assigned */}
+                        {orderDetails.order.assigned_at && orderDetails.order.rider_name && (
+                          <div className="relative pl-16">
+                            <div className="absolute left-0 w-12 h-12 rounded-full bg-purple-100 border-4 border-white flex items-center justify-center shadow-lg">
+                              <User className="w-5 h-5 text-purple-600" />
+                            </div>
+                            <div className="bg-white p-5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="font-bold text-gray-900 text-lg">👤 Rider Assigned</h4>
+                                <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                                  {new Date(orderDetails.order.assigned_at).toLocaleString()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-700 mb-2">
+                                Order assigned to rider <span className="font-semibold text-purple-600">{orderDetails.order.rider_name}</span>
+                              </p>
+                              <div className="flex flex-wrap gap-2 text-xs">
+                                {orderDetails.order.rider_phone && (
+                                  <span className="text-gray-600 bg-gray-50 px-2 py-1 rounded flex items-center gap-1">
+                                    <Phone className="w-3 h-3" />
+                                    {orderDetails.order.rider_phone}
+                                  </span>
+                                )}
+                                {orderDetails.order.vehicle_number && (
+                                  <span className="text-gray-600 bg-gray-50 px-2 py-1 rounded flex items-center gap-1">
+                                    <Truck className="w-3 h-3" />
+                                    {orderDetails.order.vehicle_number}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Sample Picked Up */}
+                        {orderDetails.order.picked_up_at && (
+                          <div className="relative pl-16">
+                            <div className="absolute left-0 w-12 h-12 rounded-full bg-teal-100 border-4 border-white flex items-center justify-center shadow-lg">
+                              <Package className="w-5 h-5 text-teal-600" />
+                            </div>
+                            <div className="bg-white p-5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="font-bold text-gray-900 text-lg">📦 Sample Picked Up</h4>
+                                <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                                  {new Date(orderDetails.order.picked_up_at).toLocaleString()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-700">
+                                <span className="font-semibold text-teal-600">{orderDetails.order.rider_name}</span> picked up samples from{' '}
+                                <span className="font-semibold text-blue-600">{orderDetails.order.center_name}</span>
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Handovers */}
+                        {orderDetails.handover_history && orderDetails.handover_history.length > 0 &&
+                         orderDetails.handover_history.map((handover, index) => {
+                           if (handover.status === 'confirmed' && handover.confirmed_at) {
+                             return (
+                               <div key={handover.id || index} className="relative pl-16">
+                                 <div className="absolute left-0 w-12 h-12 rounded-full bg-orange-100 border-4 border-white flex items-center justify-center shadow-lg">
+                                   <Users className="w-5 h-5 text-orange-600" />
+                                 </div>
+                                 <div className="bg-white p-5 rounded-xl border-2 border-orange-300 shadow-sm hover:shadow-md transition-shadow">
+                                   <div className="flex items-center justify-between mb-3">
+                                     <h4 className="font-bold text-gray-900 text-lg">🔄 Handover Completed</h4>
+                                     <span className="text-sm text-gray-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
+                                       {new Date(handover.confirmed_at).toLocaleString()}
+                                     </span>
+                                   </div>
+                                   <p className="text-sm text-gray-700 mb-3">
+                                     <span className="font-semibold text-orange-600">{handover.original_rider_name}</span>
+                                     {handover.original_rider_phone && (
+                                       <span className="text-xs text-gray-600"> ({handover.original_rider_phone})</span>
+                                     )}
+                                     {' '}handed over to{' '}
+                                     <span className="font-semibold text-orange-600">{handover.new_rider_name}</span>
+                                     {handover.new_rider_phone && (
+                                       <span className="text-xs text-gray-600"> ({handover.new_rider_phone})</span>
+                                     )}
+                                   </p>
+                                   {handover.handover_reason && (
+                                     <p className="text-xs text-gray-600 bg-orange-50 p-2 rounded border border-orange-100">
+                                       <span className="font-medium">Reason:</span> {handover.handover_reason}
+                                     </p>
+                                   )}
+                                 </div>
+                               </div>
+                             );
+                           }
+                           return null;
+                         })}
+
+                        {/* In Transit */}
+                        {orderDetails.order.delivery_started_at && (
+                          <div className="relative pl-16">
+                            <div className="absolute left-0 w-12 h-12 rounded-full bg-blue-100 border-4 border-white flex items-center justify-center shadow-lg">
+                              <Truck className="w-5 h-5 text-blue-600" />
+                            </div>
+                            <div className="bg-white p-5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="font-bold text-gray-900 text-lg">🚚 In Transit to Hospital</h4>
+                                <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                                  {new Date(orderDetails.order.delivery_started_at).toLocaleString()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-700">
+                                En route to <span className="font-semibold text-green-600">{orderDetails.order.hospital_name}</span>
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Delivered */}
+                        {orderDetails.order.delivered_at && (
+                          <div className="relative pl-16">
+                            <div className="absolute left-0 w-12 h-12 rounded-full bg-green-100 border-4 border-white flex items-center justify-center shadow-lg">
+                              <CheckCircle2 className="w-5 h-5 text-green-600" />
+                            </div>
+                            <div className="bg-white p-5 rounded-xl border-2 border-green-300 shadow-sm hover:shadow-md transition-shadow">
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="font-bold text-gray-900 text-lg">✅ Delivered Successfully</h4>
+                                <span className="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full border border-green-200">
+                                  {new Date(orderDetails.order.delivered_at).toLocaleString()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-700 mb-2">
+                                Samples delivered to <span className="font-semibold text-green-600">{orderDetails.order.hospital_name}</span>
+                              </p>
+                              {orderDetails.order.hospital_contact_phone && (
+                                <p className="text-xs text-gray-600 flex items-center gap-1">
+                                  <Phone className="w-3 h-3" />
+                                  Contact: {orderDetails.order.hospital_contact_phone}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Cancelled */}
+                        {orderDetails.order.cancelled_at && (
+                          <div className="relative pl-16">
+                            <div className="absolute left-0 w-12 h-12 rounded-full bg-red-100 border-4 border-white flex items-center justify-center shadow-lg">
+                              <XCircle className="w-5 h-5 text-red-600" />
+                            </div>
+                            <div className="bg-white p-5 rounded-xl border-2 border-red-300 shadow-sm hover:shadow-md transition-shadow">
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="font-bold text-gray-900 text-lg">❌ Order Cancelled</h4>
+                                <span className="text-sm text-gray-600 bg-red-50 px-3 py-1 rounded-full border border-red-200">
+                                  {new Date(orderDetails.order.cancelled_at).toLocaleString()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-700">Order was cancelled</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}
