@@ -71,6 +71,10 @@ interface OrderDetails {
     };
     sample_type: string;
     sample_quantity: number;
+    samples?: Array<{
+      sample_type: string;
+      quantity: number;
+    }>;
     urgency: string;
     status: string;
     special_instructions?: string;
@@ -697,19 +701,20 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                           {orderDetails.order.estimated_distance_km?.toFixed(1) || 'N/A'} km
                         </p>
                       </div>
-                      <div className="bg-white p-4 rounded-xl border border-gray-200 text-center">
+                      <div className="bg-white p-4 rounded-xl border border-gray-200 text-center col-span-2">
                         <Package className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Sample Type</p>
-                        <p className="text-lg font-bold text-gray-900 capitalize">
-                          {orderDetails.order.sample_type || 'Not Applicable'}
-                        </p>
-                      </div>
-                      <div className="bg-white p-4 rounded-xl border border-gray-200 text-center">
-                        <Hash className="w-8 h-8 text-orange-600 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Quantity</p>
-                        <p className="text-lg font-bold text-gray-900">
-                          {orderDetails.order.sample_quantity || 'Not Applicable'}
-                        </p>
+                        <p className="text-sm text-gray-600">Samples</p>
+                        {orderDetails.order.samples && orderDetails.order.samples.length > 0 ? (
+                          <p className="text-lg font-bold text-gray-900">
+                            {orderDetails.order.samples.map(s => `${s.quantity} ${s.sample_type}`).join(', ')}
+                          </p>
+                        ) : orderDetails.order.sample_type ? (
+                          <p className="text-lg font-bold text-gray-900 capitalize">
+                            {orderDetails.order.sample_quantity} {orderDetails.order.sample_type}
+                          </p>
+                        ) : (
+                          <p className="text-lg font-bold text-gray-900">Not Applicable</p>
+                        )}
                       </div>
                     </div>
 
@@ -1072,7 +1077,12 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        {orderDetails.qr_scans.map((scan, index) => (
+                        {orderDetails.qr_scans
+                          .filter((scan, index, self) =>
+                            // Keep only the first scan of each scan_type
+                            index === self.findIndex((s) => s.scan_type === scan.scan_type)
+                          )
+                          .map((scan, index) => (
                           <div key={`${scan.qr_id}-${index}`} className="bg-white p-6 rounded-xl border border-gray-200">
                             <div className="flex items-start justify-between mb-4">
                               <div className="flex items-center space-x-3">
@@ -1116,7 +1126,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                                 <div>
                                   <span className="text-gray-600">Coordinates:</span>
                                   <span className="font-medium text-gray-900 ml-2">
-                                    {scan.scan_coordinates_lat.toFixed(6)}, {scan.scan_coordinates_lng.toFixed(6)}
+                                    {Number(scan.scan_coordinates_lat).toFixed(6)}, {Number(scan.scan_coordinates_lng).toFixed(6)}
                                   </span>
                                 </div>
                               )}
