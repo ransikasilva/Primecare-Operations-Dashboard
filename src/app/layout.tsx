@@ -17,9 +17,10 @@ export const metadata: Metadata = {
   title: "TransFleet Operations Dashboard",
   description: "Operations management dashboard for TransFleet healthcare delivery network",
   icons: {
-    icon: '/newfavicon.png',
-    shortcut: '/newfavicon.png',
-    apple: '/newfavicon.png',
+    icon: [
+      { url: '/icon.png', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
   },
   verification: {
     google: "fnfAH0_BJNm-dhMzaYFAT7e7ifoBCPrMij2W-oQnqSM",
