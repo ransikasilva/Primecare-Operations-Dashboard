@@ -3,7 +3,7 @@
 import { useSystemOverview } from '@/hooks/useApi';
 import { useState } from 'react';
 import { RiderDetailModal } from '@/components/modals/RiderDetailModal';
-import { 
+import {
   Users,
   User,
   Hospital,
@@ -18,7 +18,8 @@ import {
   Search,
   Filter,
   Phone,
-  Mail
+  Mail,
+  ArrowUpDown
 } from 'lucide-react';
 
 export default function RidersPage() {
@@ -28,21 +29,49 @@ export default function RidersPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'approved' | 'pending' | 'rejected'>('all');
+  const [sortBy, setSortBy] = useState<'name' | 'status' | 'hospital' | 'deliveries' | 'created'>('name');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   // Extract riders data
   const allRiders = ((systemData?.data as any)?.data?.riders || (systemData?.data as any)?.riders || []) as any[];
 
-  // Filter riders based on search and filters
-  const filteredRiders = allRiders.filter((rider: any) => {
-    const matchesSearch = rider.rider_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         rider.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         rider.phone?.includes(searchTerm) ||
-                         rider.vehicle_registration?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = filterStatus === 'all' || rider.rider_status === filterStatus;
-    
-    return matchesSearch && matchesStatus;
-  });
+  // Filter and sort riders
+  const filteredAndSortedRiders = allRiders
+    .filter((rider: any) => {
+      const matchesSearch = rider.rider_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           rider.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           rider.phone?.includes(searchTerm) ||
+                           rider.vehicle_registration?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesStatus = filterStatus === 'all' || rider.rider_status === filterStatus;
+
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a: any, b: any) => {
+      let compareValue = 0;
+
+      switch (sortBy) {
+        case 'name':
+          compareValue = a.rider_name.localeCompare(b.rider_name);
+          break;
+        case 'status':
+          compareValue = a.rider_status.localeCompare(b.rider_status);
+          break;
+        case 'hospital':
+          const aHospital = a.hospital_affiliation?.hospital_name || '';
+          const bHospital = b.hospital_affiliation?.hospital_name || '';
+          compareValue = aHospital.localeCompare(bHospital);
+          break;
+        case 'deliveries':
+          compareValue = (a.total_deliveries || 0) - (b.total_deliveries || 0);
+          break;
+        case 'created':
+          compareValue = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          break;
+      }
+
+      return sortOrder === 'asc' ? compareValue : -compareValue;
+    });
 
   // Statistics
   const stats = {
@@ -243,11 +272,34 @@ export default function RidersPage() {
                   <option value="rejected">Rejected</option>
                 </select>
               </div>
+
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="w-5 h-5 text-gray-500" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="name">Sort by Name</option>
+                  <option value="status">Sort by Status</option>
+                  <option value="hospital">Sort by Hospital</option>
+                  <option value="deliveries">Sort by Deliveries</option>
+                  <option value="created">Sort by Date Joined</option>
+                </select>
+              </div>
+
+              <button
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                className="px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                title={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+              >
+                {sortOrder === 'asc' ? '↑' : '↓'}
+              </button>
             </div>
           </div>
-          
+
           <div className="text-sm text-gray-500">
-            Showing {filteredRiders.length} of {stats.total} riders
+            Showing {filteredAndSortedRiders.length} of {stats.total} riders
           </div>
         </div>
       </div>
@@ -264,21 +316,21 @@ export default function RidersPage() {
         <div className="p-6 border-b border-gray-100/60">
           <h2 className="text-xl font-bold text-gray-800 mb-1 flex items-center gap-2">
             <Users className="w-6 h-6 text-teal-600" />
-            All Riders ({filteredRiders.length})
+            All Riders ({filteredAndSortedRiders.length})
           </h2>
           <p className="text-gray-600 text-base">Complete list with hospital affiliations and contact details</p>
         </div>
-        
+
         <div className="p-6">
           <div className="space-y-4">
-            {filteredRiders.length === 0 ? (
+            {filteredAndSortedRiders.length === 0 ? (
               <div className="text-center py-12">
                 <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-500 text-lg font-medium">No Riders Found</p>
                 <p className="text-gray-400">Try adjusting your search or filter criteria</p>
               </div>
             ) : (
-              filteredRiders.map((rider: any) => (
+              filteredAndSortedRiders.map((rider: any) => (
                 <RiderCard 
                   key={rider.id}
                   rider={rider}
@@ -290,6 +342,7 @@ export default function RidersPage() {
                       
                       if (riderDetailsResponse.success) {
                         // Use real data from API
+                        console.log('Rider details from API:', riderDetailsResponse.data);
                         setSelectedRider(riderDetailsResponse.data);
                       } else {
                         // Fallback to transformed data

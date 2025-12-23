@@ -963,7 +963,20 @@ class OperationsApiClient {
       weekly_km: number;
       created_at: string;
       last_active: string;
-    }>(`/api/riders/${riderId}/details`);
+    }>(`/api/operations/riders/${riderId}/details`);
+  }
+
+  async getRiderStats(riderId: string) {
+    return this.request<{
+      total_deliveries: number;
+      successful_deliveries: number;
+      cancelled_deliveries: number;
+      success_rate: number;
+      average_delivery_time: number;
+      total_km: number;
+      monthly_km: number;
+      weekly_km: number;
+    }>(`/api/operations/riders/${riderId}/stats`);
   }
 
   async updateRiderStatus(riderId: string, status: string, notes?: string) {

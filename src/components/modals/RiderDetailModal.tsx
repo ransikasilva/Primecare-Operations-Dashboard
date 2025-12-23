@@ -101,6 +101,23 @@ export function RiderDetailModal({
   const [currentPage, setCurrentPage] = useState(1);
   const [ordersPerPage] = useState(10);
   const [imagePreview, setImagePreview] = useState<{ url: string; title: string } | null>(null);
+  const [stats, setStats] = useState<any>(null);
+
+  // Fetch rider stats
+  const fetchStats = async () => {
+    if (!rider?.id || !isOpen) return;
+
+    try {
+      const { operationsApi } = await import('@/lib/api');
+      const response = await operationsApi.getRiderStats(rider.id);
+
+      if (response.success) {
+        setStats(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch rider stats:', error);
+    }
+  };
 
   // Fetch orders when modal opens or filters change
   const fetchOrders = async () => {
@@ -148,6 +165,13 @@ export function RiderDetailModal({
       setDateFrom(thirtyDaysAgo.toISOString().split('T')[0]);
     }
   }, [isOpen]);
+
+  // Fetch stats when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      fetchStats();
+    }
+  }, [rider?.id, isOpen]);
 
   // Calculate pagination
   const totalPages = Math.ceil(orders.length / ordersPerPage);
@@ -213,13 +237,14 @@ export function RiderDetailModal({
     Math.round((rider.successful_deliveries / rider.total_deliveries) * 100) : 0;
 
   const getKmValue = () => {
+    if (!stats) return 0;
     switch (kmFilter) {
       case 'weekly':
-        return rider.weekly_km || 0;
+        return stats.weekly_km || 0;
       case 'monthly':
-        return rider.monthly_km || 0;
+        return stats.monthly_km || 0;
       default:
-        return rider.total_km || 0;
+        return stats.total_km || 0;
     }
   };
 
@@ -369,7 +394,7 @@ export function RiderDetailModal({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-teal-600 font-medium">Total Deliveries</p>
-                    <p className="text-2xl font-bold text-teal-800">{rider.total_deliveries}</p>
+                    <p className="text-2xl font-bold text-teal-800">{stats?.total_deliveries || 0}</p>
                   </div>
                   <div className="w-12 h-12 bg-teal-200 rounded-xl flex items-center justify-center">
                     <Route className="w-6 h-6 text-teal-600" />
@@ -381,7 +406,7 @@ export function RiderDetailModal({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-green-600 font-medium">Success Rate</p>
-                    <p className="text-2xl font-bold text-green-800">{successRate}%</p>
+                    <p className="text-2xl font-bold text-green-800">{stats?.success_rate || 0}%</p>
                   </div>
                   <div className="w-12 h-12 bg-green-200 rounded-xl flex items-center justify-center">
                     <CheckCircle2 className="w-6 h-6 text-green-600" />
@@ -393,7 +418,7 @@ export function RiderDetailModal({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-amber-600 font-medium">Avg. Time</p>
-                    <p className="text-2xl font-bold text-amber-800">{formatTime(rider.average_delivery_time)}</p>
+                    <p className="text-2xl font-bold text-amber-800">{formatTime(stats?.average_delivery_time || 0)}</p>
                   </div>
                   <div className="w-12 h-12 bg-amber-200 rounded-xl flex items-center justify-center">
                     <Clock className="w-6 h-6 text-amber-600" />
@@ -405,7 +430,7 @@ export function RiderDetailModal({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-purple-600 font-medium">Total KMs</p>
-                    <p className="text-2xl font-bold text-purple-800">{rider.total_km.toFixed(1)} KM</p>
+                    <p className="text-2xl font-bold text-purple-800">{stats?.total_km?.toFixed(1) || '0.0'} KM</p>
                   </div>
                   <div className="w-12 h-12 bg-purple-200 rounded-xl flex items-center justify-center">
                     <TrendingUp className="w-6 h-6 text-purple-600" />
@@ -478,14 +503,14 @@ export function RiderDetailModal({
                       <Activity className="w-5 h-5 text-amber-600" />
                     </div>
                     <p className="text-2xl font-bold text-amber-800">
-                      {rider.total_deliveries > 0 ? (getKmValue() / rider.total_deliveries).toFixed(1) : '0.0'} KM
+                      {stats?.successful_deliveries > 0 ? (getKmValue() / stats.successful_deliveries).toFixed(1) : '0.0'} KM
                     </p>
                     <p className="text-xs text-amber-600 mt-1">Efficiency metric</p>
                   </div>
                 </div>
                 
                 {/* Period Breakdown */}
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="mt-6">
                   <div className="bg-white p-4 rounded-2xl border border-gray-200">
                     <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
@@ -494,43 +519,15 @@ export function RiderDetailModal({
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">This Month</span>
-                        <span className="text-sm font-medium text-gray-800">{rider.monthly_km.toFixed(1)} KM</span>
+                        <span className="text-sm font-medium text-gray-800">{stats?.monthly_km?.toFixed(1) || '0.0'} KM</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">This Week</span>
-                        <span className="text-sm font-medium text-gray-800">{rider.weekly_km.toFixed(1)} KM</span>
+                        <span className="text-sm font-medium text-gray-800">{stats?.weekly_km?.toFixed(1) || '0.0'} KM</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">All Time Total</span>
-                        <span className="text-sm font-medium text-gray-800">{rider.total_km.toFixed(1)} KM</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white p-4 rounded-2xl border border-gray-200">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4" />
-                      Performance Insights
-                    </h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Efficiency Rating</span>
-                        <span className="text-sm font-medium text-green-600">
-                          {rider.total_deliveries > 0 && getKmValue() / rider.total_deliveries < 15 ? 'Excellent' : 
-                           rider.total_deliveries > 0 && getKmValue() / rider.total_deliveries < 25 ? 'Good' : 'Average'}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Activity Level</span>
-                        <span className="text-sm font-medium text-teal-600">
-                          {getKmValue() > 100 ? 'High' : getKmValue() > 50 ? 'Medium' : 'Low'}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Consistency</span>
-                        <span className="text-sm font-medium text-purple-600">
-                          {Math.abs(rider.weekly_km * 4 - rider.monthly_km) < rider.monthly_km * 0.2 ? 'Consistent' : 'Variable'}
-                        </span>
+                        <span className="text-sm font-medium text-gray-800">{stats?.total_km?.toFixed(1) || '0.0'} KM</span>
                       </div>
                     </div>
                   </div>
@@ -545,27 +542,31 @@ export function RiderDetailModal({
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Personal Information</h3>
 
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
-                      <User className="w-6 h-6 text-teal-600" />
+                  {rider.full_name && (
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                        <User className="w-6 h-6 text-teal-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Full Name</p>
+                        <p className="font-semibold text-gray-800">{rider.full_name}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Full Name</p>
-                      <p className="font-semibold text-gray-800">{rider.full_name}</p>
-                    </div>
-                  </div>
+                  )}
 
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                      <Phone className="w-6 h-6 text-green-600" />
+                  {rider.mobile_number && rider.mobile_number !== 'N/A' && (
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <Phone className="w-6 h-6 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Mobile Number</p>
+                        <p className="font-semibold text-gray-800">{rider.mobile_number}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Mobile Number</p>
-                      <p className="font-semibold text-gray-800">{rider.mobile_number}</p>
-                    </div>
-                  </div>
+                  )}
 
-                  {rider.email && (
+                  {rider.email && rider.email !== 'N/A' && !rider.email.includes('@primecare.lk') && (
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
                         <Mail className="w-6 h-6 text-purple-600" />
@@ -577,35 +578,41 @@ export function RiderDetailModal({
                     </div>
                   )}
 
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-                      <FileText className="w-6 h-6 text-yellow-600" />
+                  {rider.nic_number && rider.nic_number !== 'N/A' && (
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                        <FileText className="w-6 h-6 text-yellow-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">NIC Number</p>
+                        <p className="font-semibold text-gray-800">{rider.nic_number}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">NIC Number</p>
-                      <p className="font-semibold text-gray-800">{rider.nic_number}</p>
-                    </div>
-                  </div>
+                  )}
 
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                      <AlertTriangle className="w-6 h-6 text-red-600" />
+                  {rider.emergency_contact && rider.emergency_contact !== 'N/A' && rider.emergency_contact !== 'Not provided' && (
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                        <AlertTriangle className="w-6 h-6 text-red-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Emergency Contact</p>
+                        <p className="font-semibold text-gray-800">{rider.emergency_contact}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Emergency Contact</p>
-                      <p className="font-semibold text-gray-800">{rider.emergency_contact}</p>
-                    </div>
-                  </div>
+                  )}
 
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
-                      <MapPin className="w-6 h-6 text-teal-600" />
+                  {rider.address && rider.address !== 'N/A' && rider.address !== 'Not provided' && (
+                    <div className="flex items-start space-x-4">
+                      <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                        <MapPin className="w-6 h-6 text-teal-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Address</p>
+                        <p className="font-semibold text-gray-800">{rider.address}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Address</p>
-                      <p className="font-semibold text-gray-800">{rider.address}</p>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
@@ -614,55 +621,65 @@ export function RiderDetailModal({
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Vehicle & Work Details</h3>
 
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-                      <Truck className="w-6 h-6 text-amber-600" />
+                  {rider.vehicle_type && rider.vehicle_type !== 'N/A' && rider.vehicle_type !== 'Not specified' && (
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                        <Truck className="w-6 h-6 text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Vehicle Type</p>
+                        <p className="font-semibold text-gray-800 capitalize">{rider.vehicle_type}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Vehicle Type</p>
-                      <p className="font-semibold text-gray-800 capitalize">{rider.vehicle_type}</p>
-                    </div>
-                  </div>
+                  )}
 
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
-                      <FileText className="w-6 h-6 text-teal-600" />
+                  {rider.vehicle_number && rider.vehicle_number !== 'N/A' && rider.vehicle_number !== 'Not provided' && (
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                        <FileText className="w-6 h-6 text-teal-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Vehicle Number</p>
+                        <p className="font-semibold text-gray-800">{rider.vehicle_number}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Vehicle Number</p>
-                      <p className="font-semibold text-gray-800">{rider.vehicle_number}</p>
-                    </div>
-                  </div>
+                  )}
 
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                      <Shield className="w-6 h-6 text-green-600" />
+                  {rider.license_number && rider.license_number !== 'N/A' && rider.license_number !== 'Not provided' && (
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <Shield className="w-6 h-6 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">License Number</p>
+                        <p className="font-semibold text-gray-800">{rider.license_number}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">License Number</p>
-                      <p className="font-semibold text-gray-800">{rider.license_number}</p>
-                    </div>
-                  </div>
+                  )}
 
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                      <Award className="w-6 h-6 text-purple-600" />
+                  {rider.experience && rider.experience !== 'Not specified' && (
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <Award className="w-6 h-6 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Experience</p>
+                        <p className="font-semibold text-gray-800">{rider.experience}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Experience</p>
-                      <p className="font-semibold text-gray-800">{rider.experience}</p>
-                    </div>
-                  </div>
+                  )}
 
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
-                      <Hospital className="w-6 h-6 text-teal-600" />
+                  {rider.hospital_affiliation?.main_hospital && (
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                        <Hospital className="w-6 h-6 text-teal-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Main Hospital</p>
+                        <p className="font-semibold text-gray-800">{rider.hospital_affiliation.main_hospital}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Main Hospital</p>
-                      <p className="font-semibold text-gray-800">{rider.hospital_affiliation?.main_hospital || 'N/A'}</p>
-                    </div>
-                  </div>
+                  )}
 
                   {rider.hospital_affiliation?.regional_hospitals?.length > 0 && (
                     <div className="flex items-start space-x-4">
