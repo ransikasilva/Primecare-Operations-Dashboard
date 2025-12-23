@@ -32,6 +32,7 @@ interface CollectionCenter {
   center_type: 'dependent' | 'independent';
   contact_person: string;
   phone: string;
+  address: string;
   city: string;
   status: string;
   coordinates_lat: number;
@@ -162,12 +163,22 @@ export default function OperationsMap({
 
     const systemData = (systemOverviewData?.data || {}) as any;
 
+    // Extract riders first to count by hospital
+    const allRiders = systemData.riders || [];
+    const riderCountByHospital: Record<string, number> = {};
+    allRiders.forEach((rider: any) => {
+      const hospitalId = rider.hospital_affiliation?.hospital_id;
+      if (hospitalId) {
+        riderCountByHospital[hospitalId] = (riderCountByHospital[hospitalId] || 0) + 1;
+      }
+    });
+
     // Extract hospitals from system overview or hospital networks data
     let hospitals: Hospital[] = [];
 
     // Try to get hospitals from system overview first
     if (systemData.hospital_networks) {
-      hospitals = systemData.hospital_networks.flatMap((network: any) => 
+      hospitals = systemData.hospital_networks.flatMap((network: any) =>
         (network.hospitals || []).map((hospital: any) => ({
           id: hospital.id,
           name: hospital.name,
@@ -179,11 +190,11 @@ export default function OperationsMap({
           coordinates_lng: hospital.coordinates_lng,
           status: hospital.status,
           active_orders: hospital.active_orders || 0,
-          total_riders: hospital.total_riders || 0
+          total_riders: riderCountByHospital[hospital.id] || 0
         }))
       );
     }
-    
+
     // If no hospitals from system overview, try hospital networks data
     if (hospitals.length === 0 && (hospitalNetworksData?.data as any)?.hospital_networks) {
       hospitals = ((hospitalNetworksData?.data as any)?.hospital_networks || []).flatMap((network: any) =>
@@ -198,7 +209,7 @@ export default function OperationsMap({
           coordinates_lng: hospital.coordinates_lng,
           status: hospital.status,
           active_orders: hospital.active_orders || 0,
-          total_riders: hospital.total_riders || 0
+          total_riders: riderCountByHospital[hospital.id] || 0
         }))
       );
     }
@@ -214,6 +225,7 @@ export default function OperationsMap({
         center_type: center.center_type,
         contact_person: center.contact_person,
         phone: center.phone,
+        address: center.address || center.city || 'No address',
         city: center.city,
         status: center.status,
         coordinates_lat: center.coordinates_lat,
@@ -232,6 +244,7 @@ export default function OperationsMap({
         center_type: center.center_type,
         contact_person: center.contact_person,
         phone: center.phone,
+        address: center.address || center.city || 'No address',
         city: center.city,
         status: center.status,
         coordinates_lat: center.coordinates_lat,
@@ -306,146 +319,12 @@ export default function OperationsMap({
       })));
     }
 
-    // If no data from APIs, use fallback mock data for development
-    if (hospitals.length === 0 && collectionCenters.length === 0 && riders.length === 0) {
-      console.log('🗺️ No data from APIs - using fallback mock data');
-      setData({
-        hospitals: [
-          {
-            id: '1',
-            name: 'Apollo Hospital Colombo',
-            network_name: 'Apollo Network',
-            hospital_type: 'main',
-            city: 'Colombo',
-            province: 'Western',
-            coordinates_lat: 6.9271,
-            coordinates_lng: 79.8612,
-            status: 'active',
-            active_orders: 15,
-            total_riders: 8
-          },
-          {
-            id: '2',
-            name: 'Nawaloka Hospital',
-            network_name: 'Nawaloka Network',
-            hospital_type: 'main',
-            city: 'Colombo',
-            province: 'Western',
-            coordinates_lat: 6.8860,
-            coordinates_lng: 79.8742,
-            status: 'active',
-            active_orders: 12,
-            total_riders: 6
-          },
-          {
-            id: '3',
-            name: 'Asiri Medical Kandy',
-            network_name: 'Asiri Network',
-            hospital_type: 'regional',
-            city: 'Kandy',
-            province: 'Central',
-            coordinates_lat: 7.2906,
-            coordinates_lng: 80.6337,
-            status: 'active',
-            active_orders: 8,
-            total_riders: 4
-          }
-        ],
-        collectionCenters: [
-          {
-            id: '1',
-            center_name: 'Elite Medical Labs',
-            center_type: 'independent',
-            contact_person: 'Dr. Silva',
-            phone: '+94771234567',
-            city: 'Colombo',
-            status: 'active',
-            coordinates_lat: 6.9030,
-            coordinates_lng: 79.8536,
-            active_orders: 5,
-            hospital_affiliations: ['Apollo Network', 'Nawaloka Network']
-          },
-          {
-            id: '2',
-            center_name: 'HealthGuard Diagnostics',
-            center_type: 'dependent',
-            contact_person: 'Ms. Fernando',
-            phone: '+94712345678',
-            city: 'Mount Lavinia',
-            status: 'active',
-            coordinates_lat: 6.8344,
-            coordinates_lng: 79.8754,
-            active_orders: 3,
-            hospital_affiliations: ['Apollo Network']
-          },
-          {
-            id: '3',
-            center_name: 'MediCare Central',
-            center_type: 'independent',
-            contact_person: 'Dr. Perera',
-            phone: '+94723456789',
-            city: 'Kandy',
-            status: 'active',
-            coordinates_lat: 7.2734,
-            coordinates_lng: 80.6007,
-            active_orders: 7,
-            hospital_affiliations: ['Asiri Network']
-          }
-        ],
-        riders: [
-          {
-            id: '1',
-            rider_name: 'Kamal Silva',
-            phone: '+94771111111',
-            availability_status: 'available',
-            hospital_name: 'Apollo Hospital Colombo',
-            vehicle_type: 'motorcycle',
-            current_location: { lat: 6.9145, lng: 79.8440 },
-            total_deliveries: 156,
-            rating: 4.8
-          },
-          {
-            id: '2',
-            rider_name: 'Priya Fernando',
-            phone: '+94772222222',
-            availability_status: 'busy',
-            hospital_name: 'Nawaloka Hospital',
-            vehicle_type: 'motorcycle',
-            current_location: { lat: 6.8705, lng: 79.8850 },
-            total_deliveries: 203,
-            rating: 4.9
-          },
-          {
-            id: '3',
-            rider_name: 'Nuwan Perera',
-            phone: '+94773333333',
-            availability_status: 'available',
-            hospital_name: 'Asiri Medical Kandy',
-            vehicle_type: 'car',
-            current_location: { lat: 7.2820, lng: 80.6350 },
-            total_deliveries: 89,
-            rating: 4.6
-          },
-          {
-            id: '4',
-            rider_name: 'Saman Rajapaksa',
-            phone: '+94774444444',
-            availability_status: 'offline',
-            hospital_name: 'Apollo Hospital Colombo',
-            vehicle_type: 'motorcycle',
-            current_location: { lat: 6.9200, lng: 79.8500 },
-            total_deliveries: 234,
-            rating: 4.7
-          }
-        ]
-      });
-    } else {
-      setData({
-        hospitals: hospitals.filter(h => h.coordinates_lat && h.coordinates_lng),
-        collectionCenters: collectionCenters.filter(c => c.coordinates_lat && c.coordinates_lng),
-        riders
-      });
-    }
+    // Set real data from APIs
+    setData({
+      hospitals: hospitals.filter(h => h.coordinates_lat && h.coordinates_lng),
+      collectionCenters: collectionCenters.filter(c => c.coordinates_lat && c.coordinates_lng),
+      riders
+    });
     
     setLoading(systemLoading || networksLoading || centersLoading);
   }, [systemOverviewData, hospitalNetworksData, allCollectionCentersData, systemLoading, networksLoading, centersLoading]);
@@ -662,9 +541,9 @@ export default function OperationsMap({
                 <span class="w-20 text-gray-600">Phone:</span>
                 <span class="font-medium">${center.phone}</span>
               </div>
-              <div class="flex items-center">
-                <span class="w-20 text-gray-600">Location:</span>
-                <span class="font-medium">${center.city}</span>
+              <div class="flex items-start">
+                <span class="w-20 text-gray-600 flex-shrink-0">Address:</span>
+                <span class="font-medium">${center.address}</span>
               </div>
               <div class="flex items-center">
                 <span class="w-20 text-gray-600">Type:</span>
@@ -673,10 +552,6 @@ export default function OperationsMap({
               <div class="flex items-center">
                 <span class="w-20 text-gray-600">Orders:</span>
                 <span class="inline-block px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">${center.active_orders} active</span>
-              </div>
-              <div class="flex items-center">
-                <span class="w-20 text-gray-600">Status:</span>
-                <span class="inline-block px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">${center.status}</span>
               </div>
               ${center.hospital_affiliations ? `
                 <div class="flex items-start">
@@ -767,10 +642,6 @@ export default function OperationsMap({
               <div class="flex items-center">
                 <span class="w-20 text-gray-600">Deliveries:</span>
                 <span class="font-medium">${rider.total_deliveries}</span>
-              </div>
-              <div class="flex items-center">
-                <span class="w-20 text-gray-600">Rating:</span>
-                <span class="font-medium">${rider.rating} ⭐</span>
               </div>
               <div class="flex items-center">
                 <span class="w-20 text-gray-600">Location:</span>

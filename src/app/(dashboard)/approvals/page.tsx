@@ -272,9 +272,9 @@ export default function ApprovalsPage() {
               <Shield className="w-6 h-6" style={{ color: '#f59e0b' }} />
             </div>
           </div>
-          <h3 className="text-3xl font-bold text-gray-800 mb-2">{mainHospitalsCount + pendingCollectionCenters.length + pendingFeatureRequests.length}</h3>
+          <h3 className="text-3xl font-bold text-gray-800 mb-2">{mainHospitalsCount + pendingCollectionCenters.length}</h3>
           <p className="text-sm font-medium text-gray-600">Total Pending</p>
-          <p className="text-xs text-gray-500 mt-1">Awaiting final approval</p>
+          <p className="text-xs text-gray-500 mt-1">HQ approvals only</p>
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSystemOverview } from '@/hooks/useApi';
+import { useSystemOverview, usePendingFeatureRequests } from '@/hooks/useApi';
 import { useState } from 'react';
 import { CollectionCenterDetailModal } from '@/components/modals/CollectionCenterDetailModal';
 import { operationsApi } from '@/lib/api';
@@ -22,6 +22,7 @@ import {
 
 export default function CollectionCentersPage() {
   const { data: systemData, loading, error } = useSystemOverview();
+  const { data: featureRequestsData } = usePendingFeatureRequests();
   const [selectedCenter, setSelectedCenter] = useState<any>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -30,7 +31,10 @@ export default function CollectionCentersPage() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'approved' | 'pending' | 'rejected'>('all');
 
   // Extract collection centers data
-  const allCollectionCenters = systemData?.data?.data?.collection_centers || systemData?.data?.collection_centers || [];
+  const systemDataObj = systemData?.data?.data || systemData?.data || {};
+  const allCollectionCenters = Array.isArray((systemDataObj as any)?.collection_centers)
+    ? (systemDataObj as any).collection_centers
+    : [];
 
   // Filter centers based on search and filters
   const filteredCenters = allCollectionCenters.filter((center: any) => {
@@ -44,13 +48,18 @@ export default function CollectionCentersPage() {
     return matchesSearch && matchesType && matchesStatus;
   });
 
+  // Feature requests data
+  const featureRequestsRaw = featureRequestsData?.data;
+  const pendingFeatureRequests = featureRequestsRaw?.requests || [];
+
   // Statistics
   const stats = {
     total: allCollectionCenters.length,
     independent: allCollectionCenters.filter((c: any) => c.center_type === 'independent').length,
     dependent: allCollectionCenters.filter((c: any) => c.center_type === 'dependent').length,
     approved: allCollectionCenters.filter((c: any) => c.center_status === 'approved').length,
-    pending: allCollectionCenters.filter((c: any) => c.center_status !== 'approved').length
+    pending: allCollectionCenters.filter((c: any) => c.center_status === 'pending').length,
+    featureRequests: pendingFeatureRequests.length
   };
 
   if (loading) {
@@ -115,7 +124,7 @@ export default function CollectionCentersPage() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
         <div 
           className="rounded-3xl p-6"
           style={{
@@ -188,7 +197,7 @@ export default function CollectionCentersPage() {
           <p className="text-sm font-medium text-gray-600">Approved</p>
         </div>
 
-        <div 
+        <div
           className="rounded-3xl p-6"
           style={{
             background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%)',
@@ -196,7 +205,7 @@ export default function CollectionCentersPage() {
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.04)'
           }}
         >
-          <div 
+          <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
             style={{ backgroundColor: '#f59e0b' + '20', border: `2px solid #f59e0b` + '30' }}
           >
@@ -204,6 +213,24 @@ export default function CollectionCentersPage() {
           </div>
           <h3 className="text-3xl font-bold text-gray-800 mb-2">{stats.pending}</h3>
           <p className="text-sm font-medium text-gray-600">Pending</p>
+        </div>
+
+        <div
+          className="rounded-3xl p-6"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%)',
+            border: '1px solid rgba(203, 213, 225, 0.3)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.04)'
+          }}
+        >
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
+            style={{ backgroundColor: '#6366f1' + '20', border: `2px solid #6366f1` + '30' }}
+          >
+            <Settings className="w-6 h-6" style={{ color: '#6366f1' }} />
+          </div>
+          <h3 className="text-3xl font-bold text-gray-800 mb-2">{stats.featureRequests}</h3>
+          <p className="text-sm font-medium text-gray-600">Feature Requests</p>
         </div>
       </div>
 
