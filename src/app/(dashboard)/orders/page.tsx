@@ -264,16 +264,6 @@ export default function OrdersPage() {
                 <RefreshCw className={`w-5 h-5 text-white ${loading ? 'animate-spin' : ''}`} />
                 <span className="text-white font-semibold">Refresh</span>
               </button>
-              <button className="flex items-center gap-2 px-6 py-3 rounded-2xl transition-all duration-300 hover:transform hover:scale-105"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(248,250,252,0.1) 100%)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  boxShadow: '0 8px 32px rgba(255, 255, 255, 0.1)'
-                }}
-              >
-                <Download className="w-5 h-5 text-white" />
-                <span className="text-white font-semibold">Export</span>
-              </button>
             </div>
           </div>
         </div>
