@@ -281,7 +281,6 @@ export default function OrderTrackingMap({ orderDetails, onRefresh }: OrderTrack
           url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
             <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
               <circle cx="16" cy="16" r="14" fill="#10B981" stroke="#FFFFFF" stroke-width="2"/>
-              <text x="16" y="20" text-anchor="middle" fill="white" font-family="Arial" font-size="10" font-weight="bold">🏍️</text>
             </svg>
           `),
           scaledSize: new window.google.maps.Size(32, 32),
@@ -301,7 +300,6 @@ export default function OrderTrackingMap({ orderDetails, onRefresh }: OrderTrack
         content: `
           <div class="p-3 min-w-48">
             <div class="flex items-center mb-2">
-              <span class="text-2xl mr-2">🏍️</span>
               <h3 class="font-bold text-gray-900">Current Location</h3>
             </div>
             <div class="space-y-1 text-sm">
