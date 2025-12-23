@@ -124,11 +124,26 @@ export default function OrdersPage() {
     summary
   });
 
-  // Helper function to safely get summary values
-  const getSummaryValue = (key: string, fallback: number = 0): number => {
-    if (!summary || typeof summary !== 'object') return fallback;
-    return (summary as any)[key] ?? fallback;
-  };
+  // Calculate metrics from actual orders data
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const activeOrders = allOrders.filter(order =>
+    ['assigned', 'pickup_started', 'picked_up', 'delivery_started', 'in_transit'].includes(order.status)
+  ).length;
+
+  const pendingAssignment = allOrders.filter(order =>
+    order.status === 'pending_rider_assignment'
+  ).length;
+
+  const deliveredToday = allOrders.filter(order => {
+    if (order.status === 'delivered' && order.delivered_at) {
+      const deliveredDate = new Date(order.delivered_at);
+      deliveredDate.setHours(0, 0, 0, 0);
+      return deliveredDate.getTime() === today.getTime();
+    }
+    return false;
+  }).length;
 
 
   // Status configuration helper function
@@ -284,9 +299,9 @@ export default function OrdersPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
           { label: 'Total Orders', value: allOrders.length || 0, color: '#4ECDC4', icon: Package },
-          { label: 'Active Orders', value: getSummaryValue('active_orders') || getSummaryValue('in_progress_orders'), color: '#10B981', icon: Clock },
-          { label: 'Pending Assignment', value: getSummaryValue('pending_rider_assignment') || getSummaryValue('pending_orders'), color: '#F59E0B', icon: Timer },
-          { label: 'Delivered Today', value: getSummaryValue('delivered_today') || getSummaryValue('completed_orders'), color: '#059669', icon: CheckCircle2 }
+          { label: 'Active Orders', value: activeOrders, color: '#10B981', icon: Clock },
+          { label: 'Pending Assignment', value: pendingAssignment, color: '#F59E0B', icon: Timer },
+          { label: 'Delivered Today', value: deliveredToday, color: '#059669', icon: CheckCircle2 }
         ].map((stat, index) => {
           const IconComponent = stat.icon;
           return (
