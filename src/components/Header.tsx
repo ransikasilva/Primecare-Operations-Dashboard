@@ -314,10 +314,10 @@ export function Header() {
                             key={index}
                             onClick={() => {
                               // Navigate based on type
-                              if (result.type === 'hospital') router.push(`/hospitals?id=${result.id}`);
-                              else if (result.type === 'center') router.push(`/centers?id=${result.id}`);
-                              else if (result.type === 'rider') router.push(`/riders?id=${result.id}`);
-                              else if (result.type === 'order') router.push(`/orders?id=${result.id}`);
+                              if (result.type === 'hospital') router.push(`/hospitals`);
+                              else if (result.type === 'center') router.push(`/collection-centers`);
+                              else if (result.type === 'rider') router.push(`/riders`);
+                              else if (result.type === 'order') router.push(`/orders`);
                               setSearchQuery('');
                             }}
                             className="px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors duration-200 flex items-center space-x-3"
