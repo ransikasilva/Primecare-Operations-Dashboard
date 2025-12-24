@@ -387,9 +387,7 @@ export default function OrdersPage() {
                 <option value="pending_rider_assignment">Pending Assignment</option>
                 <option value="assigned">Assigned</option>
                 <option value="picked_up">Picked Up</option>
-                <option value="in_transit">In Transit</option>
                 <option value="delivered">Delivered</option>
-                <option value="delayed">Delayed</option>
                 <option value="cancelled">Cancelled</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
