@@ -59,6 +59,7 @@ export default function HospitalsPage() {
         admin_email: network.admin_email,
         admin_phone: network.admin_phone,
         network_created_at: network.network_created_at,
+        subscription_status: network.subscription_status,
         regionalHospitals: regionalHospitals
       }];
     }
@@ -441,6 +442,12 @@ function HospitalNetworkCard({
                    network.network_status === 'approved' ? 'Approved' :
                    network.network_status === 'rejected' ? 'Rejected' : network.network_status}
                 </span>
+                {network.subscription_status === 'Suspended' && (
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 border border-red-200 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    Suspended
+                  </span>
+                )}
               </div>
 
               <div className="flex items-center gap-4 text-gray-600 mb-3">

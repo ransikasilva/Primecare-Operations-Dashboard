@@ -109,25 +109,30 @@ interface OrderDetails {
     accuracy_meters?: number;
     recorded_at: string;
   }>;
-  handover_history?: Array<{
-    id: string;
-    original_rider_id: string;
-    original_rider_name: string;
-    original_rider_phone?: string;
-    new_rider_id?: string;
-    new_rider_name?: string;
-    new_rider_phone?: string;
-    handover_reason: string;
-    handover_location?: {
-      lat: number;
-      lng: number;
-    };
+  handover?: {
+    handover_id: string;
     status: string;
-    notes?: string;
+    reason: string;
+    original_rider: {
+      id: string;
+      name: string;
+      phone?: string;
+      vehicle?: string;
+    };
+    new_rider: {
+      id: string;
+      name: string;
+      phone?: string;
+      vehicle?: string;
+    };
+    location: {
+      lat: number | null;
+      lng: number | null;
+    };
     initiated_at: string;
     accepted_at?: string;
     confirmed_at?: string;
-  }>;
+  };
 }
 
 // Generate status history from order timestamps
@@ -302,22 +307,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
           },
           qr_scans: (response.data as any).qr_scans || [],
           location_tracking: (response.data as any).location_tracking || [],
-          handover_history: ((response.data as any).handover_history || []).map((h: any) => ({
-            id: h.handover_id,
-            original_rider_id: h.original_rider?.id,
-            original_rider_name: h.original_rider?.name,
-            original_rider_phone: h.original_rider?.phone,
-            new_rider_id: h.new_rider?.id,
-            new_rider_name: h.new_rider?.name,
-            new_rider_phone: h.new_rider?.phone,
-            handover_reason: h.reason,
-            handover_location: h.location,
-            status: h.status,
-            notes: h.notes,
-            initiated_at: h.timeline?.initiated_at,
-            accepted_at: h.timeline?.accepted_at,
-            confirmed_at: h.timeline?.confirmed_at
-          }))
+          handover: (response.data as any).handover || null
         };
         setOrderDetails(mappedData);
       } else {
@@ -661,34 +651,103 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                     {/* Rider Information */}
                     {orderDetails.order.rider_name && (
                       <div className="bg-white p-6 rounded-xl border border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                          <User className="w-5 h-5 text-purple-600" />
-                          Assigned Rider
-                        </h3>
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-3">
-                            <span className="text-gray-600 w-20">Name:</span>
-                            <span className="font-medium text-gray-900">{orderDetails.order.rider_name}</span>
-                          </div>
-                          {orderDetails.order.rider_phone && (
-                            <div className="flex items-center gap-3">
-                              <span className="text-gray-600 w-20">Phone:</span>
-                              <a
-                                href={`tel:${orderDetails.order.rider_phone}`}
-                                className="font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1"
-                              >
-                                <Phone className="w-4 h-4" />
-                                {orderDetails.order.rider_phone}
-                              </a>
+                        {orderDetails.handover ? (
+                          <>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                              <Users className="w-5 h-5 text-orange-600" />
+                              Rider Information (Handover)
+                            </h3>
+
+                            {/* Original Rider */}
+                            <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                              <h4 className="text-sm font-semibold text-blue-900 mb-2 uppercase">Original Rider (Pickup)</h4>
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-gray-600 w-20">Name:</span>
+                                  <span className="font-medium text-gray-900">{orderDetails.handover.original_rider.name}</span>
+                                </div>
+                                {orderDetails.handover.original_rider.phone && (
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-gray-600 w-20">Phone:</span>
+                                    <a
+                                      href={`tel:${orderDetails.handover.original_rider.phone}`}
+                                      className="font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1"
+                                    >
+                                      <Phone className="w-4 h-4" />
+                                      {orderDetails.handover.original_rider.phone}
+                                    </a>
+                                  </div>
+                                )}
+                                {orderDetails.handover.original_rider.vehicle && (
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-gray-600 w-20">Vehicle:</span>
+                                    <span className="font-medium text-gray-900">{orderDetails.handover.original_rider.vehicle}</span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          )}
-                          {orderDetails.order.vehicle_number && (
-                            <div className="flex items-center gap-3">
-                              <span className="text-gray-600 w-20">Vehicle:</span>
-                              <span className="font-medium text-gray-900">{orderDetails.order.vehicle_number}</span>
+
+                            {/* New Rider */}
+                            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                              <h4 className="text-sm font-semibold text-green-900 mb-2 uppercase">Current Rider (Delivery)</h4>
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-gray-600 w-20">Name:</span>
+                                  <span className="font-medium text-gray-900">{orderDetails.handover.new_rider.name}</span>
+                                </div>
+                                {orderDetails.handover.new_rider.phone && (
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-gray-600 w-20">Phone:</span>
+                                    <a
+                                      href={`tel:${orderDetails.handover.new_rider.phone}`}
+                                      className="font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1"
+                                    >
+                                      <Phone className="w-4 h-4" />
+                                      {orderDetails.handover.new_rider.phone}
+                                    </a>
+                                  </div>
+                                )}
+                                {orderDetails.handover.new_rider.vehicle && (
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-gray-600 w-20">Vehicle:</span>
+                                    <span className="font-medium text-gray-900">{orderDetails.handover.new_rider.vehicle}</span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          )}
-                        </div>
+                          </>
+                        ) : (
+                          <>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                              <User className="w-5 h-5 text-purple-600" />
+                              Assigned Rider
+                            </h3>
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-3">
+                                <span className="text-gray-600 w-20">Name:</span>
+                                <span className="font-medium text-gray-900">{orderDetails.order.rider_name}</span>
+                              </div>
+                              {orderDetails.order.rider_phone && (
+                                <div className="flex items-center gap-3">
+                                  <span className="text-gray-600 w-20">Phone:</span>
+                                  <a
+                                    href={`tel:${orderDetails.order.rider_phone}`}
+                                    className="font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1"
+                                  >
+                                    <Phone className="w-4 h-4" />
+                                    {orderDetails.order.rider_phone}
+                                  </a>
+                                </div>
+                              )}
+                              {orderDetails.order.vehicle_number && (
+                                <div className="flex items-center gap-3">
+                                  <span className="text-gray-600 w-20">Vehicle:</span>
+                                  <span className="font-medium text-gray-900">{orderDetails.order.vehicle_number}</span>
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
 
@@ -729,139 +788,81 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                       </div>
                     )}
 
-                    {/* Handover History */}
-                    {orderDetails.handover_history && orderDetails.handover_history.length > 0 && (
-                      <div className="bg-white p-6 rounded-xl border border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                          <Users className="w-5 h-5 text-purple-600" />
-                          Handover History
-                        </h3>
-                        <div className="space-y-4">
-                          {orderDetails.handover_history.map((handover, index) => {
-                            const isCompleted = handover.status === 'confirmed';
-                            const isCancelledDeclined = ['cancelled', 'declined', 'expired'].includes(handover.status);
-                            const isPending = handover.status === 'pending';
+                    {/* Handover Information - Show if handover occurred */}
+                    {orderDetails.handover && (
+                      <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Route className="w-5 h-5 text-orange-600" />
+                          <h3 className="font-semibold text-orange-900">Handover Occurred</h3>
+                          <span className={`ml-auto text-xs px-2 py-1 rounded ${
+                            orderDetails.handover.status === 'confirmed'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {orderDetails.handover.status}
+                          </span>
+                        </div>
 
-                            return (
-                              <div key={handover.id || index} className={`p-5 rounded-xl border-2 ${
-                                isCompleted
-                                  ? 'bg-green-50 border-green-300'
-                                  : isCancelledDeclined
-                                    ? 'bg-red-50 border-red-300'
-                                    : 'bg-yellow-50 border-yellow-300'
-                              }`}>
-                                <div className="flex items-center justify-between mb-4">
-                                  <div className="flex items-center gap-3">
-                                    <div className={`p-2 rounded-lg ${
-                                      isCompleted
-                                        ? 'bg-green-100'
-                                        : isCancelledDeclined
-                                          ? 'bg-red-100'
-                                          : 'bg-yellow-100'
-                                    }`}>
-                                      <Users className={`w-5 h-5 ${
-                                        isCompleted
-                                          ? 'text-green-700'
-                                          : isCancelledDeclined
-                                            ? 'text-red-700'
-                                            : 'text-yellow-700'
-                                      }`} />
-                                    </div>
-                                    <div>
-                                      <span className={`font-semibold text-base ${
-                                        isCompleted
-                                          ? 'text-green-900'
-                                          : isCancelledDeclined
-                                            ? 'text-red-900'
-                                            : 'text-yellow-900'
-                                      }`}>
-                                        {handover.status === 'confirmed' && '✅ Handover Completed'}
-                                        {handover.status === 'cancelled' && '❌ Handover Cancelled'}
-                                        {handover.status === 'declined' && '🚫 Handover Declined'}
-                                        {handover.status === 'expired' && '⏱️ Handover Expired'}
-                                        {handover.status === 'pending' && '⏳ Handover Pending'}
-                                      </span>
-                                      <p className="text-sm text-gray-600 mt-1">
-                                        {new Date(handover.initiated_at).toLocaleString()}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          {/* Original Rider (Rider A) */}
+                          <div className="bg-white border border-orange-200 rounded-lg p-3">
+                            <label className="text-xs font-medium text-orange-700 uppercase">Original Rider (Pickup)</label>
+                            <div className="mt-2 space-y-1">
+                              <p className="font-semibold text-gray-900">{orderDetails.handover.original_rider.name}</p>
+                              <p className="text-sm text-gray-600">{orderDetails.handover.original_rider.phone}</p>
+                              <p className="text-xs text-gray-500">{orderDetails.handover.original_rider.vehicle || 'N/A'}</p>
+                            </div>
+                          </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                  <div className="bg-white bg-opacity-60 p-3 rounded-lg">
-                                    <label className="text-xs text-gray-600 font-medium">Original Rider</label>
-                                    <p className="font-semibold text-gray-900 mt-1">{handover.original_rider_name}</p>
-                                    {handover.original_rider_phone && (
-                                      <p className="text-sm text-gray-600">{handover.original_rider_phone}</p>
-                                    )}
-                                  </div>
-                                  {handover.new_rider_name && (
-                                    <div className="bg-white bg-opacity-60 p-3 rounded-lg">
-                                      <label className="text-xs text-gray-600 font-medium">New Rider</label>
-                                      <p className="font-semibold text-gray-900 mt-1">{handover.new_rider_name}</p>
-                                      {handover.new_rider_phone && (
-                                        <p className="text-sm text-gray-600">{handover.new_rider_phone}</p>
-                                      )}
-                                    </div>
-                                  )}
-                                </div>
+                          {/* New Rider (Rider B) */}
+                          <div className="bg-white border border-orange-200 rounded-lg p-3">
+                            <label className="text-xs font-medium text-orange-700 uppercase">New Rider (Delivery)</label>
+                            <div className="mt-2 space-y-1">
+                              <p className="font-semibold text-gray-900">{orderDetails.handover.new_rider.name}</p>
+                              <p className="text-sm text-gray-600">{orderDetails.handover.new_rider.phone}</p>
+                              <p className="text-xs text-gray-500">{orderDetails.handover.new_rider.vehicle || 'N/A'}</p>
+                            </div>
+                          </div>
+                        </div>
 
-                                {handover.handover_reason && (
-                                  <div className="mb-3">
-                                    <label className="text-xs text-gray-600 font-medium">Reason</label>
-                                    <p className="text-sm text-gray-900 mt-1 bg-white bg-opacity-60 p-2 rounded">
-                                      {handover.handover_reason}
-                                    </p>
-                                  </div>
-                                )}
+                        {/* Handover Reason */}
+                        {orderDetails.handover.reason && (
+                          <div className="bg-white border border-orange-200 rounded-lg p-3 mb-3">
+                            <label className="text-xs font-medium text-orange-700 uppercase">Handover Reason</label>
+                            <p className="text-sm text-gray-900 mt-1">{orderDetails.handover.reason}</p>
+                          </div>
+                        )}
 
-                                {handover.notes && (
-                                  <div className="mb-3">
-                                    <label className="text-xs text-gray-600 font-medium">Notes</label>
-                                    <p className="text-sm text-gray-900 mt-1 bg-white bg-opacity-60 p-2 rounded">
-                                      {handover.notes}
-                                    </p>
-                                  </div>
-                                )}
-
-                                {handover.handover_location && handover.handover_location.lat && handover.handover_location.lng && (
-                                  <div className="mb-3">
-                                    <label className="text-xs text-gray-600 font-medium">Handover Location</label>
-                                    <p className="text-sm text-gray-900 mt-1 bg-white bg-opacity-60 p-2 rounded font-mono">
-                                      {handover.handover_location.lat.toFixed(6)}, {handover.handover_location.lng.toFixed(6)}
-                                    </p>
-                                  </div>
-                                )}
-
-                                <div className="flex items-center gap-6 text-xs text-gray-700 mt-4 pt-4 border-t border-gray-300">
-                                  {handover.initiated_at && (
-                                    <div>
-                                      <span className="font-semibold">Initiated:</span>{' '}
-                                      <span>{new Date(handover.initiated_at).toLocaleString()}</span>
-                                    </div>
-                                  )}
-                                  {handover.accepted_at && (
-                                    <div>
-                                      <span className="font-semibold">Accepted:</span>{' '}
-                                      <span>{new Date(handover.accepted_at).toLocaleString()}</span>
-                                    </div>
-                                  )}
-                                  {handover.confirmed_at && (
-                                    <div>
-                                      <span className="font-semibold">Confirmed:</span>{' '}
-                                      <span>{new Date(handover.confirmed_at).toLocaleString()}</span>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
+                        {/* Handover Timeline */}
+                        <div className="grid grid-cols-3 gap-3 text-xs">
+                          <div className="bg-white border border-orange-200 rounded p-2">
+                            <label className="text-orange-700 font-medium">Initiated</label>
+                            <p className="text-gray-900 mt-1">
+                              {new Date(orderDetails.handover.initiated_at).toLocaleString('en-US', { timeZone: 'Asia/Colombo' })}
+                            </p>
+                          </div>
+                          {orderDetails.handover.accepted_at && (
+                            <div className="bg-white border border-orange-200 rounded p-2">
+                              <label className="text-orange-700 font-medium">Accepted</label>
+                              <p className="text-gray-900 mt-1">
+                                {new Date(orderDetails.handover.accepted_at).toLocaleString('en-US', { timeZone: 'Asia/Colombo' })}
+                              </p>
+                            </div>
+                          )}
+                          {orderDetails.handover.confirmed_at && (
+                            <div className="bg-white border border-green-600 rounded p-2">
+                              <label className="text-green-700 font-medium">Confirmed</label>
+                              <p className="text-gray-900 mt-1">
+                                {new Date(orderDetails.handover.confirmed_at).toLocaleString('en-US', { timeZone: 'Asia/Colombo' })}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
                   </div>
                 )}
+
 
                 {activeTab === 'chain' && (
                   <div className="space-y-6">
@@ -885,7 +886,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                               <div className="flex items-center justify-between mb-3">
                                 <h4 className="font-bold text-gray-900 text-lg">📄 Order Created</h4>
                                 <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                                  {new Date(orderDetails.order.created_at).toLocaleString()}
+                                  {new Date(orderDetails.order.created_at).toLocaleString('en-US', { timeZone: 'Asia/Colombo' })}
                                 </span>
                               </div>
                               <p className="text-sm text-gray-700 mb-2">
@@ -911,11 +912,11 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                               <div className="flex items-center justify-between mb-3">
                                 <h4 className="font-bold text-gray-900 text-lg">👤 Rider Assigned</h4>
                                 <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                                  {new Date(orderDetails.order.assigned_at).toLocaleString()}
+                                  {new Date(orderDetails.order.assigned_at).toLocaleString('en-US', { timeZone: 'Asia/Colombo' })}
                                 </span>
                               </div>
                               <p className="text-sm text-gray-700 mb-2">
-                                Order assigned to rider <span className="font-semibold text-purple-600">{orderDetails.order.rider_name}</span>
+                                Order assigned to rider <span className="font-semibold text-purple-600">{orderDetails.handover ? orderDetails.handover.original_rider.name : orderDetails.order.rider_name}</span>
                               </p>
                               <div className="flex flex-wrap gap-2 text-xs">
                                 {orderDetails.order.rider_phone && (
@@ -945,11 +946,11 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                               <div className="flex items-center justify-between mb-3">
                                 <h4 className="font-bold text-gray-900 text-lg">📦 Sample Picked Up</h4>
                                 <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                                  {new Date(orderDetails.order.picked_up_at).toLocaleString()}
+                                  {new Date(orderDetails.order.picked_up_at).toLocaleString('en-US', { timeZone: 'Asia/Colombo' })}
                                 </span>
                               </div>
                               <p className="text-sm text-gray-700">
-                                <span className="font-semibold text-teal-600">{orderDetails.order.rider_name}</span> picked up samples from{' '}
+                                <span className="font-semibold text-teal-600">{orderDetails.handover ? orderDetails.handover.original_rider.name : orderDetails.order.rider_name}</span> picked up samples from{' '}
                                 <span className="font-semibold text-blue-600">{orderDetails.order.center_name}</span>
                               </p>
                             </div>
@@ -957,43 +958,37 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                         )}
 
                         {/* Handovers */}
-                        {orderDetails.handover_history && orderDetails.handover_history.length > 0 &&
-                         orderDetails.handover_history.map((handover, index) => {
-                           if (handover.status === 'confirmed' && handover.confirmed_at) {
-                             return (
-                               <div key={handover.id || index} className="relative pl-16">
-                                 <div className="absolute left-0 w-12 h-12 rounded-full bg-orange-100 border-4 border-white flex items-center justify-center shadow-lg">
-                                   <Users className="w-5 h-5 text-orange-600" />
-                                 </div>
-                                 <div className="bg-white p-5 rounded-xl border-2 border-orange-300 shadow-sm hover:shadow-md transition-shadow">
-                                   <div className="flex items-center justify-between mb-3">
-                                     <h4 className="font-bold text-gray-900 text-lg">🔄 Handover Completed</h4>
-                                     <span className="text-sm text-gray-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
-                                       {new Date(handover.confirmed_at).toLocaleString()}
-                                     </span>
-                                   </div>
-                                   <p className="text-sm text-gray-700 mb-3">
-                                     <span className="font-semibold text-orange-600">{handover.original_rider_name}</span>
-                                     {handover.original_rider_phone && (
-                                       <span className="text-xs text-gray-600"> ({handover.original_rider_phone})</span>
-                                     )}
-                                     {' '}handed over to{' '}
-                                     <span className="font-semibold text-orange-600">{handover.new_rider_name}</span>
-                                     {handover.new_rider_phone && (
-                                       <span className="text-xs text-gray-600"> ({handover.new_rider_phone})</span>
-                                     )}
-                                   </p>
-                                   {handover.handover_reason && (
-                                     <p className="text-xs text-gray-600 bg-orange-50 p-2 rounded border border-orange-100">
-                                       <span className="font-medium">Reason:</span> {handover.handover_reason}
-                                     </p>
-                                   )}
-                                 </div>
-                               </div>
-                             );
-                           }
-                           return null;
-                         })}
+                        {orderDetails.handover && orderDetails.handover.status === 'confirmed' && orderDetails.handover.confirmed_at && (
+                          <div className="relative pl-16">
+                            <div className="absolute left-0 w-12 h-12 rounded-full bg-orange-100 border-4 border-white flex items-center justify-center shadow-lg">
+                              <Users className="w-5 h-5 text-orange-600" />
+                            </div>
+                            <div className="bg-white p-5 rounded-xl border-2 border-orange-300 shadow-sm hover:shadow-md transition-shadow">
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="font-bold text-gray-900 text-lg">🔄 Handover Completed</h4>
+                                <span className="text-sm text-gray-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
+                                  {new Date(orderDetails.handover.confirmed_at).toLocaleString('en-US', { timeZone: 'Asia/Colombo' })}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-700 mb-3">
+                                <span className="font-semibold text-orange-600">{orderDetails.handover.original_rider.name}</span>
+                                {orderDetails.handover.original_rider.phone && (
+                                  <span className="text-xs text-gray-600"> ({orderDetails.handover.original_rider.phone})</span>
+                                )}
+                                {' '}handed over to{' '}
+                                <span className="font-semibold text-orange-600">{orderDetails.handover.new_rider.name}</span>
+                                {orderDetails.handover.new_rider.phone && (
+                                  <span className="text-xs text-gray-600"> ({orderDetails.handover.new_rider.phone})</span>
+                                )}
+                              </p>
+                              {orderDetails.handover.reason && (
+                                <p className="text-xs text-gray-600 bg-orange-50 p-2 rounded border border-orange-100">
+                                  <span className="font-medium">Reason:</span> {orderDetails.handover.reason}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        )}
 
                         {/* In Transit */}
                         {orderDetails.order.delivery_started_at && (
@@ -1005,7 +1000,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                               <div className="flex items-center justify-between mb-3">
                                 <h4 className="font-bold text-gray-900 text-lg">🚚 In Transit to Hospital</h4>
                                 <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                                  {new Date(orderDetails.order.delivery_started_at).toLocaleString()}
+                                  {new Date(orderDetails.order.delivery_started_at).toLocaleString('en-US', { timeZone: 'Asia/Colombo' })}
                                 </span>
                               </div>
                               <p className="text-sm text-gray-700">
@@ -1025,7 +1020,7 @@ export function OrderDetailModal({ orderId, isOpen, onClose }: OrderDetailProps)
                               <div className="flex items-center justify-between mb-3">
                                 <h4 className="font-bold text-gray-900 text-lg">✅ Delivered Successfully</h4>
                                 <span className="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full border border-green-200">
-                                  {new Date(orderDetails.order.delivered_at).toLocaleString()}
+                                  {new Date(orderDetails.order.delivered_at).toLocaleString('en-US', { timeZone: 'Asia/Colombo' })}
                                 </span>
                               </div>
                               <p className="text-sm text-gray-700 mb-2">

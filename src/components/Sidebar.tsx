@@ -43,7 +43,8 @@ export function Sidebar() {
   // Calculate counts from API data (no fallback data)
   const totalActiveOrders = dashboardData?.data?.totalActiveOrders ?? 0;
   const onlineRiders = dashboardData?.data?.onlineRiders ?? 0;
-  const pendingApprovals = pendingData?.data?.total ?? 0;
+  // Use operations_total which excludes riders (only hospitals approve riders)
+  const pendingApprovals = pendingData?.data?.operations_total ?? 0;
 
   const navigation = [
     {
@@ -88,21 +89,14 @@ export function Sidebar() {
       badge: null,
       description: "Center relationships"
     },
-    { 
-      name: "Rider Management", 
-      href: "/riders", 
+    {
+      name: "Rider Management",
+      href: "/riders",
       icon: Users,
       badge: null,
       description: "All system riders"
     },
-    { 
-      name: "System Configuration", 
-      href: "/configuration", 
-      icon: SettingsIcon,
-      badge: null,
-      description: "Global feature controls"
-    },
-    { 
+    {
       name: "Billing & Subscriptions", 
       href: "/billing", 
       icon: CreditCard,

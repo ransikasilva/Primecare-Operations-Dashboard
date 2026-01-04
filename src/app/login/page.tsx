@@ -21,6 +21,18 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Forgot Password States
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotPasswordStep, setForgotPasswordStep] = useState<'email' | 'otp' | 'reset'>('email');
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetOTP, setResetOTP] = useState('');
+  const [resetToken, setResetToken] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetError, setResetError] = useState('');
+  const [resetSuccess, setResetSuccess] = useState('');
+
   const { login } = useAuth();
   const router = useRouter();
 
@@ -36,6 +48,110 @@ export default function LoginPage() {
       setError(err.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSendResetOTP = async () => {
+    setResetLoading(true);
+    setResetError('');
+    setResetSuccess('');
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/dashboard/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: resetEmail })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setResetSuccess('Reset code sent to your email!');
+        setForgotPasswordStep('otp');
+      } else {
+        setResetError(data.error?.message || 'Failed to send reset code');
+      }
+    } catch (error) {
+      setResetError('Failed to send reset code. Please try again.');
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    setResetLoading(true);
+    setResetError('');
+    setResetSuccess('');
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/dashboard/verify-reset-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: resetEmail, otp: resetOTP })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setResetToken(data.data.resetToken);
+        setResetSuccess('Code verified! Now set your new password.');
+        setForgotPasswordStep('reset');
+      } else {
+        setResetError(data.error?.message || 'Invalid or expired code');
+      }
+    } catch (error) {
+      setResetError('Failed to verify code. Please try again.');
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (newPassword !== confirmPassword) {
+      setResetError('Passwords do not match');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setResetError('Password must be at least 6 characters');
+      return;
+    }
+
+    setResetLoading(true);
+    setResetError('');
+    setResetSuccess('');
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/dashboard/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: resetEmail,
+          resetToken: resetToken,
+          newPassword: newPassword
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setResetSuccess('Password reset successfully! You can now login.');
+        setTimeout(() => {
+          setShowForgotPassword(false);
+          setForgotPasswordStep('email');
+          setResetEmail('');
+          setResetOTP('');
+          setNewPassword('');
+          setConfirmPassword('');
+          setResetToken('');
+        }, 2000);
+      } else {
+        setResetError(data.error?.message || 'Failed to reset password');
+      }
+    } catch (error) {
+      setResetError('Failed to reset password. Please try again.');
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -149,6 +265,15 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+              <div className="mt-2 text-right">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </div>
             </div>
 
             <button
@@ -221,6 +346,142 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-8 relative">
+            <button
+              onClick={() => {
+                setShowForgotPassword(false);
+                setForgotPasswordStep('email');
+                setResetError('');
+                setResetSuccess('');
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Reset Password</h2>
+
+            {resetError && (
+              <div className="p-4 rounded-xl bg-red-50 text-red-800 text-sm mb-4">
+                {resetError}
+              </div>
+            )}
+
+            {resetSuccess && (
+              <div className="p-4 rounded-xl bg-green-50 text-green-800 text-sm mb-4">
+                {resetSuccess}
+              </div>
+            )}
+
+            {/* Step 1: Enter Email */}
+            {forgotPasswordStep === 'email' && (
+              <div className="space-y-4">
+                <p className="text-gray-600 mb-4">
+                  Enter your email address and we'll send you a verification code.
+                </p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    placeholder="admin@primecare.com"
+                  />
+                </div>
+                <button
+                  onClick={handleSendResetOTP}
+                  disabled={resetLoading || !resetEmail}
+                  className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 disabled:opacity-50"
+                >
+                  {resetLoading ? 'Sending...' : 'Send Verification Code'}
+                </button>
+              </div>
+            )}
+
+            {/* Step 2: Enter OTP */}
+            {forgotPasswordStep === 'otp' && (
+              <div className="space-y-4">
+                <p className="text-gray-600 mb-4">
+                  Enter the 6-digit code sent to <strong>{resetEmail}</strong>
+                </p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Verification Code
+                  </label>
+                  <input
+                    type="text"
+                    value={resetOTP}
+                    onChange={(e) => setResetOTP(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 text-center text-2xl tracking-widest"
+                    placeholder="000000"
+                    maxLength={6}
+                  />
+                </div>
+                <button
+                  onClick={handleVerifyOTP}
+                  disabled={resetLoading || resetOTP.length !== 6}
+                  className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 disabled:opacity-50"
+                >
+                  {resetLoading ? 'Verifying...' : 'Verify Code'}
+                </button>
+                <button
+                  onClick={() => setForgotPasswordStep('email')}
+                  className="w-full text-sm text-gray-600 hover:text-gray-800"
+                >
+                  ← Back to email
+                </button>
+              </div>
+            )}
+
+            {/* Step 3: Set New Password */}
+            {forgotPasswordStep === 'reset' && (
+              <div className="space-y-4">
+                <p className="text-gray-600 mb-4">
+                  Create a new password for your account
+                </p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    placeholder="At least 6 characters"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    placeholder="Re-enter your password"
+                  />
+                </div>
+                <button
+                  onClick={handleResetPassword}
+                  disabled={resetLoading || !newPassword || !confirmPassword}
+                  className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 disabled:opacity-50"
+                >
+                  {resetLoading ? 'Resetting...' : 'Reset Password'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

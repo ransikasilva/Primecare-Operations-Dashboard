@@ -274,6 +274,7 @@ class OperationsApiClient {
       collection_centers: any[];
       riders: any[];
       total: number;
+      operations_total: number;
     }>('/api/approvals/pending');
   }
 

@@ -446,12 +446,12 @@ export default function BillingManagementPage() {
       {/* Billing Metrics Cards - Matching Dashboard Style */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { 
-            title: 'Total Revenue', 
-            value: formatCurrency(totalRevenue), 
-            icon: DollarSign, 
+          {
+            title: 'Total Revenue',
+            value: formatCurrency(totalRevenue),
+            icon: DollarSign,
             gradient: ['#10b981', '#059669'],
-            change: '+15% from last month',
+            change: 'Manual subscription billing',
             changeColor: 'text-green-600'
           },
           { 

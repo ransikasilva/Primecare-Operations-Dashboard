@@ -136,7 +136,7 @@ export default function ApprovalsPage() {
                 Final approval workflow for hospital networks and collection centers
               </p>
               <p className="text-white/80 text-base">
-                {mainHospitalsCount + pendingCollectionCenters.length + pendingFeatureRequests.length} items awaiting TransFleet HQ approval
+                {mainHospitalsCount + pendingCollectionCenters.length} items awaiting TransFleet HQ approval
               </p>
             </div>
           </div>
@@ -155,7 +155,7 @@ export default function ApprovalsPage() {
       </div>
 
       {/* Approval Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div 
           className="rounded-3xl p-6"
           style={{
@@ -227,30 +227,6 @@ export default function ApprovalsPage() {
           <h3 className="text-3xl font-bold text-gray-800 mb-2">{dependentCenters.length}</h3>
           <p className="text-sm font-medium text-gray-600">Dependent Centers</p>
           <p className="text-xs text-gray-500 mt-1">Main hospital affiliation</p>
-        </div>
-
-        <div 
-          className="rounded-3xl p-6"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%)',
-            border: '1px solid rgba(203, 213, 225, 0.3)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.04)'
-          }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div 
-              className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{
-                backgroundColor: '#ec4899' + '20',
-                border: `2px solid #ec4899` + '30'
-              }}
-            >
-              <Zap className="w-6 h-6" style={{ color: '#ec4899' }} />
-            </div>
-          </div>
-          <h3 className="text-3xl font-bold text-gray-800 mb-2">{pendingFeatureRequests.length}</h3>
-          <p className="text-sm font-medium text-gray-600">Feature Requests</p>
-          <p className="text-xs text-gray-500 mt-1">Center feature approvals</p>
         </div>
 
         <div 
