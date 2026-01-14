@@ -517,25 +517,29 @@ function CollectionCenterCard({
                         center.center_type === 'independent' ? 'text-teal-600' : 'text-purple-600'
                       }`} />
                       <span className="text-sm font-medium text-gray-800">{relationship.hospital_name}</span>
-                      {relationship.is_main_hospital && (
+                      {/* For independent centers: show "Main Hospital" badge */}
+                      {center.center_type === 'independent' && relationship.is_main_hospital_relation && (
                         <span className="text-xs px-2 py-1 bg-teal-100 text-teal-700 rounded-full font-medium">
                           Main Hospital
                         </span>
                       )}
-                      {relationship.is_main_hospital_relation && (
+                      {/* For dependent centers: show "Supervising Hospital" badge */}
+                      {center.center_type === 'dependent' && relationship.is_main_hospital_relation && (
                         <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
                           Supervising Hospital
                         </span>
                       )}
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      relationship.relation_status === 'approved' 
-                        ? 'bg-green-100 text-green-700' 
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium capitalize ${
+                      relationship.relation_status === 'approved'
+                        ? 'bg-green-100 text-green-700'
                         : relationship.relation_status === 'pending'
                         ? 'bg-yellow-100 text-yellow-700'
+                        : relationship.relation_status === 'rejected'
+                        ? 'bg-red-100 text-red-700'
                         : 'bg-gray-100 text-gray-700'
                     }`}>
-                      {relationship.relation_status}
+                      {relationship.relation_status || 'N/A'}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-xs text-gray-600">

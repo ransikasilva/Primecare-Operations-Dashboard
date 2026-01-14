@@ -371,6 +371,20 @@ export default function HospitalsPage() {
               setIsProcessing(false);
             }
           }}
+          onReject={async (hospitalId: string, networkId: string) => {
+            setIsProcessing(true);
+            try {
+              await operationsApi.rejectApproval('hospital_network', networkId, 'Rejected by Operations HQ');
+              setShowDetailModal(false);
+              setSelectedHospital(null);
+              // Refresh data after rejection
+              window.location.reload();
+            } catch (error) {
+              console.error('Hospital rejection failed:', error);
+            } finally {
+              setIsProcessing(false);
+            }
+          }}
           isProcessing={isProcessing}
         />
       )}
@@ -597,6 +611,7 @@ function HospitalDetailModal({
   isOpen,
   onClose,
   onApprove,
+  onReject,
   isProcessing
 }: {
   hospital: any;
@@ -604,6 +619,7 @@ function HospitalDetailModal({
   isOpen: boolean;
   onClose: () => void;
   onApprove: (hospitalId: string, networkId: string) => Promise<void>;
+  onReject?: (hospitalId: string, networkId: string) => Promise<void>;
   isProcessing: boolean;
 }) {
   const [orders, setOrders] = useState<any[]>([]);
@@ -675,7 +691,6 @@ function HospitalDetailModal({
   if (!isOpen) return null;
 
   const isMainHospital = hospitalType === 'main';
-  const canApprove = isMainHospital && hospital.network_status === 'pending_hq_approval';
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -1051,7 +1066,7 @@ function HospitalDetailModal({
                         </div>
                         <div>
                           <span className="text-gray-500 block">Quantity:</span>
-                          <span className="font-medium text-gray-800">{order.quantity || 'N/A'}</span>
+                          <span className="font-medium text-gray-800">{order.sample_quantity || 'N/A'}</span>
                         </div>
                         <div>
                           <span className="text-gray-500 block">Pickup Time:</span>
@@ -1137,22 +1152,50 @@ function HospitalDetailModal({
             </div>
           )}
 
-            {/* Approval Section */}
-            {canApprove && (
+            {/* Network Status Management (HQ) */}
+            {isMainHospital && onReject && (
               <div className="mt-8 pt-6 border-t border-gray-200">
-                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+                <div className={`border rounded-xl p-6 ${
+                  hospital.network_status === 'pending_hq_approval' ? 'bg-yellow-50 border-yellow-200' :
+                  hospital.network_status === 'approved' ? 'bg-green-50 border-green-200' :
+                  hospital.network_status === 'rejected' ? 'bg-red-50 border-red-200' :
+                  'bg-gray-50 border-gray-200'
+                }`}>
                   <div className="flex items-center gap-3 mb-4">
-                    <AlertCircle className="w-6 h-6 text-yellow-600" />
-                    <h3 className="text-xl font-semibold text-yellow-800">Pending HQ Approval</h3>
+                    {hospital.network_status === 'approved' && <CheckCircle2 className="w-6 h-6 text-green-600" />}
+                    {hospital.network_status === 'rejected' && <XCircle className="w-6 h-6 text-red-600" />}
+                    {hospital.network_status === 'pending_hq_approval' && <AlertCircle className="w-6 h-6 text-yellow-600" />}
+                    <h3 className={`text-xl font-semibold ${
+                      hospital.network_status === 'pending_hq_approval' ? 'text-yellow-800' :
+                      hospital.network_status === 'approved' ? 'text-green-800' :
+                      hospital.network_status === 'rejected' ? 'text-red-800' :
+                      'text-gray-800'
+                    }`}>
+                      Network Status Management (HQ)
+                    </h3>
                   </div>
-                  <p className="text-gray-700 mb-6">
-                    This main hospital network is awaiting Operations HQ approval. Once approved,
-                    the hospital can begin operations and accept regional hospital affiliations.
+                  <p className="text-gray-700 mb-2">
+                    <span className="font-semibold">Current Status:</span>{' '}
+                    {hospital.network_status === 'approved' && <span className="text-green-600 font-semibold">✓ Approved by HQ</span>}
+                    {hospital.network_status === 'rejected' && <span className="text-red-600 font-semibold">✗ Rejected by HQ</span>}
+                    {hospital.network_status === 'pending_hq_approval' && <span className="text-yellow-600 font-semibold">⏳ Pending HQ Approval</span>}
+                  </p>
+                  <p className="text-sm text-gray-600 mb-6">
+                    {hospital.network_status === 'pending_hq_approval' &&
+                      'This main hospital network is awaiting Operations HQ approval. Once approved, the hospital can begin operations and accept regional hospital affiliations.'}
+                    {hospital.network_status === 'approved' &&
+                      'This network has been approved and is operational. You can reject this network if needed.'}
+                    {hospital.network_status === 'rejected' &&
+                      'This network has been rejected. You can re-approve this network if the issues have been resolved.'}
                   </p>
                   <div className="flex justify-end space-x-4">
                     <button
-                      className="px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105"
-                      style={{
+                      onClick={() => onReject(hospital.id, hospital.network_id)}
+                      disabled={isProcessing || hospital.network_status === 'rejected'}
+                      className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50 ${
+                        hospital.network_status === 'rejected' ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : ''
+                      }`}
+                      style={hospital.network_status === 'rejected' ? {} : {
                         backgroundColor: '#ef4444',
                         color: '#ffffff',
                         boxShadow: '0 8px 32px rgba(239, 68, 68, 0.3)'
@@ -1160,15 +1203,21 @@ function HospitalDetailModal({
                     >
                       <div className="flex items-center space-x-2">
                         <XCircle className="w-5 h-5" />
-                        <span>Reject Network</span>
+                        <span>
+                          {isProcessing ? 'Processing...' :
+                           hospital.network_status === 'rejected' ? 'Already Rejected' :
+                           'Reject Network'}
+                        </span>
                       </div>
                     </button>
 
                     <button
                       onClick={() => onApprove(hospital.id, hospital.network_id)}
-                      disabled={isProcessing}
-                      className="px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50"
-                      style={{
+                      disabled={isProcessing || hospital.network_status === 'approved'}
+                      className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50 ${
+                        hospital.network_status === 'approved' ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : ''
+                      }`}
+                      style={hospital.network_status === 'approved' ? {} : {
                         backgroundColor: '#10b981',
                         color: '#ffffff',
                         boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)'
@@ -1176,7 +1225,12 @@ function HospitalDetailModal({
                     >
                       <div className="flex items-center space-x-2">
                         <CheckCircle2 className="w-5 h-5" />
-                        <span>{isProcessing ? 'Approving...' : 'Approve Network'}</span>
+                        <span>
+                          {isProcessing ? 'Processing...' :
+                           hospital.network_status === 'approved' ? 'Already Approved' :
+                           hospital.network_status === 'rejected' ? 'Re-approve Network' :
+                           'Approve Network'}
+                        </span>
                       </div>
                     </button>
                   </div>

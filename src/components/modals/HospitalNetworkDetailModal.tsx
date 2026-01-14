@@ -339,6 +339,73 @@ export function HospitalNetworkDetailModal({
                     </div>
                   </div>
                 )}
+
+                {/* Network Approval Management (HQ Only) */}
+                {onStatusChange && (
+                  <div className="pt-6 border-t border-gray-200 mt-6">
+                    <h4 className="text-lg font-semibold text-gray-800 mb-3">Network Status Management (HQ)</h4>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Current Status: {' '}
+                      {network.network_status === 'approved' && (
+                        <span className="font-semibold text-green-600">✓ Approved by HQ</span>
+                      )}
+                      {network.network_status === 'rejected' && (
+                        <span className="font-semibold text-red-600">✗ Rejected by HQ</span>
+                      )}
+                      {network.network_status === 'pending_hq_approval' && (
+                        <span className="font-semibold text-amber-600">⏳ Pending HQ Approval</span>
+                      )}
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={() => handleStatusChange('approved')}
+                        disabled={processingStatus || network.network_status === 'approved'}
+                        className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50 ${
+                          network.network_status === 'approved'
+                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                            : 'text-white'
+                        }`}
+                        style={
+                          network.network_status === 'approved'
+                            ? {}
+                            : {
+                                backgroundColor: '#10b981',
+                                boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)'
+                              }
+                        }
+                      >
+                        {processingStatus ? (
+                          'Processing...'
+                        ) : network.network_status === 'approved' ? (
+                          'Already Approved'
+                        ) : network.network_status === 'rejected' ? (
+                          'Re-approve Network'
+                        ) : (
+                          'Approve Network'
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleStatusChange('rejected')}
+                        disabled={processingStatus || network.network_status === 'rejected'}
+                        className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50 ${
+                          network.network_status === 'rejected'
+                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                            : 'text-white'
+                        }`}
+                        style={
+                          network.network_status === 'rejected'
+                            ? {}
+                            : {
+                                backgroundColor: '#ef4444',
+                                boxShadow: '0 8px 32px rgba(239, 68, 68, 0.3)'
+                              }
+                        }
+                      >
+                        {processingStatus ? 'Processing...' : network.network_status === 'rejected' ? 'Already Rejected' : 'Reject Network'}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Hospitals in Network */}

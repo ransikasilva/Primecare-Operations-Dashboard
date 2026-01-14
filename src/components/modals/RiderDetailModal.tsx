@@ -41,6 +41,7 @@ interface RiderDetails {
   vehicle_number: string;
   license_number: string;
   experience: string;
+  delivery_experience?: string;
   areas_known: string[];
   hospital_affiliation: {
     main_hospital?: string;
@@ -657,14 +658,20 @@ export function RiderDetailModal({
                     </div>
                   )}
 
-                  {rider.experience && rider.experience !== 'Not specified' && (
+                  {(rider.delivery_experience || rider.experience) && rider.experience !== 'Not specified' && (
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                        <Award className="w-6 h-6 text-purple-600" />
+                        <Clock className="w-6 h-6 text-purple-600" />
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Experience</p>
-                        <p className="font-semibold text-gray-800">{rider.experience}</p>
+                        <p className="text-sm text-gray-500">Delivery Experience</p>
+                        <p className="font-semibold text-gray-800 capitalize">
+                          {rider.delivery_experience === '0' ? 'New Rider' :
+                           rider.delivery_experience === '1-2' ? '1-2 Years' :
+                           rider.delivery_experience === '3-5' ? '3-5 Years' :
+                           rider.delivery_experience === '5+' ? '5+ Years' :
+                           rider.delivery_experience || rider.experience}
+                        </p>
                       </div>
                     </div>
                   )}

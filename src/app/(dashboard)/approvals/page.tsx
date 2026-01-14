@@ -14,7 +14,8 @@ import {
   Shield,
   ChevronDown,
   ChevronRight,
-  Zap
+  Zap,
+  X
 } from 'lucide-react';
 
 export default function ApprovalsPage() {
@@ -32,6 +33,11 @@ export default function ApprovalsPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [expandedNetworks, setExpandedNetworks] = useState<string[]>([]);
   const [expandedCenters, setExpandedCenters] = useState<string[]>([]);
+
+  // Feature approval popup state
+  const [showFeatureApprovalPopup, setShowFeatureApprovalPopup] = useState(false);
+  const [centerForApproval, setCenterForApproval] = useState<any>(null);
+  const [selectedFeaturesToggles, setSelectedFeaturesToggles] = useState<{ [key: string]: boolean }>({});
 
   // Extract pending approvals data
   const approvalsRaw = approvalsData?.data;
@@ -317,18 +323,41 @@ export default function ApprovalsPage() {
           setShowDetailModal(true);
         }}
         onApprove={async (center: any) => {
-          setIsProcessing(true);
-          try {
-            console.log('Direct approval - collection center:', center.id, center.name);
-            await approveCenter(center.id, `Approved by operations: ${center.name || collectionCenterMap[center.id]?.center_name}`);
-            console.log('Collection center approved successfully');
-            await refetchApprovals();
-            alert(`${center.name || collectionCenterMap[center.id]?.center_name} has been approved successfully!`);
-          } catch (error) {
-            console.error('Approval failed:', error);
-            alert(`Approval failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-          } finally {
-            setIsProcessing(false);
+          // Check if this center has pending feature requests
+          const centerFeatureRequests = pendingFeatureRequests.filter((req: any) => req.center_id === center.id);
+
+          if (centerFeatureRequests.length > 0) {
+            // Show feature approval popup
+            const centerData = collectionCenterMap[center.id];
+            setCenterForApproval({
+              ...center,
+              centerData,
+              featureRequests: centerFeatureRequests
+            });
+
+            // Initialize all features as enabled (selected) by default
+            const initialToggles: { [key: string]: boolean } = {};
+            centerFeatureRequests.forEach((req: any) => {
+              initialToggles[req.feature_id] = true;
+            });
+            setSelectedFeaturesToggles(initialToggles);
+
+            setShowFeatureApprovalPopup(true);
+          } else {
+            // No feature requests, approve directly
+            setIsProcessing(true);
+            try {
+              console.log('Direct approval - collection center:', center.id, center.name);
+              await approveCenter(center.id, `Approved by operations: ${center.name || collectionCenterMap[center.id]?.center_name}`);
+              console.log('Collection center approved successfully');
+              await refetchApprovals();
+              alert(`${center.name || collectionCenterMap[center.id]?.center_name} has been approved successfully!`);
+            } catch (error) {
+              console.error('Approval failed:', error);
+              alert(`Approval failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            } finally {
+              setIsProcessing(false);
+            }
           }
         }}
       />
@@ -360,18 +389,41 @@ export default function ApprovalsPage() {
           setShowDetailModal(true);
         }}
         onApprove={async (center: any) => {
-          setIsProcessing(true);
-          try {
-            console.log('Direct approval - collection center:', center.id, center.name);
-            await approveCenter(center.id, `Approved by operations: ${center.name || collectionCenterMap[center.id]?.center_name}`);
-            console.log('Collection center approved successfully');
-            await refetchApprovals();
-            alert(`${center.name || collectionCenterMap[center.id]?.center_name} has been approved successfully!`);
-          } catch (error) {
-            console.error('Approval failed:', error);
-            alert(`Approval failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-          } finally {
-            setIsProcessing(false);
+          // Check if this center has pending feature requests
+          const centerFeatureRequests = pendingFeatureRequests.filter((req: any) => req.center_id === center.id);
+
+          if (centerFeatureRequests.length > 0) {
+            // Show feature approval popup
+            const centerData = collectionCenterMap[center.id];
+            setCenterForApproval({
+              ...center,
+              centerData,
+              featureRequests: centerFeatureRequests
+            });
+
+            // Initialize all features as enabled (selected) by default
+            const initialToggles: { [key: string]: boolean } = {};
+            centerFeatureRequests.forEach((req: any) => {
+              initialToggles[req.feature_id] = true;
+            });
+            setSelectedFeaturesToggles(initialToggles);
+
+            setShowFeatureApprovalPopup(true);
+          } else {
+            // No feature requests, approve directly
+            setIsProcessing(true);
+            try {
+              console.log('Direct approval - collection center:', center.id, center.name);
+              await approveCenter(center.id, `Approved by operations: ${center.name || collectionCenterMap[center.id]?.center_name}`);
+              console.log('Collection center approved successfully');
+              await refetchApprovals();
+              alert(`${center.name || collectionCenterMap[center.id]?.center_name} has been approved successfully!`);
+            } catch (error) {
+              console.error('Approval failed:', error);
+              alert(`Approval failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            } finally {
+              setIsProcessing(false);
+            }
           }
         }}
       />
@@ -459,6 +511,213 @@ export default function ApprovalsPage() {
         }}
         isProcessing={isProcessing}
       />
+
+      {/* Feature Approval Popup Modal */}
+      {showFeatureApprovalPopup && centerForApproval && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div
+            className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            style={{
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+            }}
+          >
+            {/* Header */}
+            <div
+              className="sticky top-0 p-6 border-b border-gray-100 bg-white rounded-t-3xl"
+              style={{
+                background: 'linear-gradient(135deg, #4ECDC4 0%, #4A9BC7 100%)'
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-1 flex items-center gap-2">
+                    <Zap className="w-6 h-6" />
+                    Approve Features
+                  </h2>
+                  <p className="text-white/90">
+                    {centerForApproval.name || centerForApproval.centerData?.center_name}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowFeatureApprovalPopup(false);
+                    setCenterForApproval(null);
+                    setSelectedFeaturesToggles({});
+                  }}
+                  className="p-2 hover:bg-white/20 rounded-xl transition-colors"
+                >
+                  <X className="w-6 h-6 text-white" />
+                </button>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="p-6">
+              <p className="text-gray-600 mb-6">
+                This collection center has requested the following features. Toggle to approve or reject each feature.
+              </p>
+
+              <div className="space-y-4">
+                {centerForApproval.featureRequests.map((request: any) => (
+                  <div
+                    key={request.feature_id}
+                    className="p-4 rounded-2xl border-2 transition-all duration-300"
+                    style={{
+                      borderColor: selectedFeaturesToggles[request.feature_id] ? '#10b981' : '#e5e7eb',
+                      background: selectedFeaturesToggles[request.feature_id]
+                        ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.1) 100%)'
+                        : 'white'
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Zap className={`w-5 h-5 ${selectedFeaturesToggles[request.feature_id] ? 'text-green-600' : 'text-gray-400'}`} />
+                          <h3 className="text-lg font-semibold text-gray-800">
+                            {request.feature_name || request.feature_id}
+                          </h3>
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            request.feature_type === 'premium'
+                              ? 'bg-purple-100 text-purple-700'
+                              : request.feature_type === 'enterprise'
+                              ? 'bg-blue-100 text-blue-700'
+                              : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {request.feature_type || 'Standard'}
+                          </span>
+                        </div>
+                        {request.feature_description && (
+                          <p className="text-sm text-gray-600 ml-8">
+                            {request.feature_description}
+                          </p>
+                        )}
+                        {request.requested_at && (
+                          <p className="text-xs text-gray-500 mt-2 ml-8">
+                            Requested: {new Date(request.requested_at).toLocaleDateString()}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Toggle Switch */}
+                      <button
+                        onClick={() => {
+                          setSelectedFeaturesToggles(prev => ({
+                            ...prev,
+                            [request.feature_id]: !prev[request.feature_id]
+                          }));
+                        }}
+                        className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 ${
+                          selectedFeaturesToggles[request.feature_id] ? 'bg-green-500' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform duration-300 ${
+                            selectedFeaturesToggles[request.feature_id] ? 'translate-x-7' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Summary */}
+              <div className="mt-6 p-4 bg-gray-50 rounded-2xl">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Features to approve:</span>
+                  <span className="font-semibold text-gray-800">
+                    {Object.values(selectedFeaturesToggles).filter(Boolean).length} of {centerForApproval.featureRequests.length}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="sticky bottom-0 p-6 border-t border-gray-100 bg-white rounded-b-3xl">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => {
+                    setShowFeatureApprovalPopup(false);
+                    setCenterForApproval(null);
+                    setSelectedFeaturesToggles({});
+                  }}
+                  className="flex-1 px-6 py-3 rounded-xl font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    setIsProcessing(true);
+                    try {
+                      // First approve the center
+                      console.log('Approving collection center with features:', centerForApproval.id, centerForApproval.name);
+                      await approveCenter(centerForApproval.id, `Approved by operations: ${centerForApproval.name || centerForApproval.centerData?.center_name}`);
+                      console.log('Collection center approved successfully');
+
+                      // Then enable/disable features based on toggles
+                      console.log('🔧 Processing feature approvals:', selectedFeaturesToggles);
+
+                      for (const request of centerForApproval.featureRequests) {
+                        const featureId = request.feature_id;
+                        const shouldEnable = selectedFeaturesToggles[featureId] || false;
+
+                        console.log(`🔧 Processing feature: ${featureId}, shouldEnable: ${shouldEnable}`);
+
+                        try {
+                          const result = await enableCenterFeature(
+                            centerForApproval.id,
+                            featureId,
+                            shouldEnable,
+                            shouldEnable ? 'Approved by operations' : 'Not approved at this time'
+                          );
+                          console.log(`✅ Feature ${featureId} ${shouldEnable ? 'enabled' : 'disabled'} successfully`, result);
+                        } catch (featureError) {
+                          console.error(`❌ Failed to ${shouldEnable ? 'enable' : 'disable'} feature ${featureId}:`, featureError);
+                          // Continue with other features even if one fails
+                        }
+                      }
+
+                      // Refresh approvals data
+                      await refetchApprovals();
+
+                      // Close popup and show success
+                      setShowFeatureApprovalPopup(false);
+                      setCenterForApproval(null);
+                      setSelectedFeaturesToggles({});
+
+                      const approvedCount = Object.values(selectedFeaturesToggles).filter(Boolean).length;
+                      alert(`${centerForApproval.name || centerForApproval.centerData?.center_name} approved successfully!\n${approvedCount} feature(s) enabled.`);
+                    } catch (error) {
+                      console.error('Approval failed:', error);
+                      alert(`Approval failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                    } finally {
+                      setIsProcessing(false);
+                    }
+                  }}
+                  disabled={isProcessing}
+                  className="flex-1 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300 hover:transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+                  }}
+                >
+                  {isProcessing ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Processing...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      <Check className="w-5 h-5" />
+                      Approve Center & Features
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

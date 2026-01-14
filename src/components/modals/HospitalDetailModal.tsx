@@ -343,10 +343,66 @@ export function HospitalDetailModal({
                   </div>
                 </div>
 
-                {/* Status Management */}
+                {/* Network Approval Management (HQ Only) */}
                 {onStatusChange && (
                   <div className="pt-6 border-t border-gray-200">
-                    <h4 className="text-lg font-semibold text-gray-800 mb-4">Status Management</h4>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2 flex items-center space-x-2">
+                      <Network className="w-5 h-5 text-purple-600" />
+                      <span>Network Status Management (HQ)</span>
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Current Status: <span className="font-semibold">
+                        {hospital.network_status === 'approved' ? '✓ Approved' :
+                         hospital.network_status === 'rejected' ? '✗ Rejected' :
+                         '⏳ Pending HQ Approval'}
+                      </span>
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={() => handleStatusChange('approved')}
+                        disabled={processingStatus || hospital.network_status === 'approved'}
+                        className={`px-6 py-3 rounded-2xl font-semibold text-white transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50 flex items-center justify-center space-x-2 ${
+                          hospital.network_status === 'approved' ? 'bg-gray-300 cursor-not-allowed' : ''
+                        }`}
+                        style={hospital.network_status === 'approved' ? {} : {
+                          backgroundColor: '#10b981',
+                          boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)'
+                        }}
+                      >
+                        <CheckCircle2 className="w-5 h-5" />
+                        <span>
+                          {processingStatus ? 'Processing...' :
+                           hospital.network_status === 'approved' ? 'Already Approved' :
+                           hospital.network_status === 'rejected' ? 'Re-approve Network' :
+                           'Approve Network'}
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => handleStatusChange('rejected')}
+                        disabled={processingStatus || hospital.network_status === 'rejected'}
+                        className={`px-6 py-3 rounded-2xl font-semibold text-white transition-all duration-200 hover:transform hover:scale-105 disabled:opacity-50 flex items-center justify-center space-x-2 ${
+                          hospital.network_status === 'rejected' ? 'bg-gray-300 cursor-not-allowed' : ''
+                        }`}
+                        style={hospital.network_status === 'rejected' ? {} : {
+                          backgroundColor: '#ef4444',
+                          boxShadow: '0 8px 32px rgba(239, 68, 68, 0.3)'
+                        }}
+                      >
+                        <XCircle className="w-5 h-5" />
+                        <span>
+                          {processingStatus ? 'Processing...' :
+                           hospital.network_status === 'rejected' ? 'Already Rejected' :
+                           'Reject Network'}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Hospital Status Management */}
+                {onStatusChange && (
+                  <div className="pt-6 border-t border-gray-200">
+                    <h4 className="text-lg font-semibold text-gray-800 mb-4">Hospital Status Management</h4>
                     <div className="space-y-3">
                       {['active', 'inactive', 'pending'].map((status) => (
                         <button
