@@ -479,18 +479,12 @@ function HospitalNetworkCard({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-gray-500">Network:</span>
-                  <div className="font-medium text-gray-800">{network.network_name}</div>
-                </div>
-                <div>
-                  <span className="text-gray-500">Location:</span>
-                  <div className="font-medium text-gray-800">{network.address || 'Not specified'}</div>
-                </div>
+              <div className="mb-4 text-sm">
+                <span className="text-gray-500">Network:</span>
+                <div className="font-medium text-gray-800">{network.network_name}</div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm mt-2">
+              <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-gray-500">Email:</span>
                   <div className="font-medium text-gray-800">{network.admin_email}</div>
