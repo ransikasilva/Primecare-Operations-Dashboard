@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { OrderDetailModal } from '@/components/modals/OrderDetailModal';
 import { useAllOrders } from '@/hooks/useApi';
 import {
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react';
 
 export default function OrdersPage() {
+  const searchParams = useSearchParams();
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
 
@@ -50,6 +52,26 @@ export default function OrdersPage() {
 
   const allOrders = ordersData?.data?.orders || [];
   const summary = ordersData?.data?.summary || {};
+
+  // Check for URL parameter to auto-open modal
+  useEffect(() => {
+    const orderId = searchParams.get('id');
+    if (orderId && allOrders.length > 0) {
+      setSelectedOrderId(orderId);
+      setShowOrderModal(true);
+    }
+  }, [searchParams, allOrders]);
+
+  // Debug: Log the first order to see SLA fields
+  if (allOrders.length > 0) {
+    console.log('🔍 First order SLA data:', {
+      order_number: allOrders[0].order_number,
+      status: allOrders[0].status,
+      pickup_late: (allOrders[0] as any).pickup_late,
+      delivery_late: (allOrders[0] as any).delivery_late,
+      full_order: allOrders[0]
+    });
+  }
 
   // Frontend filtering
   const filteredOrders = allOrders.filter(order => {
@@ -513,6 +535,30 @@ export default function OrdersPage() {
                                 <span>{order.rider_name}</span>
                               </div>
                             )}
+                          </div>
+                          {/* SLA Status */}
+                          <div className="mt-2">
+                            {(order as any).pickup_late || (order as any).delivery_late ? (
+                              <div className="flex items-center space-x-2">
+                                <span className="px-2 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800 border border-red-300 shadow-sm">
+                                  🚨 LATE
+                                </span>
+                                {(order as any).pickup_late && (
+                                  <span className="text-xs text-red-700 font-medium">
+                                    Pickup Delay
+                                  </span>
+                                )}
+                                {(order as any).delivery_late && (
+                                  <span className="text-xs text-red-700 font-medium">
+                                    {order.urgency === 'urgent' || order.urgency === 'emergency' ? 'Urgent Delivery Delay' : 'Delivery Delay'}
+                                  </span>
+                                )}
+                              </div>
+                            ) : order.status === 'delivered' ? (
+                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 border border-green-200">
+                                ✓ On Time
+                              </span>
+                            ) : null}
                           </div>
                         </div>
                       </div>

@@ -547,6 +547,10 @@ class OperationsApiClient {
     return this.request(`/api/hospitals/networks/${networkId}`);
   }
 
+  async getHospitalDetails(hospitalId: string) {
+    return this.request(`/api/hospitals/${hospitalId}`);
+  }
+
   async getNetworkHospitals(networkId: string) {
     return this.request(`/api/hospitals/networks/${networkId}/hospitals`);
   }
@@ -1237,6 +1241,8 @@ class OperationsApiClient {
       cancelled_at?: string;
       estimated_payment?: number;
       actual_payment?: number;
+      pickup_late?: boolean;
+      delivery_late?: boolean;
     }>;
     pagination: {
       total: number;

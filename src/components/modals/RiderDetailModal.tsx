@@ -357,7 +357,7 @@ export function RiderDetailModal({
                   </div>
                   <div className="flex items-center space-x-2">
                     <Route className="w-5 h-5" />
-                    <span className="text-white/90">{rider.total_km.toFixed(1)} KM Total</span>
+                    <span className="text-white/90">{Number(rider.total_km || 0).toFixed(1)} KM Total</span>
                   </div>
                 </div>
                 

@@ -1,10 +1,11 @@
 "use client";
 
 import { useSystemOverview, usePendingFeatureRequests } from '@/hooks/useApi';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { CollectionCenterDetailModal } from '@/components/modals/CollectionCenterDetailModal';
 import { operationsApi } from '@/lib/api';
-import { 
+import {
   FlaskConical,
   Building,
   Hospital,
@@ -21,6 +22,7 @@ import {
 } from 'lucide-react';
 
 export default function CollectionCentersPage() {
+  const searchParams = useSearchParams();
   const { data: systemData, loading, error } = useSystemOverview();
   const { data: featureRequestsData } = usePendingFeatureRequests();
   const [selectedCenter, setSelectedCenter] = useState<any>(null);
@@ -35,6 +37,18 @@ export default function CollectionCentersPage() {
   const allCollectionCenters = Array.isArray((systemDataObj as any)?.collection_centers)
     ? (systemDataObj as any).collection_centers
     : [];
+
+  // Check for URL parameter to auto-open modal
+  useEffect(() => {
+    const centerId = searchParams.get('id');
+    if (centerId && allCollectionCenters.length > 0) {
+      const foundCenter = allCollectionCenters.find((c: any) => c.id === centerId);
+      if (foundCenter) {
+        setSelectedCenter(foundCenter);
+        setShowDetailModal(true);
+      }
+    }
+  }, [searchParams, allCollectionCenters]);
 
   // Filter centers based on search and filters
   const filteredCenters = allCollectionCenters.filter((center: any) => {

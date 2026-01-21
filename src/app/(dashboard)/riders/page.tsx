@@ -1,7 +1,8 @@
 "use client";
 
 import { useSystemOverview } from '@/hooks/useApi';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { RiderDetailModal } from '@/components/modals/RiderDetailModal';
 import {
   Users,
@@ -23,6 +24,7 @@ import {
 } from 'lucide-react';
 
 export default function RidersPage() {
+  const searchParams = useSearchParams();
   const { data: systemData, loading, error } = useSystemOverview();
   const [selectedRider, setSelectedRider] = useState<any>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -34,6 +36,38 @@ export default function RidersPage() {
 
   // Extract riders data
   const allRiders = ((systemData?.data as any)?.data?.riders || (systemData?.data as any)?.riders || []) as any[];
+
+  // Check for URL parameter to auto-open modal
+  useEffect(() => {
+    const riderId = searchParams.get('id');
+    if (riderId && allRiders.length > 0) {
+      const foundRider = allRiders.find((r: any) => r.id === riderId);
+      if (foundRider) {
+        // Fetch detailed rider data like the View button does
+        const fetchDetailedRiderData = async () => {
+          try {
+            const { operationsApi } = await import('@/lib/api');
+            const riderDetailsResponse = await operationsApi.getRiderDetails(riderId);
+
+            if (riderDetailsResponse.success) {
+              setSelectedRider(riderDetailsResponse.data);
+            } else {
+              // Fallback to basic rider data
+              setSelectedRider(foundRider);
+            }
+            setShowDetailModal(true);
+          } catch (error) {
+            console.error('Failed to fetch rider details:', error);
+            // Fallback to basic rider data
+            setSelectedRider(foundRider);
+            setShowDetailModal(true);
+          }
+        };
+
+        fetchDetailedRiderData();
+      }
+    }
+  }, [searchParams, allRiders]);
 
   // Filter and sort riders
   const filteredAndSortedRiders = allRiders

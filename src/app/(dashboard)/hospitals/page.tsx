@@ -2,6 +2,7 @@
 
 import { useSystemOverview, useApproveHospitalNetwork } from '@/hooks/useApi';
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { HospitalNetworkDetailModal } from '@/components/modals/HospitalNetworkDetailModal';
 import { operationsApi } from '@/lib/api';
 import {
@@ -33,6 +34,7 @@ import {
 } from 'lucide-react';
 
 export default function HospitalsPage() {
+  const searchParams = useSearchParams();
   const { data: systemData, loading, error } = useSystemOverview();
   const { approveNetwork } = useApproveHospitalNetwork();
   const [selectedHospital, setSelectedHospital] = useState<any>(null);
@@ -44,6 +46,37 @@ export default function HospitalsPage() {
 
   // Extract hospital networks data
   const allHospitalNetworks = (systemData as any)?.data?.hospital_networks || [];
+
+  // Check for URL parameter to auto-open modal
+  useEffect(() => {
+    const hospitalId = searchParams.get('id');
+    if (hospitalId && allHospitalNetworks.length > 0) {
+      // Search for the hospital in all networks
+      for (const network of allHospitalNetworks) {
+        const foundHospital = network.hospitals?.find((h: any) => h.id === hospitalId);
+        if (foundHospital) {
+          // Add all network-level data like the view button does
+          const regionalHospitals = network.hospitals?.filter((h: any) => !h.is_main_hospital) || [];
+          const enrichedHospital = {
+            ...foundHospital,
+            network_name: network.network_name,
+            network_id: network.id,
+            network_status: network.network_status,
+            admin_name: network.admin_name,
+            admin_email: network.admin_email,
+            admin_phone: network.admin_phone,
+            network_created_at: network.network_created_at,
+            subscription_status: network.subscription_status,
+            regionalHospitals: regionalHospitals
+          };
+          setSelectedHospital(enrichedHospital);
+          setSelectedHospitalType(foundHospital.is_main_hospital ? 'main' : 'regional');
+          setShowDetailModal(true);
+          break;
+        }
+      }
+    }
+  }, [searchParams, allHospitalNetworks]);
 
   // Extract main hospitals from networks with their regional hospitals
   const allMainHospitals = allHospitalNetworks.flatMap((network: any) => {

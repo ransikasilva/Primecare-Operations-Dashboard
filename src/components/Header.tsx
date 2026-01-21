@@ -86,9 +86,12 @@ export function Header() {
           if (systemOverview?.success && systemData.hospital_networks) {
             systemData.hospital_networks.forEach((network: any) => {
               if (network.network_name?.toLowerCase().includes(query)) {
+                // Find the main hospital in this network
+                const mainHospital = network.hospitals?.find((h: any) => h.is_main_hospital);
                 results.push({
-                  type: 'hospital',
-                  id: network.id,
+                  type: 'network',
+                  id: mainHospital?.id || network.id, // Use main hospital ID
+                  networkId: network.id,
                   title: network.network_name,
                   subtitle: `${network.hospitals?.length || 0} hospitals • Network`,
                   icon: Hospital
@@ -313,11 +316,12 @@ export function Header() {
                           <div
                             key={index}
                             onClick={() => {
-                              // Navigate based on type
-                              if (result.type === 'hospital') router.push(`/hospitals`);
-                              else if (result.type === 'center') router.push(`/collection-centers`);
-                              else if (result.type === 'rider') router.push(`/riders`);
-                              else if (result.type === 'order') router.push(`/orders`);
+                              // Navigate based on type with ID parameter to open modal
+                              if (result.type === 'hospital') router.push(`/hospitals?id=${result.id}`);
+                              else if (result.type === 'network') router.push(`/hospitals?id=${result.id}`); // Use main hospital ID
+                              else if (result.type === 'center') router.push(`/collection-centers?id=${result.id}`);
+                              else if (result.type === 'rider') router.push(`/riders?id=${result.id}`);
+                              else if (result.type === 'order') router.push(`/orders?id=${result.id}`);
                               setSearchQuery('');
                             }}
                             className="px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors duration-200 flex items-center space-x-3"
