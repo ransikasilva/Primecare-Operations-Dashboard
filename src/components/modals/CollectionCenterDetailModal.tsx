@@ -925,6 +925,11 @@ export function CollectionCenterDetailModal({
                           <div className="flex-1 min-w-0">
                             <p className="font-semibold text-gray-800 truncate">{rider.rider_name}</p>
                             <p className="text-xs text-gray-500 truncate">{rider.phone}</p>
+                            {rider.hospital_name && (
+                              <p className="text-xs text-teal-600 truncate font-medium mt-0.5">
+                                {rider.hospital_name}
+                              </p>
+                            )}
                           </div>
                         </div>
 
