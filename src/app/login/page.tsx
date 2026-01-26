@@ -33,7 +33,7 @@ export default function LoginPage() {
   const [resetError, setResetError] = useState('');
   const [resetSuccess, setResetSuccess] = useState('');
 
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,7 +42,17 @@ export default function LoginPage() {
     setError('');
 
     try {
-      await login(email, password);
+      const result = await login(email, password);
+
+      // Validate user type - only allow operations users
+      const userData = result?.data?.user;
+      if (userData?.user_type !== 'operations') {
+        setError('Access denied. This dashboard is only for operations team members.');
+        await logout(); // Clear the invalid session
+        setLoading(false);
+        return;
+      }
+
       router.push('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Login failed. Please try again.');
